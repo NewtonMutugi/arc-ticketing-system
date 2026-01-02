@@ -19,7 +19,7 @@
   </head>
   <body>
     <nav>
-      <%= link_to "Home", root_path %>
+      <%= link_to "Home", root_path if authenticated?%>
       <%= button_to "Log out", session_path, method: :delete if authenticated? %>
     </nav>
     <main>
