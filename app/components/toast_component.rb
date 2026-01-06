@@ -40,11 +40,13 @@ class ToastComponent < ViewComponent::Base
     @args = args
     @title = title
     @body = body
-  end
 
-  def wrapper_classes
-    base = "rounded-md border p-4 shadow-sm"
-    class_names(base, @type[:wrapper], @args[:class])
+    base_classes = "rounded-md border p-4 shadow-sm"
+
+    args[:class] = class_names(base_classes, @type[:wrapper], args[:class])
+    args[:data] ||= {}
+    args[:data][:controller] = "toast"
+    @html_attributes = args
   end
 
   def svg
