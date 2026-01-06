@@ -1,5 +1,19 @@
-<%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
-<%= tag.div(flash[:notice], style: "color:green") if flash[:notice] %>
+<div class="fixed top-5 right-5 z-50 flex flex-col gap-4 w-96 pointer-events-none">
+  <% flash.each do |key, message| %>
+    <%
+      # Map standard Rails flash keys to your Component types
+      type = case key.to_s
+             when "notice" then :success
+             when "alert" then :error
+             else :info
+             end
+
+      # Title handling: Capitalize the type or use a custom title
+      title = type.to_s.humanize
+    %>
+    <%= render ToastComponent.new(type: type, title: title, body: message) %>
+  <% end %>
+</div>
 <div class="flex justify-center">
   <%= render CardComponent.new(class: "max-w-xl w-full") do %>
     <div class="flex justify-center mb-4">
