@@ -1,11 +1,33 @@
 <%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
 <%= tag.div(flash[:notice], style: "color:green") if flash[:notice] %>
-
-<%= form_with url: session_path do |form| %>
-  <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address] %><br>
-  <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72 %><br>
-  <%= form.submit "Sign in" %>
-<% end %>
-<br>
-
-<%= link_to "Forgot password?", new_password_path %>
+<div class="flex justify-center">
+  <%= render CardComponent.new(class: "max-w-xl w-full") do %>
+    <div class="flex justify-center mb-4">
+      <%= image_tag("/arc_logo.png", alt: "Africa Ruby Community Logo", class: "h-14 w-auto") %>
+    </div>
+    <%= form_with url: session_path do |form| %>
+      <%= render InputComponent.new(
+        label: "Email Address",
+        name: "email_address",
+        id: "email_address",
+        type: "email",
+        value: params[:email_address],
+        placeholder: " "
+      ) %>
+      <%= render InputComponent.new(
+        label: "Password",
+        name: "password",
+        id: "password",
+        type: "password",
+        placeholder: " "
+      ) %>
+      <div class="py-4">
+        <%= render ButtonComponent.new(intent: :primary, type: "submit", class: "") do %>
+          Sign in
+        <% end %>
+      </div>
+    <% end %>
+    <br>
+    <%= link_to "Forgot password?", new_password_path %>
+  <% end %>
+</div>
