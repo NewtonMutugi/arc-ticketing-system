@@ -9,6 +9,7 @@
              end
 
       # Title handling: Capitalize the type or use a custom title
+
       title = type.to_s.humanize
     %>
     <%= render ToastComponent.new(type: type, title: title, body: message) %>
@@ -41,7 +42,6 @@
         <% end %>
       </div>
     <% end %>
-    <br>
-    <%= link_to "Forgot password?", new_password_path %>
+    <%= link_to "Forgot password?", new_password_path , class: "hover:text-blue-500 hover:underline" %>
   <% end %>
 </div>

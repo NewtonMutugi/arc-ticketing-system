@@ -1,9 +1,48 @@
-<h1>Update your password</h1>
+<div class="fixed top-5 right-5 z-50 flex flex-col gap-4 w-96 pointer-events-none">
+  <% flash.each do |key, message| %>
+    <%
+      # Map standard Rails flash keys to your Component types
+      type = case key.to_s
+             when "alert" then :error
+             else :info
+             end
 
-<%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
+      # Title handling: Capitalize the type or use a custom title
 
-<%= form_with url: password_path(params[:token]), method: :put do |form| %>
-  <%= form.password_field :password, required: true, autocomplete: "new-password", placeholder: "Enter new password", maxlength: 72 %><br>
-  <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password", placeholder: "Repeat new password", maxlength: 72 %><br>
-  <%= form.submit "Save" %>
-<% end %>
+      title = type.to_s.humanize
+    %>
+    <%= render ToastComponent.new(type: type, title: title, body: message) %>
+  <% end %>
+</div>
+<div class="flex justify-center">
+  <%= render CardComponent.new(class: "max-w-xl w-full") do %>
+    <div class="flex justify-center mb-4">
+      <%= image_tag("/arc_logo.png", alt: "Africa Ruby Community Logo", class: "h-14 w-auto") %>
+    </div>
+    <h1>Update your password</h1>
+    <%= form_with url: password_path(params[:token]), method: :put do |form| %>
+      <%= render InputComponent.new(
+        label: "New Password",
+        name: "password",
+        id: "password",
+        type: "password",
+        placeholder: " ",
+        autocomplete: "new-password"
+      ) %>
+      <%= render InputComponent.new(
+        label: "Confirrm new Password",
+        name: "password_confirmation",
+        id: "password_confirmation",
+        type: "password",
+        placeholder: " ",
+        autocomplete: "new-password",
+
+      ) %>
+      <div class="py-4">
+        <%= render ButtonComponent.new(intent: :primary, type: "submit", class: "") do %>
+          Save
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

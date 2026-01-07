@@ -7,7 +7,7 @@
     placeholder="<%= @placeholder %>"
     class="peer mt-0.5 w-full rounded border-gray-300 px-3 py-3 shadow-sm placeholder-transparent focus:border-red-600 focus:outline-none focus:ring-red-600 sm:text-sm"
     <%= "required" if @required %>
-    autocomplete>
+    autocomplete="<%= @autocomplete%>">
     <span class="pointer-events-none absolute start-3 top-0 -translate-y-1/2 bg-white px-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">
       <%= @label %>
     </span>
