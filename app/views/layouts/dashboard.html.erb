@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%= render "layouts/head" %>
+  </head>
+  <body class="bg-gray-50">
+    <div class="flex h-screen overflow-hidden">
+      <aside class="w-64 shrink-0 border-r bg-white overflow-y-auto">
+        <%= render SidebarComponent.new(logo_text: "") do |sidebar| %>
+          <%# 1. Simple Top-Level Links %>
+          <% sidebar.with_item_link(title: "General", href: root_path) %>
+          <% sidebar.with_item_link(title: "Dashboard", href: "") %>
+          <%# 2. Dropdown Group (Teams) %>
+          <% sidebar.with_item_group(title: "Teams") do |group| %>
+            <% group.with_item(title: "Banned Users", href: "") %>
+            <% group.with_item(title: "Calendar", href: "") %>
+          <% end %>
+          <%# 3. Dropdown Group (Account) %>
+          <% sidebar.with_item_group(title: "Account") do |group| %>
+            <% group.with_item(title: "Details", href: "") %>
+            <% group.with_item(title: "Security", href: "") %>
+            <% group.with_item(title: "Logout", href:"") %>
+          <% end %>
+          <%# 4. User Footer %>
+          <% sidebar.with_user_profile(name: @user.full_name, email: @user.email_address) %>
+        <% end %>
+      </aside>
+      <main class="flex-1 overflow-y-auto p-8">
+        <%= tag.div(flash[:alert], class: "mb-4 text-red-600") if flash[:alert] %>
+        <%= tag.div(flash[:notice], class: "mb-4 text-green-600") if flash[:notice] %>
+        <%= yield %>
+      </main>
+    </div>
+  </body>
+</html>
