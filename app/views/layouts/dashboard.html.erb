@@ -8,10 +8,10 @@
       <aside class="w-64 shrink-0  bg-white overflow-y-auto">
         <%= render SidebarComponent.new(logo_text: "") do |sidebar| %>
           <%# 1. Simple Top-Level Links %>
-          <% sidebar.with_item_link(title: "Dashboard", href: root_path, icon: "fa fa-gauge") %>
-          <% sidebar.with_item_link(title: "Events", href: "", icon: "fa fa-calendar") %>
+          <% sidebar.with_item_link(title: "Dashboard", href: root_path, icon: "fa-solid fa-gauge") %>
+          <% sidebar.with_item_link(title: "Events", href: "", icon: "fa-solid fa-calendar") %>
           <%# sidebar.with_item_link(title: "Organization", href: "", icon: "fa fa-gear") %>
-          <% sidebar.with_item_link(title: "Transactions", href: "", icon: "fa fa-credit-card") %>
+          <% sidebar.with_item_link(title: "Transactions", href: "", icon: "fa-solid fa-money-bill") %>
           <%# 2. Dropdown Group (Teams) %>
           <%# sidebar.with_item_group(title: "Teams") do |group| %>
             <%# group.with_item(title: "Banned Users", href: "") %>
