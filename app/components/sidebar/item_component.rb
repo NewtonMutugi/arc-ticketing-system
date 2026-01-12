@@ -1,17 +1,25 @@
 class Sidebar::ItemComponent < ViewComponent::Base
-  def initialize(title:, href:)
+  def initialize(title:, href:, icon:)
     @title = title
     @href = href
+    @icon = icon
   end
 
   def call
-    link_to @title, @href, class: classes
+    link_to @href, class: classes do
+      if @icon
+        safe_join([
+          tag.i(class: "#{@icon} w-5 text-center"),
+          tag.span(@title, class: "ml-3")
+        ])
+      end
+    end
   end
 
   private
 
   def classes
-    base = "block rounded-lg px-4 py-2 text-sm font-medium"
+    base = "flex items-center rounded-lg px-4 py-2 text-sm font-medium"
 
     # Logic: If current page matches href, use Active styles, else Inactive
     if active?
