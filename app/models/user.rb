@@ -8,7 +8,7 @@ class User < ApplicationRecord
 
   has_one_attached :avatar
 
-  validates :avatar, content_type: [ "imgae/jpeg", "image/png" ], size: { less_than: 5.megabytes }
+  validates :avatar, content_type: [ "image/png", "image/jpeg" ], size: { less_than: 5.megabytes }
 
   def full_name
     "#{first_name} #{last_name}"
