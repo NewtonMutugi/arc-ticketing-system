@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "register/show"
+  get "register/create"
   get "dashboard/index"
   get "home/index"
   resource :session
