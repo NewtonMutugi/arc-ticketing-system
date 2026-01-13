@@ -1,0 +1,19 @@
+<div class="relative inline-flex text-left w-full"
+     data-controller="dropdown"
+     data-action="click@window->dropdown#hide">
+  <div data-action="click->dropdown#toggle" class="w-full cursor-pointer">
+    <% if trigger? %>
+      <%= trigger %>
+    <% else %>
+      <button>Options</button>
+    <% end %>
+  </div>
+  <div data-dropdown-target="menu"
+       class="hidden absolute bottom-full mb-2 <%= alignment_class %> z-50 w-56 rounded-md bg-white shadow-lg focus:outline-2 ">
+    <div class="py-1">
+      <% items.each do |item| %>
+        <%= item %>
+      <% end %>
+    </div>
+  </div>
+</div>

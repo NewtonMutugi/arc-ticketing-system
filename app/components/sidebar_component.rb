@@ -7,6 +7,8 @@ class SidebarComponent < ViewComponent::Base
   }
 
   renders_one :user_profile, "Sidebar::UserProfileComponent"
+  # Allow any content in the footer
+  renders_one :footer
 
   def initialize(logo_text: "")
     @logo_text = logo_text
