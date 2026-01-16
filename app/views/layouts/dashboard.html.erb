@@ -28,7 +28,7 @@
                       ) %>
                 <% end %>
                 <%# Pop up Menu items %>
-                <% dropdown.with_item(title: "My Profile", href: "", icon: "fa-solid fa-user") %>
+                <% dropdown.with_item(title: "My Profile", href: "/profile/", icon: "fa-solid fa-user") %>
                 <% dropdown.with_item(title: "Settings", href: "", icon: "fa-solid fa-cog") %>
                 <% dropdown.with_item(
                           title: "Sign Out",
@@ -41,8 +41,12 @@
           <% end %>
         </aside>
         <main class="flex-1 overflow-y-auto p-8">
-          <%= tag.div(flash[:alert], class: "mb-4 text-red-600") if flash[:alert] %>
-          <%= tag.div(flash[:notice], class: "mb-4 text-green-600") if flash[:notice] %>
+          <div class="fixed top-4 right-4 z-50 flex flex-col gap-2">
+            <% flash.each do |key, value| %>
+              <% type = key.to_s == 'notice' ? :success : :error %>
+              <%= render ToastComponent.new(type: type, title: type.to_s.humanize, body: value) %>
+            <% end %>
+          </div>
           <%= yield %>
         </main>
       </div>
