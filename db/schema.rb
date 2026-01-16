@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_16_190935) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_16_193400) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -39,6 +39,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_16_190935) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "attendees", force: :cascade do |t|
+    t.datetime "checked_in_at"
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.integer "event_id", null: false
+    t.string "first_name"
+    t.string "last_name"
+    t.integer "order_id", null: false
+    t.string "preferred_name"
+    t.integer "ticket_id", null: false
+    t.string "token"
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_attendees_on_event_id"
+    t.index ["order_id"], name: "index_attendees_on_order_id"
+    t.index ["ticket_id"], name: "index_attendees_on_ticket_id"
+    t.index ["token"], name: "index_attendees_on_token", unique: true
+  end
+
   create_table "events", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "description"
@@ -54,7 +72,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_16_190935) do
     t.integer "order_id", null: false
     t.integer "quantity"
     t.integer "ticket_id", null: false
-    t.float "unit_price"
+    t.decimal "unit_price", precision: 10, scale: 2
     t.datetime "updated_at", null: false
     t.index ["order_id"], name: "index_order_items_on_order_id"
     t.index ["ticket_id"], name: "index_order_items_on_ticket_id"
@@ -66,8 +84,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_16_190935) do
     t.string "buyer_phone_no"
     t.datetime "created_at", null: false
     t.string "order_no"
-    t.boolean "status"
-    t.float "total_cost"
+    t.integer "status", default: 0
+    t.decimal "total_cost", precision: 10, scale: 2
     t.integer "total_items"
     t.datetime "updated_at", null: false
     t.index ["order_no"], name: "index_orders_on_order_no", unique: true
@@ -90,7 +108,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_16_190935) do
     t.integer "group_ticket_count"
     t.integer "max_ticket"
     t.integer "min_ticket"
-    t.float "price"
+    t.decimal "price", precision: 10, scale: 2
     t.integer "quantity"
     t.date "start_sale_date"
     t.boolean "status"
@@ -111,6 +129,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_16_190935) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "attendees", "events"
+  add_foreign_key "attendees", "orders"
+  add_foreign_key "attendees", "tickets"
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "tickets"
   add_foreign_key "sessions", "users"
