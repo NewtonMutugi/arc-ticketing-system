@@ -9,7 +9,7 @@
         <%= render SidebarComponent.new(logo_text: "") do |sidebar| %>
           <%# 1. Simple Top-Level Links %>
           <% sidebar.with_item_link(title: "Dashboard", href: root_path, icon: "fa fa-gauge") %>
-          <% sidebar.with_item_link(title: "Events", href: "", icon: "fa fa-calendar") %>
+          <% sidebar.with_item_link(title: "Events", href: events_path, icon: "fa fa-calendar") %>
           <% sidebar.with_item_link(title: "Transactions", href: "", icon: "fa fa-money-bill") %>
           <%# 2. Dropdown Group (Teams) %>
           <%# sidebar.with_item_group(title: "Teams") do |group| %>
