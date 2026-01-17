@@ -4,7 +4,7 @@
                 class: wrapper_classes,
                 **(@system_arguments.except(:class))) do %>
   <span class="<%= background_border_classes %>"></span>
-  <span class="<%= foreground_classes %> bg-red-600">
+  <span class="<%= foreground_classes %> ">
     <%= content %>
   </span>
 <% end %>
