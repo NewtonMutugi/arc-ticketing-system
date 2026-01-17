@@ -7,7 +7,7 @@ class ButtonComponent < ViewComponent::Base
     primary: {
       wrapper: "text-white focus:ring-red-600",
       border: "border-red-600",
-      forground: "border-red-600 bg-red-600"
+      foreground: "border-red-600 bg-red-600"
     },
     secondary: {
       wrapper: "text-red-600 focus:ring-red-600",
@@ -32,7 +32,7 @@ class ButtonComponent < ViewComponent::Base
   end
 
   def background_border_classes
-    class_names("absolute inset-0 border", @intent_data[:border])
+    class_names("absolute inset-x-0 inset-y-0 border", @intent_data[:border])
   end
 
   def foreground_classes
