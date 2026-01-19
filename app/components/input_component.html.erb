@@ -1,14 +1,48 @@
- <label for="<%= @id %>" class="relative block py-2 my-4">
-  <input
-    type="<%= @type %>"
-    name="<%= @name %>"
-    id="<%= @id %>"
-    value="<%= @value %>"
-    placeholder="<%= @placeholder %>"
-    class="peer mt-0.5 w-full rounded border-gray-300 px-3 py-3 shadow-sm placeholder-transparent focus:border-red-600 focus:outline-none focus:ring-red-600 sm:text-sm"
-    <%= "required" if @required %>
-    autocomplete="<%= @autocomplete%>">
-    <span class="pointer-events-none absolute start-3 top-0 -translate-y-1/2 bg-white px-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">
-      <%= @label %>
-    </span>
-  </label>
+<label for="<%= @id %>" class="<%= wrapper_classes %>">
+  <%# 1. HANDLE SELECT INPUTS %>
+  <% if @type == "select" %>
+    <select
+      name="<%= @name %>"
+      id="<%= @id %>"
+      class="<%= input_classes %>"
+      <%= "required" if @required %>
+      autocomplete="<%= @autocomplete %>"
+    >
+      <option value="" disabled <%= "selected" if @value.nil? %>><%= @placeholder.strip.empty? ? "Select Option" : @placeholder %></option>
+        <% if @options %>
+          <% @options.each do |label, val| %>
+            <option value="<%= val %>" <%= "selected" if val.to_s == @value.to_s %>><%= label %></option>
+            <% end %>
+          <% end %>
+        </select>
+        <%# 2. HANDLE TEXTAREA %>
+      <% elsif @type == "textarea" %>
+        <textarea
+      name="<%= @name %>"
+      id="<%= @id %>"
+      rows="4"
+      class="<%= input_classes %>"
+      placeholder="<%= @placeholder %>"
+      <%= "required" if @required %>
+      autocomplete="<%= @autocomplete %>"
+    ><%= @value %></textarea>
+        <%# 3. HANDLE REGULAR INPUTS (Text, Date, File, Password) %>
+      <% else %>
+        <input
+      type="<%= @type %>"
+      name="<%= @name %>"
+      id="<%= @id %>"
+      <%# File inputs cannot have a value attribute for security %>
+      <%= "value=\"#{@value}\"".html_safe unless @type == "file" %>
+      placeholder="<%= @placeholder %>"
+      class="<%= input_classes %> <%= 'file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100' if @type == 'file' %>"
+      <%= "required" if @required %>
+      autocomplete="<%= @autocomplete %>"
+      <% if @accept %>accept="<%= @accept %>"<% end %>
+    >
+        <% end %>
+        <%# LABEL RENDER (Standard vs Floating) %>
+        <span class="<%= label_classes %>">
+          <%= @label %>
+        </span>
+      </label>
