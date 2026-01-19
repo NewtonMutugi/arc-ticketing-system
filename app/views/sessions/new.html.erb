@@ -15,8 +15,8 @@
     <%= render ToastComponent.new(type: type, title: title, body: message) %>
   <% end %>
 </div>
-<div class="flex justify-center">
-  <%= render CardComponent.new(class: "max-w-xl w-full") do %>
+<div class="flex justify-center mt-8">
+  <%= render CardComponent.new(class: "max-w-xl w-full p-8") do %>
     <div class="flex justify-center mb-4">
       <%= image_tag("/arc_logo.png", alt: "Africa Ruby Community Logo", class: "h-14 w-auto") %>
     </div>
