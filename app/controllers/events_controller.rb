@@ -27,9 +27,15 @@ class EventsController < ApplicationController
   end
 
   def edit
+    @event
   end
 
   def update
+    if @event.update(event_params)
+      redirect_to event_path(@event), notice: "Event details updated"
+    else
+      render :edit, status: :unprocessable_entity
+    end
   end
 
   def destroy
@@ -48,7 +54,7 @@ class EventsController < ApplicationController
 
   def resolve_layout
     case action_name
-    when "show"
+    when "show", "edit", "update"
       "event_dashboard"
     else
       "dashboard"
@@ -56,6 +62,6 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    params.expect(event: [ :title, :start_date, :end_date, :location, :description, :event_image ])
+    params.expect(event: [ :title, :start_date, :end_date, :location, :description, :event_image, :publish ])
   end
 end
