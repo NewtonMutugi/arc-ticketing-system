@@ -1,5 +1,5 @@
 class EventsController < ApplicationController
-  layout "dashboard"
+  layout :resolve_layout
   before_action :set_user
 
   before_action :set_event, only: %i[ show edit update destroy ]
@@ -8,6 +8,8 @@ class EventsController < ApplicationController
   end
 
   def show
+    @tickets = Ticket.all
+    @orders = Order.all
     @event
   end
 
@@ -42,6 +44,15 @@ class EventsController < ApplicationController
     @event = Event.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to events_path, alert: "Event not found."
+  end
+
+  def resolve_layout
+    case action_name
+    when "show"
+      "event_dashboard"
+    else
+      "dashboard"
+    end
   end
 
   def event_params

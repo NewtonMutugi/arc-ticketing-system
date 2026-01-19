@@ -4,6 +4,11 @@
       <%= image_tag '/arc_logo.png' %>
       <%= @logo_text %>
     </span>
+    <% if header? %>
+      <div class="mb-6">
+        <%= header %>
+      </div>
+    <% end %>
     <ul class="mt-6 space-y-1">
       <% items.each do |item| %>
         <li><%= item %></li>

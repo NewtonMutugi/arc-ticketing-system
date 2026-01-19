@@ -10,6 +10,8 @@ class SidebarComponent < ViewComponent::Base
   # Allow any content in the footer
   renders_one :footer
 
+  renders_one :header
+
   def initialize(logo_text: "")
     @logo_text = logo_text
   end
