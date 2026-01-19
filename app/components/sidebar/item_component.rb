@@ -10,7 +10,7 @@ class Sidebar::ItemComponent < ViewComponent::Base
       if @icon
         safe_join([
           tag.i(class: "#{@icon} w-5 text-center"),
-          tag.span(@title, class: "ml-3")
+          tag.span(@title, class: "ml-3", data: { sidebar_target: "text" })
         ])
       end
     end

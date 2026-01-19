@@ -1,9 +1,15 @@
 <div class="flex h-screen flex-col justify-between border-e border-gray-100 bg-white">
-  <div class="px-4 py-6">
-    <span class="grid h-10 w-32 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">
-      <%= image_tag '/arc_logo.png' %>
-      <%= @logo_text %>
-    </span>
+  <div class="px-4 py-6" data-sidebar-target="wrapper">
+    <div class="flex items-center justify-between mb-4" data-sidebar-target="header">
+      <span class="grid h-10 w-32 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600 whitespace-nowrap overflow-hidden" data-sidebar-target="text">
+        <%= image_tag '/arc_logo.png' %>
+        <%= @logo_text %>
+      </span>
+      <%= image_tag '/icon.svg', class: "h-10 w-10 p-1 hidden", data: { sidebar_target: "collapsedLogo" } %>
+      <button data-action="click->sidebar#toggle" class="p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
     <% if header? %>
       <div class="mb-6">
         <%= header %>
