@@ -36,7 +36,7 @@ class ButtonComponent < ViewComponent::Base
   end
 
   def foreground_classes
-    base = "block px-12 py-3 transition-transform group-hover:-translate-x-1 group-hover:-translate-y-1 border cursor-pointer"
+    base = "block px-12 sm:px-6 py-3 transition-transform group-hover:-translate-x-1 group-hover:-translate-y-1 border cursor-pointer"
     class_names(base, @intent_data[:foreground])
   end
 end
