@@ -12,17 +12,49 @@
 </div>
 <hr class="my-4 border-gray-200"/>
 <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8 mt-2">
-  <% if @events %>
+  <% if !@events %>
     <p>No events found</p>
   <% else %>
-    <% @events.each do |event| %>
-      <%= render CardComponent.new(class: "bg-white") do %>
-        <div class="flex items-center justify-between">
-          <h2 class="text-lg font-medium text-gray-500 "><%= event.name %></h2>
-          <i class="fa-solid fa-calendar text-gray-500"></i>
-        </div>
-        <p class="text-lg font-medium  my-6"><%= event.date %></p>
+    <% if @events.empty? %>
+      <div class="col-span-full text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+        <p class="text-gray-500">No events found. Create one to get started!</p>
+      </div>
+    <% else %>
+      <% @events.each do |event| %>
+        <%= render CardComponent.new(class: "bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col") do %>
+          <div class="bg-red-500 p-4 text-white relative">
+            <div class="absolute top-0 right-0 p-4 opacity-20">
+              <i class="fa-solid fa-ticket text-6xl transform -rotate-12"></i>
+            </div>
+            <h2 class="text-xl font-bold relative z-10"><%= event.title %></h2>
+            <div class="flex items-center text-sm text-white">
+              <i class="fa-solid fa-calendar mr-2 text-white"></i>
+              <span>
+                <%= event.start_date.to_fs(:short) %> – <%= event.end_date.to_fs(:short) %>
+              </span>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 divide-x divide-gray-100 bg-gray-50 border-b border-gray-100">
+            <div class="p-4 text-center">
+              <span class="block text-2xl font-bold text-gray-800">0</span>
+              <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Tickets</span>
+            </div>
+            <div class="p-4 text-center">
+              <span class="block text-2xl font-bold text-gray-800">Ksh 0</span>
+              <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Revenue</span>
+            </div>
+          </div>
+          <div class="flex justify-between items-center p-3 bg-white">
+            <%= link_to edit_event_path(event), class: "flex-1 flex items-center justify-center py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors" do %>
+              <i class="fa-solid fa-pen-to-square mr-2"></i> Edit
+            <% end %>
+            <div class="w-px h-6 bg-gray-200 mx-2"></div>
+            <%= link_to event_path(event), class: "flex-1 flex items-center justify-center py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors" do %>
+              <i class="fa-solid fa-eye mr-2"></i> View
+            <% end %>
+          <% end %>
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
   <% end %>
 </div>

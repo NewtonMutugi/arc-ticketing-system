@@ -1,11 +1,14 @@
 class EventsController < ApplicationController
   layout "dashboard"
   before_action :set_user
+
+  before_action :set_event, only: %i[ show edit update destroy ]
   def index
-    @events = Event.all
+    @events = Event.all.with_attached_event_image
   end
 
   def show
+    @event
   end
 
   def new
@@ -21,12 +24,27 @@ class EventsController < ApplicationController
     end
   end
 
+  def edit
+  end
+
+  def update
+  end
+
+  def destroy
+  end
+
   private
   def set_user
     @user = Current.user
   end
 
+  def set_event
+    @event = Event.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to events_path, alert: "Event not found."
+  end
+
   def event_params
-    params.expect(event: [ :name, :date, :time, :location, :description, :image_tag ])
+    params.expect(event: [ :title, :start_date, :end_date, :location, :description, :event_image ])
   end
 end
