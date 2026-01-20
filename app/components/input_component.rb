@@ -30,7 +30,7 @@ class InputComponent < ViewComponent::Base
   end
 
   def wrapper_classes
-    return "block my-4" if @type == "file"
-    "relative block py-2 my-4"
+    return "block my-2" if @type == "file"
+    "relative block py-2 my-2"
   end
 end

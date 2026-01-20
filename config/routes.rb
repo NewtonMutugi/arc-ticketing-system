@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "tickets/index"
   get "register/show"
   get "register/create"
   get "dashboard/index"

@@ -14,7 +14,7 @@
           <% end %>
           <%# 1. Simple Top-Level Links %>
           <% sidebar.with_item_link(title: "Dashboard", href: event_path(@event), icon: "fa fa-gauge") %>
-          <% sidebar.with_item_link(title: "Tickets", href: "", icon: "fa fa-ticket") %>
+          <% sidebar.with_item_link(title: "Tickets", href: event_tickets_path(@event), icon: "fa fa-ticket") %>
           <% sidebar.with_item_link(title: "Orders", href: "", icon: "fa fa-cart-arrow-down") %>
           <% sidebar.with_item_link(title: "Attendees", href: "", icon: "fa fa-users") %>
           <% sidebar.with_item_link(title: "Customize", href: edit_event_path(@event), icon: "fa fa-cog") %>

@@ -1,0 +1,7 @@
+<%= turbo_frame_tag "modal" do %>
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 backdrop-blur-xs p-4 overflow-y-auto">
+    <div class="relative w-full max-w-3xl transform transition-all">
+      <%= render "form", ticket: @ticket %>
+    </div>
+  </div>
+<% end %>
