@@ -2,6 +2,8 @@ module Public
   class OrdersController < ApplicationController
     layout "public"
     before_action :set_event
+    allow_unauthenticated_access
+    before_action :resume_session
 
     def create
       # 1. Initialize Order

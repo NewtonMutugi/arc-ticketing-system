@@ -1,6 +1,9 @@
 module Public
   class EventsController < ApplicationController
     layout "public"
+    allow_unauthenticated_access
+
+    before_action :resume_session
 
     # Landing Page
     def index

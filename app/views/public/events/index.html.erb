@@ -1,6 +1,27 @@
-<div class="relative bg-gray-900 rounded-3xl overflow-hidden mb-12">
+<div class="relative bg-gray-900 rounded-3xl overflow-hidden mb-12 group">
+  <% if defined?(Current) && Current.user %>
+    <div class="absolute top-6 right-6 z-30">
+      <%= link_to dashboard_events_path, class: "flex items-center gap-3 bg-black/30 backdrop-blur-md border border-white/10 pl-2 pr-4 py-2 rounded-full hover:bg-black/50 hover:border-red-500/50 transition-all duration-300 group/badge shadow-lg" do %>
+        <div class="relative">
+          <% if Current.user.respond_to?(:avatar) && Current.user.avatar&.attached? %>
+            <%= image_tag Current.user.avatar, class: "w-9 h-9 rounded-full object-cover border-2 border-white/20 group-hover/badge:border-red-500 transition-colors" %>
+          <% else %>
+            <div class="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold border-2 border-white/20 group-hover/badge:border-red-500 transition-colors shadow-inner">
+              <%= Current.user.first_name.to_s[0]&.upcase || "U" %>
+            </div>
+          <% end %>
+          <span class="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-gray-900 bg-green-400"></span>
+        </div>
+        <div class="text-left hidden sm:block">
+          <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold group-hover/badge:text-red-400 transition-colors">Go to Dashboard</p>
+          <p class="text-sm font-bold text-white leading-none"><%= Current.user.first_name %></p>
+        </div>
+        <i class="fa-solid fa-arrow-right-long text-white/40 ml-1 group-hover/badge:text-white group-hover/badge:translate-x-1 transition-all"></i>
+      <% end %>
+    </div>
+  <% end %>
   <div class="absolute inset-0 opacity-40">
-    <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" class="w-full h-full object-cover" alt="Conference crowd">
+    <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out" alt="Conference crowd">
   </div>
   <div class="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/80 to-transparent"></div>
   <div class="relative z-10 px-8 py-16 md:py-24 max-w-2xl">
@@ -14,9 +35,9 @@
     <p class="text-lg text-gray-300 mb-8 leading-relaxed">
       Secure your spot at the biggest developer gatherings in Africa. No sign-up required—just choose your event and grab your ticket.
     </p>
-    <div class="bg-white/10 backdrop-blur-md p-2 rounded-lg border border-white/20 flex max-w-md">
+    <div class="bg-white/10 backdrop-blur-md p-2 rounded-lg border border-white/20 flex max-w-md focus-within:bg-white/20 transition-colors">
       <input type="text" placeholder="Search events..." class="bg-transparent border-none text-white placeholder-gray-400 focus:ring-0 w-full text-sm">
-      <button class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-md font-bold text-sm transition">
+      <button class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-md font-bold text-sm transition shadow-lg hover:shadow-red-900/50">
         Search
       </button>
     </div>
