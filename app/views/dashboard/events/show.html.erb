@@ -50,7 +50,7 @@
             <%= @event.start_date.strftime("%b") %>
           </span>
         </div>
-        <%= link_to "Tickets", event_tickets_path(@event), class: "rounded bg-red-600 px-4 py-2 text-xs font-bold text-white uppercase hover:bg-red-700 transition" %>
+        <%= link_to "Tickets", dashboard_event_tickets_path(@event), class: "rounded bg-red-600 px-4 py-2 text-xs font-bold text-white uppercase hover:bg-red-700 transition" %>
       </div>
       <h2 class="text-2xl font-bold text-gray-900 mb-2">
         <%= @event.title %>

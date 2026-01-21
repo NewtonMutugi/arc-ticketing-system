@@ -4,7 +4,7 @@
     <h2 class="text-l">All Events</h2>
   </div>
   <div class="block">
-    <%= render ButtonComponent.new(type: "button", href: new_event_path) do %>
+    <%= render ButtonComponent.new(type: "button", href: new_dashboard_event_path) do %>
       <i class="fa-solid fa-plus"></i>
       Create Event
     <% end %>
@@ -45,11 +45,11 @@
             </div>
           </div>
           <div class="flex justify-between items-center p-3 bg-white">
-            <%= link_to edit_event_path(event), class: "flex-1 flex items-center justify-center py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors" do %>
+            <%= link_to edit_dashboard_event_path(event), class: "flex-1 flex items-center justify-center py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors" do %>
               <i class="fa-solid fa-pen-to-square mr-2"></i> Edit
             <% end %>
             <div class="w-px h-6 bg-gray-200 mx-2"></div>
-            <%= link_to event_path(event), class: "flex-1 flex items-center justify-center py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors" do %>
+            <%= link_to dashboard_event_path(event), class: "flex-1 flex items-center justify-center py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors" do %>
               <i class="fa-solid fa-eye mr-2"></i> View
             <% end %>
           <% end %>

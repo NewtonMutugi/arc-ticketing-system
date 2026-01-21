@@ -1,8 +1,8 @@
-class EventsController < ApplicationController
+class Dashboard::EventsController < ApplicationController
   layout :resolve_layout
   before_action :set_user
-
   before_action :set_event, only: %i[ show edit update destroy ]
+
   def index
     @events = Event.all.with_attached_event_image
   end
@@ -20,7 +20,7 @@ class EventsController < ApplicationController
   def create
     @event = Event.new(event_params)
     if @event.save
-      redirect_to events_path, status: :see_other, notice: "Event created successfully."
+      redirect_to dashboard_events_path, status: :see_other, notice: "Event created successfully."
     else
       render :new, status: :unprocessable_entity
     end
@@ -32,7 +32,7 @@ class EventsController < ApplicationController
 
   def update
     if @event.update(event_params)
-      redirect_to event_path(@event), notice: "Event details updated"
+      redirect_to dashboard_event_path(@event), notice: "Event details updated"
     else
       render :edit, status: :unprocessable_entity
     end
@@ -41,7 +41,9 @@ class EventsController < ApplicationController
   def destroy
   end
 
+
   private
+
   def set_user
     @user = Current.user
   end

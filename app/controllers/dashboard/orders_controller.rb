@@ -1,7 +1,8 @@
-class OrdersController < ApplicationController
+class Dashboard::OrdersController < ApplicationController
   layout "event_dashboard"
   before_action :set_event
   before_action :set_user
+
   def index
     @query = @event.orders.includes(:order_items).order(created_at: :desc)
     @pagy, @orders = pagy(@query)

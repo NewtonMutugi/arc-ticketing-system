@@ -1,13 +1,18 @@
-<%= form_with(model: event, local: true, multipart: true, class: "form-horizontal") do |f| %>
-  <%# Error Handling Block %>
+<%= form_with(model: [:dashboard, event], local: true, multipart: true, class: "form-horizontal") do |f| %>
   <% if event.errors.any? %>
-    <div class="alert alert-danger p-4 mb-4 bg-red-50 text-red-700 border border-red-200 rounded">
-      <h4 class="font-bold"><%= pluralize(event.errors.count, "error") %> prohibited this event from being saved:</h4>
-      <ul class="list-disc ml-5 mt-2">
-        <% event.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
+    <div class="fixed top-5 right-5 z-50 flex flex-col gap-2 w-96 pointer-events-none">
+      <%= render ToastComponent.new(
+            type: :error,
+            title: "Validation Error",
+            body: "#{pluralize(event.errors.count, 'error')} prohibited this event from being saved."
+          ) %>
+      <% event.errors.full_messages.each do |msg| %>
+        <%= render ToastComponent.new(
+              type: :error,
+              title: "Error",
+              body: msg
+            ) %>
+      <% end %>
     </div>
   <% end %>
   <div class="row">

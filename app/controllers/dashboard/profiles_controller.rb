@@ -1,4 +1,4 @@
-class ProfilesController < ApplicationController
+class Dashboard::ProfilesController < ApplicationController
   layout "dashboard"
   before_action :set_user
 
@@ -14,6 +14,7 @@ class ProfilesController < ApplicationController
   end
 
   private
+
   def set_user
     @user = Current.user
   end

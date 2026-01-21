@@ -4,7 +4,7 @@
     <p class="mt-1 text-sm text-gray-500">Manage who is coming to your event.</p>
   </div>
   <div class="mt-4 sm:mt-0 flex gap-3">
-    <%= form_with url: event_attendees_path(@event), method: :get, class: "relative" do |f| %>
+    <%= form_with url: dashboard_event_attendees_path(@event), method: :get, class: "relative" do |f| %>
       <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
       <%= f.text_field :query, value: params[:query], placeholder: "Search name, email...", class: "pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500" %>
     <% end %>

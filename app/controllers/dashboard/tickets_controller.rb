@@ -1,15 +1,14 @@
-class TicketsController < ApplicationController
+class Dashboard::TicketsController < ApplicationController
   layout "event_dashboard"
   before_action :set_event
-
   before_action :set_user
+
   def index
     @tickets = @event.tickets
   end
 
   def show
   end
-
 
   def destroy
   end
