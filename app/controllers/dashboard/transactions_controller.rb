@@ -1,6 +1,5 @@
-class Dashboard::TransactionsController < ApplicationController
+class Dashboard::TransactionsController < Dashboard::BaseController
   layout "event_dashboard"
-  before_action :set_event
   before_action :set_user
 
   def index
@@ -12,9 +11,5 @@ class Dashboard::TransactionsController < ApplicationController
   private
   def set_event
     @event = Event.find(params[:event_id])
-  end
-
-  def set_user
-    @user = Current.user
   end
 end

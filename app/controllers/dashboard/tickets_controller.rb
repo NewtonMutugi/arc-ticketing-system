@@ -1,7 +1,6 @@
-class Dashboard::TicketsController < ApplicationController
+class Dashboard::TicketsController < Dashboard::BaseController
   layout "event_dashboard"
   before_action :set_event
-  before_action :set_user
 
   def index
     @tickets = @event.tickets
@@ -40,9 +39,5 @@ class Dashboard::TicketsController < ApplicationController
 
   def ticket_params
     params.require(:ticket).permit(:title, :price, :quantity, :start_sale_date, :end_sale_date, :description)
-  end
-
-  def set_user
-    @user = Current.user
   end
 end

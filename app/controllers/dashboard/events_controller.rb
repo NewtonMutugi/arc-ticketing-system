@@ -1,6 +1,4 @@
-class Dashboard::EventsController < ApplicationController
-  layout :resolve_layout
-  before_action :set_user
+class Dashboard::EventsController < Dashboard::BaseController
   before_action :set_event, only: %i[ show edit update destroy ]
 
   def index
@@ -41,29 +39,15 @@ class Dashboard::EventsController < ApplicationController
   def destroy
   end
 
-
   private
 
-  def set_user
-    @user = Current.user
+  def event_params
+    params.expect(event: [ :title, :start_date, :end_date, :location, :description, :event_image, :publish ])
   end
 
   def set_event
     @event = Event.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to events_path, alert: "Event not found."
-  end
-
-  def resolve_layout
-    case action_name
-    when "show", "edit", "update"
-      "event_dashboard"
-    else
-      "dashboard"
-    end
-  end
-
-  def event_params
-    params.expect(event: [ :title, :start_date, :end_date, :location, :description, :event_image, :publish ])
   end
 end
