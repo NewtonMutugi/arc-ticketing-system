@@ -65,6 +65,8 @@ group :test do
   gem "selenium-webdriver"
 end
 
+gem "pagy", "~> 9.1"
+
 # Frontend Gems
 gem "view_component"
 
