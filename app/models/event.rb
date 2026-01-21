@@ -10,4 +10,22 @@ class Event < ApplicationRecord
   has_one_attached :event_image
 
   validates :event_image, content_type: [ "image/png", "image/jpeg" ], size: { less_than: 5.megabytes }
+
+  def tickets_sold
+    order_items.joins(:order).where(orders: { status: :paid }).sum(:quantity)
+  end
+
+  def transaction_count
+    orders.where(status: :paid).distinct.count
+  end
+
+  def total_order_count
+    orders.distinct.count
+  end
+
+  def revenue
+    order_items.joins(:order)
+               .where(orders: { status: :paid })
+               .sum("order_items.unit_price * order_items.quantity")
+  end
 end

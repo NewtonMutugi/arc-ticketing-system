@@ -6,9 +6,9 @@ class Admin::EventsController < Admin::BaseController
   end
 
   def show
-    @tickets = Ticket.all
-    @orders = Order.all
-    @event
+    @orders = @event.total_order_count
+    @tickets_sold = @event.tickets_sold
+    @revenue = @event.revenue
   end
 
   def new

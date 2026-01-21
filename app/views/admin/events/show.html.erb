@@ -8,7 +8,7 @@
       <h2 class="text-lg font-medium text-gray-500 ">Orders</h2>
       <i class="fa-solid fa-bag-shopping text-gray-500 text-2xl"></i>
     </div>
-    <p class="text-lg font-medium  my-6"><%= @orders.count %></p>
+    <p class="text-lg font-medium  my-6"><%= @orders %></p>
   <% end %>
   <%# Tickets sold tile with tickets count and ticket icon%>
   <%= render CardComponent.new(class: "bg-white p-4") do %>
@@ -16,7 +16,7 @@
       <h2 class="text-lg font-medium text-gray-500">Tickets Sold</h2>
       <i class="fa-solid fa-ticket text-gray-500 text-2xl"></i>
     </div>
-    <p class="text-lg font-medium  my-6"><%= @tickets.count %></p>
+    <p class="text-lg font-medium  my-6"><%= @tickets_sold %></p>
   <% end %>
   <%# Revenue tile with revenue count and dollar icon%>
   <%= render CardComponent.new(class: "bg-white p-4") do %>

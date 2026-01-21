@@ -19,7 +19,7 @@ class Admin::TicketsController < Admin::BaseController
   def create
     @ticket = @event.tickets.new(ticket_params)
     if @ticket.save
-      redirect_to event_tickets_path(@event), notice: "Ticket created successfully."
+      redirect_to admin_event_tickets_path(@event), notice: "Ticket created successfully."
     else
       render :new, status: :unprocessable_entity
     end
