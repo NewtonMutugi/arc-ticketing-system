@@ -1,4 +1,4 @@
-class Dashboard::EventsController < Dashboard::BaseController
+class Admin::EventsController < Admin::BaseController
   before_action :set_event, only: %i[ show edit update destroy ]
 
   def index
@@ -18,7 +18,7 @@ class Dashboard::EventsController < Dashboard::BaseController
   def create
     @event = Event.new(event_params)
     if @event.save
-      redirect_to dashboard_events_path, status: :see_other, notice: "Event created successfully."
+      redirect_to admin_events_path, status: :see_other, notice: "Event created successfully."
     else
       render :new, status: :unprocessable_entity
     end
@@ -30,7 +30,7 @@ class Dashboard::EventsController < Dashboard::BaseController
 
   def update
     if @event.update(event_params)
-      redirect_to dashboard_event_path(@event), notice: "Event details updated"
+      redirect_to admin_event_path(@event), notice: "Event details updated"
     else
       render :edit, status: :unprocessable_entity
     end

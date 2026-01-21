@@ -1,4 +1,4 @@
-class DashboardController < ApplicationController
+class Admin::DashboardController < Admin::BaseController
   layout "dashboard"
   def index
     @user = Current.user

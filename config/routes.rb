@@ -18,8 +18,8 @@ Rails.application.routes.draw do
     end
   end
 
-  namespace :dashboard do
-    get "/", to: "events#index"
+  namespace :admin do
+    root "dashboard#index"
 
     resource :session
     resources :passwords, param: :token

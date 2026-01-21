@@ -1,4 +1,4 @@
-class Dashboard::TransactionsController < Dashboard::BaseController
+class Admin::TransactionsController < Admin::BaseController
   layout "event_dashboard"
   before_action :set_user
 

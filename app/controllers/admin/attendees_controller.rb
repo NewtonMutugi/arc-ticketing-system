@@ -1,5 +1,5 @@
 
-class Dashboard::AttendeesController < ApplicationController
+class Admin::AttendeesController < ApplicationController
   layout "event_dashboard"
   before_action :set_event
   before_action :set_user

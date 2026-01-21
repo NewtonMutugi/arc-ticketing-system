@@ -8,17 +8,17 @@
       <aside class="w-64 shrink-0 bg-white overflow-y-auto overflow-x-hidden transition-all duration-300" data-sidebar-target="sidebar">
         <%= render SidebarComponent.new(logo_text: "") do |sidebar| %>
           <% sidebar.with_header do %>
-            <%= link_to dashboard_events_path, class: "text-sm font-bold py-2 text-gray-500" do %>
+            <%= link_to admin_events_path, class: "text-sm font-bold py-2 text-gray-500" do %>
               <i class="fa-solid fa-arrow-left mr-2"></i> <span data-sidebar-target="text">Back to Main Dashboard</span>
             <% end %>
           <% end %>
           <%# 1. Simple Top-Level Links %>
-          <% sidebar.with_item_link(title: "Dashboard", href: dashboard_event_path(@event), icon: "fa fa-gauge") %>
-          <% sidebar.with_item_link(title: "Tickets", href: dashboard_event_tickets_path(@event), icon: "fa fa-ticket") %>
-          <% sidebar.with_item_link(title: "Orders", href: dashboard_event_orders_path(@event), icon: "fa fa-cart-arrow-down") %>
-          <% sidebar.with_item_link(title: "Attendees", href: dashboard_event_attendees_path(@event), icon: "fa fa-users") %>
-          <% sidebar.with_item_link(title: "Transactions", href: dashboard_event_transactions_path(@event), icon: "fa fa-money-bill") %>
-          <% sidebar.with_item_link(title: "Customize", href: edit_dashboard_event_path(@event), icon: "fa fa-cog") %>
+          <% sidebar.with_item_link(title: "Dashboard", href: admin_event_path(@event), icon: "fa fa-gauge") %>
+          <% sidebar.with_item_link(title: "Tickets", href: admin_event_tickets_path(@event), icon: "fa fa-ticket") %>
+          <% sidebar.with_item_link(title: "Orders", href: admin_event_orders_path(@event), icon: "fa fa-cart-arrow-down") %>
+          <% sidebar.with_item_link(title: "Attendees", href: admin_event_attendees_path(@event), icon: "fa fa-users") %>
+          <% sidebar.with_item_link(title: "Transactions", href: admin_event_transactions_path(@event), icon: "fa fa-money-bill") %>
+          <% sidebar.with_item_link(title: "Customize", href: edit_admin_event_path(@event), icon: "fa fa-cog") %>
           <%# 3. User Footer %>
           <% sidebar.with_footer do  %>
             <%= render DropdownComponent.new(align: :right) do |dropdown| %>
@@ -35,7 +35,7 @@
               <% dropdown.with_item(title: "Settings", href: "", icon: "fa-solid fa-cog") %>
               <% dropdown.with_item(
                           title: "Sign Out",
-                          href: dashboard_session_path,
+                          href: admin_session_path,
                           icon: "fa-solid fa-right-from-bracket",
                           data: { turbo_method: :delete }
                         ) %>

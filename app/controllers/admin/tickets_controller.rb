@@ -1,4 +1,4 @@
-class Dashboard::TicketsController < Dashboard::BaseController
+class Admin::TicketsController < Admin::BaseController
   layout "event_dashboard"
   before_action :set_event
 

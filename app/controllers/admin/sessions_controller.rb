@@ -1,6 +1,6 @@
-class Dashboard::SessionsController < ApplicationController
+class Admin::SessionsController < ApplicationController
   allow_unauthenticated_access only: %i[ new create ]
-  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_dashboard_session_path, alert: "Try again later." }
+  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_admin_session_path, alert: "Try again later." }
   layout "public"
 
   before_action :resume_session, only: %i[ new create ]
@@ -13,9 +13,9 @@ class Dashboard::SessionsController < ApplicationController
   def create
     if user = User.authenticate_by(params.permit(:email_address, :password))
       start_new_session_for user
-      redirect_to dashboard_path
+      redirect_to admin_path
     else
-      redirect_to new_dashboard_session_path, alert: "Try another email address or password."
+      redirect_to new_admin_session_path, alert: "Try another email address or password."
     end
   end
 
@@ -28,7 +28,7 @@ class Dashboard::SessionsController < ApplicationController
 
   def redirect_if_authenticated
     if Current.user
-      redirect_to dashboard_events_path, notice: "You are already signed in."
+      redirect_to admin_events_path, notice: "You are already signed in."
     end
   end
 end

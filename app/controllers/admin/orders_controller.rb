@@ -1,4 +1,4 @@
-class Dashboard::OrdersController < Dashboard::BaseController
+class Admin::OrdersController < Admin::BaseController
   layout "event_dashboard"
   before_action :set_event
 

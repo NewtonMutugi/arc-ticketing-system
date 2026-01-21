@@ -5,7 +5,7 @@
     <h2 class="text-l">All Tickets</h2>
   </div>
   <div class="block">
-    <%= render ButtonComponent.new(type: "button", href: new_dashboard_event_ticket_path, data: { turbo_frame: "modal" }) do %>
+    <%= render ButtonComponent.new(type: "button", href: new_admin_event_ticket_path, data: { turbo_frame: "modal" }) do %>
       <i class="fa-solid fa-plus"></i>
       Create Ticket
     <% end %>
@@ -79,11 +79,11 @@
               On Sale
             </span>
             <div class="flex gap-4 font-medium text-gray-500">
-              <%= link_to edit_dashboard_event_ticket_path(@event, ticket), class: "flex items-center hover:text-red-600 transition-colors", data: { turbo_frame: "modal" } do %>
+              <%= link_to edit_admin_event_ticket_path(@event, ticket), class: "flex items-center hover:text-red-600 transition-colors", data: { turbo_frame: "modal" } do %>
                 <i class="fa-solid fa-pen-to-square mr-1"></i> Edit
               <% end %>
               <div class="w-px h-4 bg-gray-300 self-center"></div>
-              <%= link_to dashboard_event_ticket_path(@event, ticket), class: "flex items-center hover:text-red-600 transition-colors" do %>
+              <%= link_to admin_event_ticket_path(@event, ticket), class: "flex items-center hover:text-red-600 transition-colors" do %>
                 <i class="fa-solid fa-eye mr-1"></i> View
               <% end %>
             </div>

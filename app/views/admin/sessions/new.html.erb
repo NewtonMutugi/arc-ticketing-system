@@ -20,7 +20,7 @@
     <div class="flex justify-center mb-4">
       <%= image_tag("/arc_logo.png", alt: "Africa Ruby Community Logo", class: "h-14 w-auto") %>
     </div>
-    <%= form_with url: dashboard_session_path do |form| %>
+    <%= form_with url: admin_session_path do |form| %>
       <%= render InputComponent.new(
         label: "Email Address",
         name: "email_address",
@@ -42,6 +42,6 @@
         <% end %>
       </div>
     <% end %>
-    <%= link_to "Forgot password?", new_dashboard_password_path , class: "hover:text-blue-500 hover:underline" %>
+    <%= link_to "Forgot password?", new_admin_password_path , class: "hover:text-blue-500 hover:underline" %>
   <% end %>
 </div>

@@ -1,4 +1,4 @@
-class Dashboard::BaseController < ApplicationController
+class Admin::BaseController < ApplicationController
   layout :resolve_layout
   before_action :set_user
   before_action :authenticate_user!
@@ -7,7 +7,7 @@ class Dashboard::BaseController < ApplicationController
 
   def authenticate_user!
       if Current.user.nil?
-        redirect_to new_dashboard_session_path, alert: "Please sign in to access the dashboard."
+        redirect_to new_admin_session_path, alert: "Please sign in to access the dashboard."
       end
   end
 

@@ -1,4 +1,4 @@
-class Dashboard::ProfilesController < Dashboard::BaseController
+class Admin::ProfilesController < Admin::BaseController
   layout "dashboard"
   before_action :set_user
 

@@ -1,4 +1,4 @@
-<%= form_with(model: [:dashboard, event], local: true, multipart: true, class: "form-horizontal") do |f| %>
+<%= form_with(model: [:admin, event], local: true, multipart: true, class: "form-horizontal") do |f| %>
   <% if event.errors.any? %>
     <div class="fixed top-5 right-5 z-50 flex flex-col gap-2 w-96 pointer-events-none">
       <%= render ToastComponent.new(
