@@ -1,18 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>RubyConf Africa Tickets</title>
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
-    <script src="https://kit.fontawesome.com/YOUR_KIT.js" crossorigin="anonymous"></script>
+    <%= render "layouts/head" %>
   </head>
   <body class="bg-gray-50 text-gray-900 font-sans antialiased">
     <nav class="bg-white border-b border-gray-200 py-4">
       <div class="max-w-5xl mx-auto px-4 flex justify-between items-center">
         <a href="/" class="text-xl font-bold tracking-tight">
-          <span class="text-red-600">RubyConf</span> Tickets
+          <%= image_tag("/arc_logo.png", alt: "Africa Ruby Community Logo", class: "h-10 w-auto") %>
         </a>
         <% if Current.user %>
           <%= link_to dashboard_events_path, class: "flex items-center gap-3 hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors group" do %>
