@@ -15,10 +15,10 @@
           <%# 1. Simple Top-Level Links %>
           <% sidebar.with_item_link(title: "Dashboard", href: event_path(@event), icon: "fa fa-gauge") %>
           <% sidebar.with_item_link(title: "Tickets", href: event_tickets_path(@event), icon: "fa fa-ticket") %>
-          <% sidebar.with_item_link(title: "Orders", href: "", icon: "fa fa-cart-arrow-down") %>
+          <% sidebar.with_item_link(title: "Orders", href: event_orders_path(@event), icon: "fa fa-cart-arrow-down") %>
           <% sidebar.with_item_link(title: "Attendees", href: event_attendees_path(@event), icon: "fa fa-users") %>
+          <% sidebar.with_item_link(title: "Transactions", href: event_transactions_path(@event), icon: "fa fa-money-bill") %>
           <% sidebar.with_item_link(title: "Customize", href: edit_event_path(@event), icon: "fa fa-cog") %>
-          <% sidebar.with_item_link(title: "Transactions", href: "", icon: "fa fa-money-bill") %>
           <%# 3. User Footer %>
           <% sidebar.with_footer do  %>
             <%= render DropdownComponent.new(align: :right) do |dropdown| %>

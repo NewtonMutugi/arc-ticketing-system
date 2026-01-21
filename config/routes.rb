@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "transactions/index"
+  get "orders/index"
   get "tickets/index"
   get "register/show"
   get "register/create"
