@@ -1,0 +1,83 @@
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900">Attendees</h1>
+    <p class="mt-1 text-sm text-gray-500">Manage who is coming to your event.</p>
+  </div>
+  <div class="mt-4 sm:mt-0 flex gap-3">
+    <%= form_with url: event_attendees_path(@event), method: :get, class: "relative" do |f| %>
+      <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+      <%= f.text_field :query, value: params[:query], placeholder: "Search name, email...", class: "pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500" %>
+    <% end %>
+    <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700">
+      <i class="fa-solid fa-download mr-2"></i> Export
+    </button>
+  </div>
+</div>
+<div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Attendee</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ticket Type</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order #</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+          <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <% if @attendees.empty? %>
+          <tr>
+            <td colspan="5" class="px-6 py-12 text-center text-gray-500">No attendees found.</td>
+          </tr>
+        <% else %>
+          <% @attendees.each do |attendee| %>
+            <tr class="hover:bg-gray-50 transition">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="h-10 w-10 flex-shrink-0">
+                    <span class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold">
+                      <%= attendee.first_name[0] %><%= attendee.last_name[0] %>
+                    </span>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900"><%= attendee.first_name %> <%= attendee.last_name %></div>
+                    <div class="text-sm text-gray-500"><%= attendee.email %></div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-100">
+                  <%= attendee.ticket.title %>
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                #<%= attendee.order.order_no %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <% if attendee.checked_in_at %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    Checked In <span class="ml-1 text-[10px] opacity-75"><%= attendee.checked_in_at.strftime("%H:%M") %></span>
+                  </span>
+                <% else %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    Pending
+                  </span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <button class="text-gray-400 hover:text-indigo-600">
+                  <i class="fa-solid fa-ellipsis-vertical"></i>
+                </button>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <% if @pagy.pages > 1 %>
+    <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-center">
+      <%== pagy_nav(@pagy) %> </div>
+  <% end %>
+</div>
