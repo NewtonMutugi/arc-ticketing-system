@@ -11,7 +11,7 @@ Rails.application.routes.draw do
     root "events#index"
 
     resources :events, only: [ :show ] do
-      resources :orders, only: [ :new, :create ] do
+      resources :orders, only: [ :new, :create, :show ] do
         get "attendees", to: "orders#attendees"
         patch "confirm", to: "orders#confirm"
       end

@@ -7,20 +7,23 @@ module Public
 
     def create
       # 1. Initialize Order
-      @order = @event.orders.new(order_params)
+      @order = Order.new(order_params)
       @order.status = :pending
+
       @order.order_no = "ORD-#{SecureRandom.hex(4).upcase}"
 
       # 2. Calculate Costs (Simple logic for now)
       total = 0
-      params[:tickets].each do |ticket_id, quantity|
-        qty = quantity.to_i
-        next if qty <= 0
+      if params[:tickets]
+        params[:tickets].each do |ticket_id, quantity|
+          qty = quantity.to_i
+          next if qty <= 0
 
-        ticket = Ticket.find(ticket_id)
-        # Create the OrderItems in memory
-        @order.order_items.build(ticket: ticket, quantity: qty, unit_price: ticket.price)
-        total += (ticket.price * qty)
+          ticket = Ticket.find(ticket_id)
+          # Create the OrderItems in memory
+          @order.order_items.build(ticket: ticket, quantity: qty, unit_price: ticket.price)
+          total += (ticket.price * qty)
+        end
       end
 
       @order.total_cost = total
@@ -40,7 +43,33 @@ module Public
     end
 
     def confirm
-      # Finalize details -> Redirect to Payment (Later)
+      @order = Order.find(params[:order_id])
+
+      # Transaction ensures we save all attendees or none
+      ActiveRecord::Base.transaction do
+        params[:attendees].each do |attendee_data|
+          # Create the attendee linked to Event, Ticket, and Order
+          @order.attendees.create!(
+            event: @event,
+            ticket_id: attendee_data[:ticket_id],
+            first_name: attendee_data[:first_name],
+            last_name: attendee_data[:last_name],
+            email: attendee_data[:email],
+            token: SecureRandom.hex(10).upcase # Unique ticket code
+          )
+        end
+      end
+
+      # For now, since we don't have payment, we redirect to a success page
+      redirect_to event_order_path(@event, @order), notice: "Order confirmed!"
+
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to event_order_attendees_path(@event, @order), alert: "Please check attendee details."
+    end
+
+    # Add a simple show page for the "Success" state
+    def show
+      @order = Order.find(params[:id])
     end
 
     private
