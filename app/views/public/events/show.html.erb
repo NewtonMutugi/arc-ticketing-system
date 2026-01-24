@@ -1,0 +1,50 @@
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+  <div class="md:col-span-2">
+    <% if @event.event_image.attached? %>
+      <%= image_tag @event.event_image, class: "w-full h-64 object-cover rounded-xl mb-6 shadow-sm" %>
+    <% end %>
+    <h1 class="text-4xl font-extrabold text-gray-900 mb-4"><%= @event.title %></h1>
+    <div class="flex gap-6 text-gray-600 mb-6 border-b border-gray-100 pb-6">
+      <div class="flex items-center">
+        <i class="fa-regular fa-calendar mr-2"></i>
+        <%= @event.start_date.to_fs(:long) %>
+      </div>
+      <div class="flex items-center">
+        <i class="fa-solid fa-location-dot mr-2"></i>
+        <%= @event.location %>
+      </div>
+    </div>
+    <div class="prose max-w-none text-gray-600">
+      <%= simple_format @event.description %>
+    </div>
+  </div>
+  <div class="md:col-span-1">
+    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 sticky top-4">
+      <h3 class="text-xl font-bold mb-4">Select Tickets</h3>
+      <%= form_with url: event_orders_path(@event), method: :post, local: true do |f| %>
+        <div class="mb-6 space-y-3">
+          <%= f.text_field :buyer_name, placeholder: "Your Full Name", required: true, class: "w-full border-gray-300 rounded-lg text-sm" %>
+          <%= f.email_field :buyer_email, placeholder: "Email Address", required: true, class: "w-full border-gray-300 rounded-lg text-sm" %>
+          <%= f.telephone_field :buyer_phone_no, placeholder: "Phone Number", required: true, class: "w-full border-gray-300 rounded-lg text-sm" %>
+        </div>
+        <hr class="border-gray-100 mb-4">
+        <div class="space-y-4 mb-6">
+          <% @tickets.each do |ticket| %>
+            <div class="flex justify-between items-center p-3 border border-gray-200 rounded-lg hover:border-red-200 transition">
+              <div>
+                <div class="font-bold text-gray-900"><%= ticket.title %></div>
+                <div class="text-sm text-gray-500">
+                  <%= ticket.price == 0 ? "Free" : number_to_currency(ticket.price, unit: "Ksh ", precision: 0) %>
+                </div>
+              </div>
+              <div class="w-20">
+                <input type="number" name="tickets[<%= ticket.id %>]" value="0" min="0" max="10" class="w-full border-gray-300 rounded-md text-center">
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <%= f.submit "Checkout", class: "w-full bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700 transition cursor-pointer" %>
+      <% end %>
+    </div>
+  </div>
+</div>

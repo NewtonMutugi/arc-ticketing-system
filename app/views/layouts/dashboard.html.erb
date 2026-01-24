@@ -8,8 +8,8 @@
       <aside class="w-64 shrink-0 bg-white overflow-y-auto overflow-x-hidden transition-all duration-300" data-sidebar-target="sidebar">
         <%= render SidebarComponent.new(logo_text: "") do |sidebar| %>
           <%# 1. Simple Top-Level Links %>
-          <% sidebar.with_item_link(title: "Dashboard", href: root_path, icon: "fa fa-gauge") %>
-          <% sidebar.with_item_link(title: "Events", href: events_path, icon: "fa fa-calendar") %>
+          <% sidebar.with_item_link(title: "Dashboard", href: admin_root_path, icon: "fa fa-gauge") %>
+          <% sidebar.with_item_link(title: "Events", href: admin_events_path, icon: "fa fa-calendar") %>
           <% sidebar.with_item_link(title: "Transactions", href: "", icon: "fa fa-money-bill") %>
           <%# 2. Dropdown Group (Teams) %>
           <%# sidebar.with_item_group(title: "Teams") do |group| %>
@@ -28,11 +28,11 @@
                       ) %>
                 <% end %>
                 <%# Pop up Menu items %>
-                <% dropdown.with_item(title: "My Profile", href: "/profile/", icon: "fa-solid fa-user") %>
+                <% dropdown.with_item(title: "My Profile", href: "/dashboard/profile/", icon: "fa-solid fa-user") %>
                 <% dropdown.with_item(title: "Settings", href: "", icon: "fa-solid fa-cog") %>
                 <% dropdown.with_item(
                           title: "Sign Out",
-                          href: session_path,
+                          href: admin_session_path,
                           icon: "fa-solid fa-right-from-bracket",
                           data: { turbo_method: :delete }
                         ) %>

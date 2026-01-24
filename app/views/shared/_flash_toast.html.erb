@@ -1,0 +1,5 @@
+<%= render ToastComponent.new(
+      type: local_assigns[:type] || :success,
+      title: local_assigns[:title] || "Notification",
+      body: local_assigns[:body]
+    ) %>
