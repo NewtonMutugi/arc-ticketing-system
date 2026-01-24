@@ -29,6 +29,15 @@ class Admin::TicketsController < Admin::BaseController
     @ticket = @event.tickets.find(params[:id])
   end
 
+  def update
+    @ticket = @event.tickets.find(params[:id])
+    if @ticket.update(ticket_params)
+      redirect_to admin_event_tickets_path(@event), notice: "Ticket updated successfully."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_event
