@@ -44,7 +44,7 @@
         <% end %>
       </aside>
       <main class="flex-1 overflow-y-auto p-8">
-        <div class="fixed top-4 right-4 z-50 flex flex-col gap-2">
+        <div id="flash-toasts" class="fixed top-4 right-4 z-100 flex flex-col gap-2">
           <% flash.each do |key, value| %>
             <% type = key.to_s == 'notice' ? :success : :error %>
             <%= render ToastComponent.new(type: type, title: type.to_s.humanize, body: value) %>
