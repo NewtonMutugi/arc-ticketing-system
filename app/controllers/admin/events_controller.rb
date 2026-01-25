@@ -3,6 +3,8 @@ class Admin::EventsController < Admin::BaseController
 
   def index
     @events = Event.all.with_attached_event_image
+    @tickets_sold = Event.all.sum(&:tickets_sold)
+    @revenue = Event.all.sum(&:revenue)
   end
 
   def show
@@ -46,7 +48,7 @@ class Admin::EventsController < Admin::BaseController
   end
 
   def set_event
-    @event = Event.find(params[:id])
+    @event = Event.friendly.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to events_path, alert: "Event not found."
   end

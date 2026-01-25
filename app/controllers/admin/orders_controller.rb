@@ -61,10 +61,10 @@ class Admin::OrdersController < Admin::BaseController
   private
 
   def set_event
-    @event = Event.find(params[:event_id])
+    @event = Event.friendly.find(params[:event_id])
   end
 
   def set_order
-    @order = @event.orders.find(params[:id])
+    @order = @event.orders.friendly.find(params[:order_no])
   end
 end
