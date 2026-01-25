@@ -77,3 +77,6 @@ gem "tailwindcss-rails", "~> 4.4"
 # Mailer gems
 gem "prawn", "~> 2.1" # Pdf generator
 gem "rqrcode", "~> 3.2" # QR Code generator
+
+# Slug generation
+gem "friendly_id", "~> 5.6"
