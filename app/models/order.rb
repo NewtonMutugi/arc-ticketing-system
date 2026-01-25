@@ -14,6 +14,10 @@ class Order < ApplicationRecord
     refunded: 3
   }
 
+  def to_param
+    order_no
+  end
+
   private
   def generate_order_number
     loop do

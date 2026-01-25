@@ -6,7 +6,7 @@ Rails.application.routes.draw do
     root "events#index"
 
     resources :events, only: [ :show ] do
-      resources :orders, only: [ :new, :create, :show ] do
+      resources :orders, only: [ :new, :create, :show ], param: :order_no do
         get "attendees", to: "orders#attendees"
         patch "confirm", to: "orders#confirm"
         get "checkout", to: "orders#checkout"
@@ -24,7 +24,7 @@ Rails.application.routes.draw do
     resources :events do
       resources :tickets
       resources :attendees
-      resources :orders do
+      resources :orders, param: :order_no do
         member do
           patch :approve
           patch :disapprove
