@@ -39,4 +39,8 @@ class Order < ApplicationRecord
       end
     end
   end
+
+  def to_param
+    order_no
+  end
 end
