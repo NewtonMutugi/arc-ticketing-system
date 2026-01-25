@@ -1,15 +1,15 @@
-require "Prawn"
+require "prawn"
 require "rqrcode"
 
 class TicketPdfGenerator
-  def intialize(order)
+  def initialize(order)
     @order = order
     @event = order.order_items.first.ticket.event
   end
 
   def render
     Prawn::Document.new(page_size: "A4") do |pdf|
-      @order.attendees.each_with_index do |attendees, index|
+      @order.attendees.each_with_index do |attendee, index|
         pdf.start_new_page if index > 0
 
         # Header
@@ -19,7 +19,7 @@ class TicketPdfGenerator
         pdf.move_down 20
         pdf.fill_color "FFFFFF"
         pdf.font("Helvetica", style: :bold) do
-          pdf.text order.order_items.first.ticket.event.title, size: 24, align: :center
+          pdf.text @order.order_items.first.ticket.event.title, size: 24, align: :center
         end
         pdf.move_down 5
         pdf.text "OFFICIAL TICKET", size: 10, align: :center, spacing: 4

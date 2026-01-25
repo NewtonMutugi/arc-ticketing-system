@@ -37,6 +37,27 @@ class Admin::OrdersController < Admin::BaseController
     end
   end
 
+
+  # USED FOR TESTING PURPOSES ONLY
+  # def disapprove
+  #   @order = @event.orders.find(params[:id])
+  #   if @order.update(status: :pending)
+  #     respond_to do |format|
+  #       format.html { redirect_to admin_event_orders_path(@event), notice: "Order disapproved." }
+
+  #       format.turbo_stream do
+  #         render turbo_stream: [
+  #           turbo_stream.replace("order_row_#{@order.id}", partial: "admin/orders/order_row", locals: { order: @order, event: @event }),
+  #           turbo_stream.replace("modal", template: "admin/orders/show"),
+  #           turbo_stream.append("flash-toasts", partial: "shared/flash_toast", locals: { type: :warning, title: "Disapproved", body: "Order payment marked as pending." })
+  #         ]
+  #       end
+  #     end
+  #   else
+  #     redirect_to admin_event_order_path(@event, @order), alert: "Disapproval failed."
+  #   end
+  # end
+
   private
 
   def set_event

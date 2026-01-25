@@ -104,6 +104,13 @@
             <button class="text-sm text-red-600 hover:text-red-800 font-medium underline decoration-red-200" disabled title="Refunds coming soon">
               Refund Order
             </button>
+            <!-- Disapprove Order -->
+            <%#= button_to "Disapprove Payment",
+                disapprove_admin_event_order_path(@event, @order),
+                method: :patch,
+                class: "ml-6 px-4 py-2 bg-yellow-600 text-white text-sm font-bold rounded hover:bg-yellow-700 transition shadow-sm cursor-pointer",
+                form: { data: { turbo_confirm: "Are you sure? This will mark the order as pending again." } }
+            %>
           </div>
         <% end %>
       </div>

@@ -1,12 +1,7 @@
 Rails.application.routes.draw do
-  # get "transactions/index"
-  # get "orders/index"
-  # get "tickets/index"
-  # get "register/show"
-  # get "register/create"
-  # get "dashboard/index"
-  # get "home/index"
-
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
   scope module: :public do
     root "events#index"
 
@@ -32,6 +27,7 @@ Rails.application.routes.draw do
       resources :orders do
         member do
           patch :approve
+          patch :disapprove
         end
       end
       resources :transactions, only: [ :index ]
