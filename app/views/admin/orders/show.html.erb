@@ -1,0 +1,112 @@
+<%= turbo_frame_tag "modal" do %>
+  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900 bg-opacity-50 backdrop-blur-sm p-4 overflow-y-auto">
+    <%= link_to "", admin_event_orders_path(@event), class: "absolute inset-0 cursor-default", aria: { label: "Close" } %>
+    <div class="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+        <div>
+          <h2 class="text-xl font-bold text-gray-900">Order #<%= @order.order_no %></h2>
+          <p class="text-sm text-gray-500"><%= @order.created_at.strftime("%b %d, %Y at %H:%M") %></p>
+        </div>
+        <div class="flex items-center gap-2">
+          <% status_colors = { "paid" => "bg-green-100 text-green-800", "pending" => "bg-yellow-100 text-yellow-800", "failed" => "bg-red-100 text-red-800", "refunded" => "bg-gray-100 text-gray-800" } %>
+          <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide <%= status_colors[@order.status] %>">
+            <%= @order.status %>
+          </span>
+          <%= link_to admin_event_orders_path(@event), class: "ml-2 text-gray-400 hover:text-gray-600" do %>
+            <i class="fa-solid fa-xmark text-xl"></i>
+          <% end %>
+        </div>
+      </div>
+      <div class="p-6 overflow-y-auto">
+        <% if @order.pending? && @order.payment_reference.present? %>
+          <div class="mb-8 bg-blue-50 border border-blue-100 rounded-lg p-5">
+            <h3 class="font-bold text-blue-900 mb-3 flex items-center">
+              <i class="fa-solid fa-magnifying-glass mr-2"></i> Verify Payment
+            </h3>
+            <div class="grid grid-cols-2 gap-4 text-sm mb-4">
+              <div>
+                <span class="block text-blue-600 text-xs uppercase font-bold">Provider</span>
+                <span class="font-medium text-gray-900"><%= @order.payment_provider || "N/A" %></span>
+              </div>
+              <div>
+                <span class="block text-blue-600 text-xs uppercase font-bold">Reference Code</span>
+                <span class="font-mono font-bold text-lg text-gray-900 select-all"><%= @order.payment_reference %></span>
+              </div>
+              <div>
+                <span class="block text-blue-600 text-xs uppercase font-bold">Amount Due</span>
+                <span class="font-bold text-gray-900"><%= number_to_currency(@order.total_cost, unit: "Ksh ", precision: 0) %></span>
+              </div>
+            </div>
+            <div class="flex gap-3 pt-3 border-t border-blue-200">
+              <%= button_to "Approve Payment",
+                  approve_admin_event_order_path(@event, @order),
+                  method: :patch,
+                  class: "px-4 py-2 bg-green-600 text-white text-sm font-bold rounded hover:bg-green-700 transition shadow-sm cursor-pointer",
+                  form: { data: { turbo_confirm: "Are you sure? This will mark the order as paid." } }
+              %>
+            </div>
+          </div>
+        <% end %>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Customer</h4>
+            <div class="flex items-center">
+              <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold mr-3">
+                <%= @order.buyer_name[0] %>
+              </div>
+              <div>
+                <div class="font-medium text-gray-900"><%= @order.buyer_name %></div>
+                <div class="text-sm text-gray-500"><%= @order.buyer_email %></div>
+                <div class="text-xs text-gray-400"><%= @order.buyer_phone_no %></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Items Purchased</h4>
+        <table class="min-w-full divide-y divide-gray-100 mb-6">
+          <tbody class="divide-y divide-gray-100">
+            <% @order.order_items.includes(:ticket).each do |item| %>
+              <tr>
+                <td class="py-3 text-sm text-gray-900">
+                  <span class="font-medium"><%= item.ticket.title %></span>
+                  <span class="text-gray-500 ml-2">x <%= item.quantity %></span>
+                </td>
+                <td class="py-3 text-sm text-right font-medium text-gray-900">
+                  <%= number_to_currency(item.total_price, unit: "Ksh ", precision: 0) %>
+                </td>
+              </tr>
+            <% end %>
+            <tr class="bg-gray-50">
+              <td class="py-3 pl-3 text-sm font-bold text-gray-900">Total</td>
+              <td class="py-3 pr-3 text-sm text-right font-bold text-gray-900">
+                <%= number_to_currency(@order.total_cost, unit: "Ksh ", precision: 0) %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Attendees</h4>
+        <div class="space-y-2">
+          <% @order.attendees.each do |attendee| %>
+            <div class="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+              <div>
+                <div class="text-sm font-medium text-gray-900"><%= attendee.first_name %> <%= attendee.last_name %></div>
+                <div class="text-xs text-gray-500"><%= attendee.email %></div>
+              </div>
+              <div class="text-xs font-mono bg-white border border-gray-200 px-2 py-1 rounded text-gray-600">
+                <%= attendee.token %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <% if @order.paid? %>
+          <div class="mt-8 pt-6 border-t border-gray-100">
+            <h4 class="text-xs font-bold text-red-400 uppercase tracking-wider mb-2">Danger Zone</h4>
+            <button class="text-sm text-red-600 hover:text-red-800 font-medium underline decoration-red-200" disabled title="Refunds coming soon">
+              Refund Order
+            </button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

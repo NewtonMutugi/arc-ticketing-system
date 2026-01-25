@@ -1,0 +1,30 @@
+<tr id="order_row_<%= order.id %>" class="hover:bg-gray-50 transition-colors">
+  <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-indigo-600">
+    <%# Link targets the 'modal' frame %>
+    <%= link_to order.order_no, admin_event_order_path(event, order), data: { turbo_frame: "modal" }, class: "hover:underline hover:text-indigo-800" %>
+  </td>
+  <td class="px-6 py-4 whitespace-nowrap">
+    <div class="text-sm text-gray-900"><%= order.buyer_name %></div>
+    <div class="text-sm text-gray-500"><%= order.buyer_email %></div>
+  </td>
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+    <%= order.created_at.strftime("%b %d, %Y") %>
+  </td>
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+    <%= order.total_items %> items
+  </td>
+  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+    <%= number_to_currency(order.total_cost, unit: "Ksh ", precision: 0) %>
+  </td>
+  <td class="px-6 py-4 whitespace-nowrap">
+    <% status_colors = { "paid" => "bg-green-100 text-green-800", "pending" => "bg-yellow-100 text-yellow-800", "failed" => "bg-red-100 text-red-800", "refunded" => "bg-gray-100 text-gray-800" } %>
+    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= status_colors[order.status] || 'bg-gray-100 text-gray-800' %>">
+      <%= order.status.humanize %>
+    </span>
+    <% if order.pending? && order.payment_reference.present? %>
+      <span class="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 animate-pulse">
+        Review
+      </span>
+    <% end %>
+  </td>
+</tr>

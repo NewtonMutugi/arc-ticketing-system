@@ -1,0 +1,79 @@
+<div class="max-w-3xl mx-auto">
+  <div class="flex items-center justify-between mb-8">
+    <div class="flex flex-col">
+      <span class="text-sm font-bold text-red-600 uppercase tracking-wider">Step 3 of 3</span>
+      <h1 class="text-3xl font-bold text-gray-900">Payment Verification</h1>
+    </div>
+    <div class="text-right">
+      <div class="text-sm text-gray-500">Amount Due</div>
+      <div class="text-2xl font-bold text-gray-900"><%= number_to_currency(@order.total_cost, unit: "Ksh ", precision: 0) %></div>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="md:col-span-1 space-y-4">
+      <h3 class="font-bold text-gray-700">Select Method</h3>
+      <label class="block cursor-pointer group">
+        <input type="radio" name="payment_tab" value="mpesa" checked class="peer sr-only" onchange="togglePayment('mpesa')">
+        <div class="p-4 rounded-xl border border-gray-200 peer-checked:border-green-500 peer-checked:bg-green-50 peer-checked:text-green-700 hover:border-gray-300 transition">
+          <div class="font-bold">M-PESA</div>
+          <div class="text-xs text-gray-500 mt-1">Paybill</div>
+        </div>
+      </label>
+      <label class="block cursor-pointer group">
+        <input type="radio" name="payment_tab" value="paypal" class="peer sr-only" onchange="togglePayment('paypal')">
+        <div class="p-4 rounded-xl border border-gray-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-gray-300 transition">
+          <div class="font-bold">PayPal</div>
+          <div class="text-xs text-gray-500 mt-1">Direct Transfer</div>
+        </div>
+      </label>
+    </div>
+    <div class="md:col-span-2">
+      <%= form_with model: @order, url: event_order_pay_path(@event, @order), method: :patch, local: true, class: "bg-white p-6 rounded-xl border border-gray-200 shadow-sm" do |f| %>
+        <div id="mpesa-section" class="payment-section">
+          <div class="bg-green-50 border border-green-100 rounded-lg p-4 mb-6">
+            <h4 class="font-bold text-green-800 mb-2">How to pay via M-PESA</h4>
+            <ol class="list-decimal list-inside text-sm text-green-700 space-y-1">
+              <li>Go to M-PESA Menu</li>
+              <li>Select <strong>Lipa na M-PESA</strong></li>
+              <li>Select <strong>Paybill</strong></li>
+              <li>Business No: <span class="font-mono font-bold">123456</span></li>
+              <li>Account No: <span class="font-mono font-bold"><%= @order.order_no %></span></li>
+              <li>Amount: <span class="font-mono font-bold"><%= @order.total_cost.to_i %></span></li>
+            </ol>
+          </div>
+          <%= f.hidden_field :payment_provider, value: "Mpesa", id: "provider-input" %>
+        </div>
+        <div id="paypal-section" class="payment-section hidden">
+          <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6">
+            <h4 class="font-bold text-blue-800 mb-2">How to pay via PayPal</h4>
+            <p class="text-sm text-blue-700 mb-2">Send payment to: <span class="font-bold">payments@rubyconf.africa</span></p>
+            <p class="text-xs text-blue-600">Please include your Order Number (<%= @order.order_no %>) in the transaction notes.</p>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Transaction Reference / Confirmation Code</label>
+            <%= f.text_field :payment_reference, required: true, placeholder: "e.g. QKH45...", class: "w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 uppercase font-mono" %>
+            <p class="text-xs text-gray-500 mt-1">Enter the code you received from M-PESA or PayPal.</p>
+          </div>
+        </div>
+        <div class="mt-8 pt-6 border-t border-gray-100">
+          <%= f.submit "Submit for Verification", class: "w-full bg-gray-900 text-white px-6 py-3 rounded-lg font-bold hover:bg-black transition cursor-pointer" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+<script>
+  function togglePayment(method) {
+    // Hide all sections
+    document.querySelectorAll('.payment-section').forEach(el => el.classList.add('hidden'));
+
+    // Show selected section
+    document.getElementById(method + '-section').classList.remove('hidden');
+
+    // Update hidden provider input
+    const providerName = method.charAt(0).toUpperCase() + method.slice(1); // 'Mpesa' or 'Paypal'
+    document.getElementById('provider-input').value = providerName;
+  }
+</script>

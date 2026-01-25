@@ -5,6 +5,8 @@ module Public
     allow_unauthenticated_access
     before_action :resume_session
 
+    before_action :set_order, only: [ :attendees, :confirm, :checkout, :pay, :show ]
+
     def create
       # 1. Initialize Order
       @order = Order.new(order_params)
@@ -38,13 +40,10 @@ module Public
     end
 
     def attendees
-      @order = Order.find(params[:order_id])
       # Logic to display form for @order.total_items attendees
     end
 
     def confirm
-      @order = Order.find(params[:order_id])
-
       # Transaction ensures we save all attendees or none
       ActiveRecord::Base.transaction do
         params[:attendees].each do |attendee_data|
@@ -61,7 +60,8 @@ module Public
       end
 
       # For now, since we don't have payment, we redirect to a success page
-      redirect_to event_order_path(@event, @order), notice: "Order confirmed!"
+      # redirect_to event_order_path(@event, @order), notice: "Order confirmed!"
+      redirect_to event_order_checkout_path(@event, @order), notice: "Attendees saved. Please verify payment."
 
     rescue ActiveRecord::RecordInvalid => e
       redirect_to event_order_attendees_path(@event, @order), alert: "Please check attendee details."
@@ -69,10 +69,25 @@ module Public
 
     # Add a simple show page for the "Success" state
     def show
-      @order = Order.find(params[:id])
+    end
+
+    def checkout
+    end
+
+    def pay
+      if @order.update(payment_params)
+        # We keep status as 'pending' but now it has a reference number for Admin to check
+        redirect_to event_order_path(@event, @order), notice: "Payment details submitted for review!"
+      else
+        render :checkout, status: :unprocessable_entity
+      end
     end
 
     private
+
+    def set_order
+      @order = Order.find(params[:order_id] || params[:id])
+    end
 
     def set_event
       @event = Event.find(params[:event_id])
@@ -80,6 +95,10 @@ module Public
 
     def order_params
       params.permit(:buyer_name, :buyer_email, :buyer_phone_no)
+    end
+
+    def payment_params
+      params.require(:order).permit(:payment_provider, :payment_reference)
     end
   end
 end

@@ -14,6 +14,8 @@ Rails.application.routes.draw do
       resources :orders, only: [ :new, :create, :show ] do
         get "attendees", to: "orders#attendees"
         patch "confirm", to: "orders#confirm"
+        get "checkout", to: "orders#checkout"
+        patch "pay", to: "orders#pay"
       end
     end
   end
@@ -27,7 +29,11 @@ Rails.application.routes.draw do
     resources :events do
       resources :tickets
       resources :attendees
-      resources :orders
+      resources :orders do
+        member do
+          patch :approve
+        end
+      end
       resources :transactions, only: [ :index ]
     end
 
