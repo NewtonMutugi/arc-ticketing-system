@@ -65,6 +65,7 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def set_order
-    @order = @event.orders.friendly.find(params[:order_no])
+    identifier = params[:order_no] || params[:order_order_no] || params[:id]
+    @order = @event.orders.find_by!(order_no: identifier)
   end
 end

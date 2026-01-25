@@ -89,7 +89,8 @@ module Public
     private
 
     def set_order
-      @order = Order.friendly.find(params[:order_id] || params[:id])
+      identifier = params[:order_no] || params[:order_order_no] || params[:id]
+      @order = Order.find_by!(order_no: identifier)
     end
 
     def set_event
