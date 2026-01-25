@@ -68,6 +68,10 @@ end
 gem "pagy", "~> 9.1"
 
 # Frontend Gems
-gem "view_component"
+gem "view_component", "~> 4.2"
 
 gem "tailwindcss-rails", "~> 4.4"
+
+# Mailer gems
+gem "prawn", "~> 2.1" # Pdf generator
+gem "rqrcode", "~> 3.2" # QR Code generator
