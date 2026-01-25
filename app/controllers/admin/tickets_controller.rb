@@ -55,9 +55,9 @@ class Admin::TicketsController < Admin::BaseController
   private
 
   def set_event
-    @event = Event.find(params[:event_id])
+    @event = Event.friendly.find(params[:event_id])
   rescue ActiveRecord::RecordNotFound
-    redirect_to events_path, alert: "Event not found"
+    redirect_to admin_events_path, alert: "Event not found"
   end
 
   def ticket_params

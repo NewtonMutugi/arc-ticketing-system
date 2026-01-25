@@ -50,6 +50,6 @@ class Admin::EventsController < Admin::BaseController
   def set_event
     @event = Event.friendly.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    redirect_to events_path, alert: "Event not found."
+    redirect_to admin_events_path, alert: "Event not found."
   end
 end
