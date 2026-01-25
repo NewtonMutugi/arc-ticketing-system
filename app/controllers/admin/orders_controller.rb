@@ -13,8 +13,8 @@ class Admin::OrdersController < Admin::BaseController
 
   def approve
     if @order.update(status: :paid)
-      # TODO: Trigger Email Delivery Here
-      # OrderMailer.with(order: @order).confirmation_email.deliver_later
+      # TODO: Trigger Email Delivery - change to deliver later
+      OrderMailer.confirmation_email(@order).deliver_now
 
       respond_to do |format|
         format.html { redirect_to admin_event_orders_path(@event), notice: "Order approved." }

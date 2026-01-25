@@ -1,5 +1,5 @@
 <%= turbo_frame_tag "modal" do %>
-  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900 bg-opacity-50 backdrop-blur-sm p-4 overflow-y-auto">
+  <div class="fixed inset-0 z-[100] flex items-center justify-center  bg-opacity-0 backdrop-blur-sm p-4 overflow-y-auto">
     <%= link_to "", admin_event_orders_path(@event), class: "absolute inset-0 cursor-default", aria: { label: "Close" } %>
     <div class="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
       <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">

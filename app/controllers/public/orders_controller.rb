@@ -76,6 +76,9 @@ module Public
 
     def pay
       if @order.update(payment_params)
+        # TODO: Send Email - deliver now
+        OrderMailer.receipt_email(@order).deliver_now
+
         # We keep status as 'pending' but now it has a reference number for Admin to check
         redirect_to event_order_path(@event, @order), notice: "Payment details submitted for review!"
       else
