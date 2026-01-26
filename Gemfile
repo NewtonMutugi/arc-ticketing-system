@@ -75,7 +75,7 @@ gem "view_component", "~> 4.2"
 gem "tailwindcss-rails", "~> 4.4"
 
 # Mailer gems
-gem "prawn", "~> 2.1" # Pdf generator
+gem "prawn", "~> 2.5" # Pdf generator
 gem "rqrcode", "~> 3.2" # QR Code generator
 
 # Slug generation
