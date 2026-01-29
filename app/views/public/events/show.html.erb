@@ -24,9 +24,36 @@
       <h3 class="text-xl font-bold mb-4">Select Tickets</h3>
       <%= form_with url: event_orders_path(@event), method: :post, local: true do |f| %>
         <div class="mb-6 space-y-3">
-          <%= f.text_field :buyer_name, placeholder: "Your Full Name", required: true, class: "w-full border-gray-300 rounded-lg text-sm" %>
-          <%= f.email_field :buyer_email, placeholder: "Email Address", required: true, class: "w-full border-gray-300 rounded-lg text-sm" %>
-          <%= f.telephone_field :buyer_phone_no, placeholder: "Phone Number", required: true, class: "w-full border-gray-300 rounded-lg text-sm" %>
+          <%#= f.text_field :buyer_name, placeholder: "Your Full Name", required: true, class: "w-full border-gray-300 rounded-lg text-sm" %>
+          <%= render InputComponent.new(
+            label: "Full Name",
+            name: "buyer_name",
+            id: "buyer_name",
+            type: "text",
+            placeholder: "",
+            required: true,
+            className: "my-2"
+          ) %>
+          <%#= f.email_field :buyer_email, placeholder: "Email Address", required: true, class: "w-full border-gray-300 rounded-lg text-sm" %>
+          <%= render InputComponent.new(
+            label: "Email Address",
+            name: "buyer_email",
+            id: "buyer_email",
+            type: "email",
+            placeholder: "",
+            required: true,
+            className: "my-2"
+          )%>
+          <%#= f.telephone_field :buyer_phone_no, placeholder: "Phone Number", required: true, class: "w-full border-gray-300 rounded-lg text-sm" %>
+          <%= render InputComponent.new(
+            label: "Phone Number",
+            name: "buyer_phone_no",
+            id: "buyer_phone_no",
+            type: "tel",
+            placeholder: "",
+            required: true,
+            className: "my-2"
+          )%>
         </div>
         <hr class="border-gray-100 mb-4">
         <div class="space-y-4 mb-6">
