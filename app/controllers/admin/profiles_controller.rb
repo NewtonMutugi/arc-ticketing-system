@@ -7,7 +7,7 @@ class Admin::ProfilesController < Admin::BaseController
 
   def update
     if Current.user.update(profile_params)
-      redirect_to profile_path, status: :see_other, notice: "Your Profile was updated successfully."
+      redirect_to admin_profile_path, status: :see_other, notice: "Your Profile was updated successfully."
     else
       render :show, status: :unprocessable_entity
     end
