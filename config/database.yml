@@ -1,7 +1,3 @@
-<%
-  require "dotenv"
-  Dotenv.load
-%>
 # SQLite. Versions 3.8.0 and up are supported.
 #   gem install sqlite3
 #
@@ -18,9 +14,9 @@ default: &default
   encoding: unicode
   # Bump pool size slightly because Solid Queue needs its own connections
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 10 } %>
-  username: <%= ENV.fetch("POSTGRES_USER") %>
-  password: <%= ENV.fetch("POSTGRES_PASSWORD") %>
-  host: <%= ENV.fetch("POSTGRES_HOST") %>
+  username: <%= ENV.fetch("POSTGRES_USER") { "postgres" } %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD") { "password" } %>
+  host: <%= ENV.fetch("POSTGRES_HOST") { "db" } %>
 
 development:
   <<: *default
