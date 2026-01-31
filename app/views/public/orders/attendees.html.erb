@@ -27,16 +27,40 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
               <input type="hidden" name="attendees[][ticket_id]" value="<%= item.ticket.id %>">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                <input type="text" name="attendees[][first_name]" required class="w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
+                <!--<label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                <input type="text" name="attendees[][first_name]" required class="w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"> -->
+                <%= render InputComponent.new(
+                  label: "First Name",
+                  name: "attendees[][first_name]",
+                  id: "attendees_#{counter}_first_name",
+                  type: "text",
+                  placeholder: "",
+                  required: true,
+                ) %>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                <input type="text" name="attendees[][last_name]" required class="w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
+                <!--<label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                <input type="text" name="attendees[][last_name]" required class="w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"> -->
+                <%= render InputComponent.new(
+                  label: "Last Name",
+                  name: "attendees[][last_name]",
+                  id: "attendees_#{counter}_last_name",
+                  type: "text",
+                  placeholder: "",
+                  required: true,
+                ) %>
               </div>
               <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                <input type="email" name="attendees[][email]" required class="w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
+                <!--<label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <input type="email" name="attendees[][email]" required class="w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"> -->
+                <%= render InputComponent.new(
+                  label: "Email Address",
+                  name: "attendees[][email]",
+                  id: "attendees_#{counter}_email",
+                  type: "email",
+                  placeholder: "",
+                  required: true,
+                ) %>
                 <p class="text-xs text-gray-500 mt-1">We'll send the ticket to this email.</p>
               </div>
             </div>
