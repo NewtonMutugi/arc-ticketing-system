@@ -38,3 +38,7 @@
 
 # Ignore copilot files
 .github/copilot*
+
+# Ignore key files for decrypting credentials and more.
+/config/*.key
+
