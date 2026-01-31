@@ -9,7 +9,6 @@ service: arc_events_system
 # Name of the container image.
 image: newtonmutugi/arc_events_system
 
-# ADD THIS BLOCK
 ssh:
   user: ubuntu
   keys: ["~/.ssh/arc_key"]
