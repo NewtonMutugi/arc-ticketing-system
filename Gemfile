@@ -7,7 +7,7 @@ gem "propshaft", "~> 1.3"
 # Use sqlite3 as the database for Active Record
 # gem "sqlite3", "~> 2.9"
 # Use PG as the database for Active Record
-gem 'pg', '~> 1.5', '>= 1.5.9'
+gem "pg", "~> 1.5", ">= 1.5.9"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 7.1"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
@@ -84,4 +84,4 @@ gem "rqrcode", "~> 3.2" # QR Code generator
 gem "friendly_id", "~> 5.6"
 
 # Handle dot env
-gem 'dotenv-rails', '~> 3.2', groups: [:development, :test]
+gem "dotenv-rails", "~> 3.2", groups: [ :development, :test ]
