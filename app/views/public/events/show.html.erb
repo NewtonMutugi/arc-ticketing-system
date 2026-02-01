@@ -79,8 +79,27 @@
             </div>
           <% end %>
         </div>
-        <%= f.submit (@order ? "Update Order" : "Checkout"), class: "w-full bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700 transition cursor-pointer" %>
+        <%= f.submit (@order ? "Update Order" : "Checkout"),
+                      class: "w-full bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700 transition cursor-pointer",
+                      onclick: "return validateTickets(event)" %>
       <% end %>
     </div>
   </div>
 </div>
+<script>
+  function validateTickets(event) {
+    const ticketInputs = document.querySelectorAll('input[name^="tickets["]');
+    let totalTickets = 0;
+
+    ticketInputs.forEach(input => {
+      totalTickets += parseInt(input.value) || 0;
+    });
+
+    if (totalTickets <= 0) {
+      alert("Please select at least one ticket to proceed.");
+      event.preventDefault();
+      return false;
+    }
+    return true;
+  }
+</script>
