@@ -8,13 +8,18 @@ module Public
     before_action :set_order, only: [ :attendees, :confirm, :checkout, :pay, :show ]
 
     def create
-      # 1. Initialize Order
-      @order = Order.new(order_params)
-      @order.status = :pending
+      # Initialize Order or find order to resume
+      if params[:order_no].present?
+        @order = Order.find_by!(order_no: params[:order_no])
+        @order.assign_attributes(order_params)
+        @order.order_items.destroy_all # Clear items to rebuild from current selection
+      else
+        @order = Order.new(order_params)
+        @order.status = :pending
+        @order.order_no = "ORD-#{SecureRandom.hex(4).upcase}"
+      end
 
-      @order.order_no = "ORD-#{SecureRandom.hex(4).upcase}"
-
-      # 2. Calculate Costs (Simple logic for now)
+      # Calculate Costs and items
       total = 0
       if params[:tickets]
         params[:tickets].each do |ticket_id, quantity|
@@ -46,6 +51,9 @@ module Public
     def confirm
       # Transaction ensures we save all attendees or none
       ActiveRecord::Base.transaction do
+        # Clear existing attendees for this order to avoid duplicates on "Back/Forward"
+        @order.attendees.destroy_all
+
         params[:attendees].each do |attendee_data|
           # Create the attendee linked to Event, Ticket, and Order
           @order.attendees.create!(
@@ -63,7 +71,7 @@ module Public
       # redirect_to event_order_path(@event, @order), notice: "Order confirmed!"
       redirect_to event_order_checkout_path(@event, @order), notice: "Attendees saved. Please verify payment."
 
-    rescue ActiveRecord::RecordInvalid => e
+    rescue ActiveRecord::RecordInvalid
       redirect_to event_order_attendees_path(@event, @order), alert: "Please check attendee details."
     end
 

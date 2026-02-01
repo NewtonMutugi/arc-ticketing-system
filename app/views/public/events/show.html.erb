@@ -25,6 +25,9 @@
       <%= form_with url: event_orders_path(@event), method: :post, local: true do |f| %>
         <div class="mb-6 space-y-3">
           <%#= f.text_field :buyer_name, placeholder: "Your Full Name", required: true, class: "w-full border-gray-300 rounded-lg text-sm" %>
+          <% if @order %>
+            <%= hidden_field_tag :order_no, @order.order_no %>
+          <% end %>
           <%= render InputComponent.new(
             label: "Full Name",
             name: "buyer_name",
@@ -32,7 +35,8 @@
             type: "text",
             placeholder: "",
             required: true,
-            className: "my-2"
+            className: "my-2",
+            value: @order&.buyer_name,
           ) %>
           <%#= f.email_field :buyer_email, placeholder: "Email Address", required: true, class: "w-full border-gray-300 rounded-lg text-sm" %>
           <%= render InputComponent.new(
@@ -42,7 +46,8 @@
             type: "email",
             placeholder: "",
             required: true,
-            className: "my-2"
+            className: "my-2",
+            value: @order&.buyer_email,
           )%>
           <%#= f.telephone_field :buyer_phone_no, placeholder: "Phone Number", required: true, class: "w-full border-gray-300 rounded-lg text-sm" %>
           <%= render InputComponent.new(
@@ -52,7 +57,8 @@
             type: "tel",
             placeholder: "",
             required: true,
-            className: "my-2"
+            className: "my-2",
+            value: @order&.buyer_phone_no,
           )%>
         </div>
         <hr class="border-gray-100 mb-4">
@@ -66,12 +72,14 @@
                 </div>
               </div>
               <div class="w-20">
-                <input type="number" name="tickets[<%= ticket.id %>]" value="0" min="0" max="10" class="w-full border-gray-300 rounded-md text-center">
+                <%# Find if this ticket was already selected in the existing order %>
+                <% existing_qty = @order&.order_items&.find_by(ticket_id: ticket.id)&.quantity || 0 %>
+                <input type="number" name="tickets[<%= ticket.id %>]" value="<%= existing_qty %>" min="0" max="10" class="w-full border-gray-300 rounded-md text-center">
               </div>
             </div>
           <% end %>
         </div>
-        <%= f.submit "Checkout", class: "w-full bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700 transition cursor-pointer" %>
+        <%= f.submit (@order ? "Update Order" : "Checkout"), class: "w-full bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700 transition cursor-pointer" %>
       <% end %>
     </div>
   </div>
