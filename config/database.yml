@@ -30,9 +30,9 @@ production:
   primary: &primary_production
     <<: *default
     database: arc_events_production
-    username: <%= ENV.fetch("PROD_POSTGRES_USER") %>
-    password: <%= ENV.fetch("PROD_POSTGRES_PASSWORD") %>
-    host: <%= ENV.fetch("PROD_POSTGRES_HOST") %>
+    username: <%= ENV.fetch("PROD_POSTGRES_USER") { "postgres" } %>
+    password: <%= ENV.fetch("PROD_POSTGRES_PASSWORD") { "password" } %>
+    host: <%= ENV.fetch("PROD_POSTGRES_HOST") { "db" } %>
 
   # Point Cache to the SAME database, but keep the migration path
   cache:
