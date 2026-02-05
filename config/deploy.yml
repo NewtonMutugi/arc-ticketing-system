@@ -60,7 +60,7 @@ env:
     # Use arc_events_system-db for a db accessory server on same machine via local kamal docker network.
     PROD_POSTGRES_HOST: arc_events_system-db
     PROD_POSTGRES_USER: arc_app
-
+  
 
     # Log everything from Rails
     # RAILS_LOG_LEVEL: debug
@@ -112,8 +112,8 @@ accessories:
     # port: "5432"
     env:
       clear:
-        POSTGRES_USER: arc_app             # The username Rails will use
-        POSTGRES_DB: arc_events_production # The DB name to create automatically
+        PROD_POSTGRES_USER: arc_app             # The username Rails will use
+        PROD_POSTGRES_DB: arc_events_production # The DB name to create automatically
       secret:
         - PROD_POSTGRES_PASSWORD
     # files:
