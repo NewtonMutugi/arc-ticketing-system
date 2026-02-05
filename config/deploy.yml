@@ -115,7 +115,7 @@ accessories:
         POSTGRES_USER: arc_app             # The username Rails will use
         POSTGRES_DB: arc_events_production # The DB name to create automatically
       secret:
-        - POSTGRES_PASSWORD: PROD_POSTGRES_PASSWORD
+        POSTGRES_PASSWORD: PROD_POSTGRES_PASSWORD
     # files:
     #   - init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
     directories:
