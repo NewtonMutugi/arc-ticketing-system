@@ -24,7 +24,7 @@ module Public
         @order.order_items.destroy_all # Clear items to rebuild from current selection
       else
         @order = Order.new(order_params)
-        @order.status = :pending
+        @order.status = :draft
         @order.order_no = "ORD-#{SecureRandom.hex(4).upcase}"
       end
 
@@ -92,7 +92,7 @@ module Public
     end
 
     def pay
-      if @order.update(payment_params)
+      if @order.update(payment_params.merge(status: :submitted))
         # TODO: Send Email - deliver now
         OrderMailer.receipt_email(@order).deliver_now
 

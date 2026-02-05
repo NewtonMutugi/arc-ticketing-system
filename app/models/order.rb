@@ -8,10 +8,11 @@ class Order < ApplicationRecord
   after_update :generate_attendees, if: -> { saved_change_to_status? && paid? }
 
   enum :status, {
-    pending: 0,
-    paid: 1,
+    draft: 0,   # Safe to auto-delete after 7 days
+    paid: 1,      # Admin approved
     failed: 2,
-    refunded: 3
+    refunded: 3,
+    submitted: 4 # User entered payment ref, waiting for Admin
   }
 
   def to_param
