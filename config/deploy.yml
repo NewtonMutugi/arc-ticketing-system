@@ -44,7 +44,7 @@ registry:
 env:
   secret:
     - RAILS_MASTER_KEY
-    - POSTGRES_PASSWORD
+    - PROD_POSTGRES_PASSWORD
   clear:
     # Run the Solid Queue Supervisor inside the web server's Puma process to do jobs.
     # When you start using multiple servers, you should split out job processing to a dedicated machine.
@@ -115,7 +115,7 @@ accessories:
         POSTGRES_USER: arc_app             # The username Rails will use
         POSTGRES_DB: arc_events_production # The DB name to create automatically
       secret:
-        - POSTGRES_PASSWORD
+        - PROD_POSTGRES_PASSWORD
     # files:
     #   - init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
     directories:
