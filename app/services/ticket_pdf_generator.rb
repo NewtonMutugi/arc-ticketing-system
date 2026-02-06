@@ -98,20 +98,20 @@ class TicketPdfGenerator
     pdf.stroke_vertical_line(0, PAGE_HEIGHT, at: 440)
     pdf.undash
 
-   # --- 5. QR CODE (On Stub) ---
-   # White background box for scanability
-   box_left = 466
+    # --- 5. QR CODE (On Stub) ---
+    # White background box for scanability
+    box_left = 466
     box_top  = 150
     box_size = 120
 
     # White background box
     pdf.fill_color "000000"
-    pdf.fill_rectangle [ box_left, box_top ], box_size, box_size
+    pdf.fill_rectangle [ 442, 200 ], 200, 200
 
     pdf.bounding_box([ box_left, box_top ], width: box_size, height: box_size) do
       qr_data = "Order:#{@order.order_no}|Token:#{attendee.token}"
       qr = RQRCode::QRCode.new(qr_data)
-      qr_png = qr.as_png(size: 150, border_modules: 0)
+      qr_png = qr.as_png(size: 170, border_modules: 0)
 
       # vposition: :center ensures the QR image is vertically aligned inside the white box
       pdf.image StringIO.new(qr_png.to_s), width: 100, position: :center, vposition: :center
@@ -119,7 +119,7 @@ class TicketPdfGenerator
 
     # Token text - Positioned just below the white box
     # The box ends at y = 30 (150 - 120). We place text at y = 25.
-    pdf.fill_color "000000"
+    pdf.fill_color "ffffff"
     pdf.font("Helvetica", style: :normal) do
       pdf.text_box attendee.token, at: [ box_left, 25 ], width: box_size, height: 10, size: 8, align: :center
     end
