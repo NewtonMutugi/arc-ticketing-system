@@ -1,6 +1,6 @@
 class Admin::SessionsController < ApplicationController
   allow_unauthenticated_access only: %i[ new create ]
-  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_admin_session_path, alert: "Try again later." }
+  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to admin_new_session_path, alert: "Try again later." }
   layout "public"
 
   before_action :resume_session, only: %i[ new create ]
@@ -15,7 +15,7 @@ class Admin::SessionsController < ApplicationController
       start_new_session_for user
       redirect_to admin_root_path
     else
-      redirect_to new_admin_session_path, alert: "Try another email address or password."
+      redirect_to admin_new_session_path, alert: "Try another email address or password."
     end
   end
 
