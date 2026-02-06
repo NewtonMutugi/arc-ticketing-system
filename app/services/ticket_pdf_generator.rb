@@ -115,7 +115,7 @@ class TicketPdfGenerator
 
     pdf.bounding_box([ box_left, box_top ], width: box_size, height: box_size) do
       # Generates: https://ticket.rubyconf.africa/admin/verify/TOKEN123
-      host = Rails.application.config.action_mailer.default_url_options[:host] || "ticket.rubyconf.africa"
+      host = Rails.application.config.action_mailer.default_url_options[:host] || "tickets.rubyconf.africa"
       protocol = Rails.application.config.action_mailer.default_url_options[:protocol] || "https"
       qr_data = "#{protocol}://#{host}/admin/verify/#{attendee.token}"
 
