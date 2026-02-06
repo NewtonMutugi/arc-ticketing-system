@@ -25,8 +25,7 @@ class TicketPdfGenerator
   private
 
   def draw_ticket(pdf, attendee)
-    # --- 1. BACKGROUND IMAGE (Full Bleed) ---
-    # This replaces all manual background drawing
+    # BACKGROUND IMAGE (Full Bleed)
     bg_path = Rails.root.join("public", "Ticket-background.png")
 
     if File.exist?(bg_path)
@@ -38,8 +37,7 @@ class TicketPdfGenerator
       pdf.fill_rectangle [ 0, PAGE_HEIGHT ], PAGE_WIDTH, PAGE_HEIGHT
     end
 
-    # --- 2. LOGO (Top Left) ---
-    # We layer the logo ON TOP of the background image
+    # LOGO (Top Left)
     logo_path = Rails.root.join("public", "ruby_conf_logo.png")
 
     if File.exist?(logo_path)
@@ -58,58 +56,69 @@ class TicketPdfGenerator
       pdf.text_box "Official Ticket", at: [ 340, 160 ], width: 90, size: 8, align: :right, options: { opacity: 0.7 }
     end
 
-    # --- 3. ATTENDEE DETAILS ---
+    # ATTENDEE DETAILS
 
     # Main Content Box
-    pdf.bounding_box([ 20, 110 ], width: 400, height: 100) do
+    pdf.bounding_box([ 20, 115 ], width: 400, height: 120) do
       # Row 1: ATTENDEE NAME
-      label(pdf, "ATTENDEE")
+      label(pdf, "Attendee")
       value(pdf, "#{attendee.first_name} #{attendee.last_name}".upcase, size: 16)
 
-      pdf.move_down 15
+      pdf.move_down 10
 
-      # Row 2: Grid for details
+      # Capture the starting Y position for the grid
       y_cursor = pdf.cursor
 
+      # --- ROW 2: DETAILS GRID ---
+
       # Col 1: Reference
-      pdf.bounding_box([ 0, y_cursor ], width: 130, height: 40) do
-        label(pdf, "ORDER REF")
+      pdf.bounding_box([ 0, y_cursor ], width: 130, height: 35) do
+        label(pdf, "Order Ref")
         value(pdf, @order.order_no, size: 10)
       end
 
       # Col 2: Ticket Type
-      pdf.bounding_box([ 140, y_cursor ], width: 130, height: 40) do
-        label(pdf, "TICKET TYPE")
+      pdf.bounding_box([ 140, y_cursor ], width: 130, height: 35) do
+        label(pdf, "Ticket Type")
         value(pdf, attendee.ticket.title.upcase, size: 10)
       end
 
       # Col 3: Date
-      pdf.bounding_box([ 280, y_cursor ], width: 100, height: 40) do
-        label(pdf, "DATE")
+      pdf.bounding_box([ 240, y_cursor ], width: 100, height: 35) do
+        label(pdf, "Date")
         value(pdf, @event.start_date.strftime("%b %d, %Y").upcase, size: 10)
+      end
+
+      # ROW 3: LOCATION (New)
+      pdf.bounding_box([ 0, y_cursor - 35 ], width: 300, height: 35) do
+        label(pdf, "Location")
+        value(pdf, @event.location.upcase, size: 10)
       end
     end
 
-    # --- 4. TEAR-OFF LINE ---
-    # We keep this to visually separate the stub, even with the background image
+    # TEAR-OFF LINE
     pdf.stroke_color "FFFFFF"
     pdf.line_width 1
     pdf.dash([ 4, 4 ])
     pdf.stroke_vertical_line(0, PAGE_HEIGHT, at: 440)
     pdf.undash
 
-    # --- 5. QR CODE (On Stub) ---
+    # QR CODE (On Stub)
     # White background box for scanability
     box_left = 466
     box_top  = 150
     box_size = 120
 
-    # White background box
+    # Black Stub Background (Covering the full stub area)
     pdf.fill_color "000000"
     pdf.fill_rectangle [ 442, 200 ], 200, 200
 
     pdf.bounding_box([ box_left, box_top ], width: box_size, height: box_size) do
-      qr_data = "Order:#{@order.order_no}|Token:#{attendee.token}"
+      # Generates: https://ticket.rubyconf.africa/admin/verify/TOKEN123
+      host = Rails.application.config.action_mailer.default_url_options[:host] || "ticket.rubyconf.africa"
+      protocol = Rails.application.config.action_mailer.default_url_options[:protocol] || "https"
+      qr_data = "#{protocol}://#{host}/admin/verify/#{attendee.token}"
+
       qr = RQRCode::QRCode.new(qr_data)
       qr_png = qr.as_png(size: 170, border_modules: 0)
 
@@ -118,7 +127,6 @@ class TicketPdfGenerator
     end
 
     # Token text - Positioned just below the white box
-    # The box ends at y = 30 (150 - 120). We place text at y = 25.
     pdf.fill_color "ffffff"
     pdf.font("Helvetica", style: :normal) do
       pdf.text_box attendee.token, at: [ box_left, 25 ], width: box_size, height: 10, size: 8, align: :center

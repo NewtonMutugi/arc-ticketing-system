@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
+    get "verifications/show"
     root "dashboard#index"
 
     # resource :session
@@ -37,6 +38,7 @@ Rails.application.routes.draw do
     end
 
     resource :profile, only: [ :show, :update ]
+    get "verify/:token", to: "verifications#show", as: :verify_attendee
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
