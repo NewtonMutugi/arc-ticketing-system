@@ -459,7 +459,7 @@ DEPENDENCIES
   kamal (~> 2.10)
   letter_opener (~> 1.10)
   letter_opener_web (~> 3.0)
-  pagy (~> 43.2, >= 43.2.9)
+  pagy (~> 43.2)
   pg (~> 1.5, >= 1.5.9)
   prawn (~> 2.1)
   propshaft (~> 1.3)
