@@ -19,7 +19,7 @@
   <div class="prose max-w-none text-gray-600 mb-12">
     <%= simple_format @event.description %>
   </div>
-  <div class="border-t border-gray-200 pt-10">
+  <div class="border-t border-gray-200 pt-10 mb-24">
     <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Available Tickets</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <% @event.tickets.where(status: true).each do |ticket| %>
