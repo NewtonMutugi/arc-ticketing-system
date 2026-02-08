@@ -7,12 +7,17 @@ module Public
 
     before_action :set_order, only: [ :attendees, :confirm, :checkout, :pay, :show ]
 
+    def new
+      @ticket = @event.tickets.find(params[:ticket_id])
+      @order = Order.new
+    end
+
     def create
       # Check if any tickets were actually selected
       total_qty = params[:tickets]&.values&.map(&:to_i)&.sum || 0
 
       if total_qty <= 0
-        redirect_to event_path(@event, order_no: params[:order_no]),
+        redirect_to new_event_order_path(@event, ticket_id: params[:tickets].keys.first),
                     alert: "Please select at least one ticket."
         return
       end

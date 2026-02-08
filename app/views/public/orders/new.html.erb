@@ -1,0 +1,85 @@
+<% content_for :title, "Buy #{@ticket.title}" %>
+<div class="max-w-3xl mx-auto">
+  <div class="mb-6">
+    <%= link_to event_path(@event), class: "text-gray-500 hover:text-gray-900 flex items-center gap-2 text-sm" do %>
+      <i class="fa-solid fa-arrow-left"></i> Back to Event
+    <% end %>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="md:col-span-1">
+      <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 sticky top-4">
+        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">Selected Ticket</h3>
+        <h2 class="text-2xl font-bold text-gray-900 mb-2"><%= @ticket.title %></h2>
+        <div class="text-xl font-bold text-red-600 mb-4">
+          <%= @ticket.price == 0 ? "Free" : number_to_currency(@ticket.price, unit: "Ksh ", precision: 0) %>
+          <span class="text-xs text-gray-500 font-normal">/ ticket</span>
+        </div>
+        <hr class="border-gray-200 my-4">
+        <div class="text-sm text-gray-600">
+          <p class="mb-1"><i class="fa-regular fa-calendar mr-2"></i> <%= @event.start_date.to_fs(:short) %></p>
+          <p><i class="fa-solid fa-location-dot mr-2"></i> <%= @event.location %></p>
+        </div>
+      </div>
+    </div>
+    <div class="md:col-span-2">
+      <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+        <h3 class="text-xl font-bold mb-6">Buyer Information</h3>
+        <%= form_with url: event_orders_path(@event), method: :post, local: true do |f| %>
+          <div class="mb-8 bg-blue-50 p-4 rounded-lg border border-blue-100 flex justify-between items-center">
+            <div>
+              <label class="block font-bold text-gray-900">Quantity</label>
+              <p class="text-xs text-gray-500">How many tickets?</p>
+            </div>
+            <div class="flex items-center w-32">
+              <button type="button" onclick="adjustQty(-1)" class="w-10 h-10 rounded-l-lg bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50">-</button>
+              <input type="number" id="ticket_qty" name="tickets[<%= @ticket.id %>]" value="1" min="1" max="10" class="w-full border-y border-gray-300 text-center h-10 focus:ring-0 z-10" readonly>
+              <button type="button" onclick="adjustQty(1)" class="w-10 h-10 rounded-r-lg bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50">+</button>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <%= render InputComponent.new(
+              label: "Full Name",
+              name: "buyer_name",
+              id: "buyer_name",
+              type: "text",
+              placeholder: "Enter your full name",
+              required: true,
+              value: @order&.buyer_name,
+            ) %>
+            <%= render InputComponent.new(
+              label: "Email Address",
+              name: "buyer_email",
+              id: "buyer_email",
+              type: "email",
+              placeholder: "We will send the receipt here",
+              required: true,
+              value: @order&.buyer_email,
+            ) %>
+            <%= render InputComponent.new(
+              label: "Phone Number",
+              name: "buyer_phone_no",
+              id: "buyer_phone_no",
+              type: "tel",
+              placeholder: "For M-PESA payment",
+              required: true,
+              value: @order&.buyer_phone_no,
+            ) %>
+          </div>
+          <div class="mt-8">
+            <%= f.submit "Continue to Attendee Details",
+                class: "w-full bg-red-600 text-white font-bold py-4 rounded-lg hover:bg-red-700 transition shadow-lg cursor-pointer flex justify-center items-center" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function adjustQty(amount) {
+    const input = document.getElementById('ticket_qty');
+    let newVal = parseInt(input.value) + amount;
+    if (newVal >= 1 && newVal <= 10) {
+      input.value = newVal;
+    }
+  }
+</script>

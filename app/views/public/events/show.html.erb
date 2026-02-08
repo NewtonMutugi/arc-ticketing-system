@@ -1,105 +1,50 @@
 <% content_for :title, "#{@event.title}" %>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-  <div class="md:col-span-2">
-    <% if @event.event_image.attached? %>
-      <%= image_tag @event.event_image, class: "w-full h-64 object-cover rounded-xl mb-6 shadow-sm" %>
-    <% end %>
-    <h1 class="text-4xl font-extrabold text-gray-900 mb-4"><%= @event.title %></h1>
-    <div class="flex gap-6 text-gray-600 mb-6 border-b border-gray-100 pb-6">
-      <div class="flex items-center">
-        <i class="fa-regular fa-calendar mr-2"></i>
+<div class="max-w-4xl mx-auto">
+  <% if @event.event_image.attached? %>
+    <%= image_tag @event.event_image, class: "w-full h-64 md:h-96 object-cover rounded-xl mb-8 shadow-sm" %>
+  <% end %>
+  <div class="text-center mb-10">
+    <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4"><%= @event.title %></h1>
+    <div class="flex flex-wrap justify-center gap-6 text-gray-600">
+      <div class="flex items-center bg-gray-50 px-4 py-2 rounded-full border border-gray-100">
+        <i class="fa-regular fa-calendar mr-2 text-red-600"></i>
         <%= @event.start_date.to_fs(:long) %>
       </div>
-      <div class="flex items-center">
-        <i class="fa-solid fa-location-dot mr-2"></i>
+      <div class="flex items-center bg-gray-50 px-4 py-2 rounded-full border border-gray-100">
+        <i class="fa-solid fa-location-dot mr-2 text-red-600"></i>
         <%= @event.location %>
       </div>
     </div>
-    <div class="prose max-w-none text-gray-600">
-      <%= simple_format @event.description %>
-    </div>
   </div>
-  <div class="md:col-span-1">
-    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 sticky top-4">
-      <h3 class="text-xl font-bold mb-4">Select Tickets</h3>
-      <%= form_with url: event_orders_path(@event), method: :post, local: true do |f| %>
-        <div class="mb-6 space-y-3">
-          <%#= f.text_field :buyer_name, placeholder: "Your Full Name", required: true, class: "w-full border-gray-300 rounded-lg text-sm" %>
-          <% if @order %>
-            <%= hidden_field_tag :order_no, @order.order_no %>
-          <% end %>
-          <%= render InputComponent.new(
-            label: "Full Name",
-            name: "buyer_name",
-            id: "buyer_name",
-            type: "text",
-            placeholder: "",
-            required: true,
-            className: "my-2",
-            value: @order&.buyer_name,
-          ) %>
-          <%#= f.email_field :buyer_email, placeholder: "Email Address", required: true, class: "w-full border-gray-300 rounded-lg text-sm" %>
-          <%= render InputComponent.new(
-            label: "Email Address",
-            name: "buyer_email",
-            id: "buyer_email",
-            type: "email",
-            placeholder: "",
-            required: true,
-            className: "my-2",
-            value: @order&.buyer_email,
-          )%>
-          <%#= f.telephone_field :buyer_phone_no, placeholder: "Phone Number", required: true, class: "w-full border-gray-300 rounded-lg text-sm" %>
-          <%= render InputComponent.new(
-            label: "Phone Number",
-            name: "buyer_phone_no",
-            id: "buyer_phone_no",
-            type: "tel",
-            placeholder: "",
-            required: true,
-            className: "my-2",
-            value: @order&.buyer_phone_no,
-          )%>
-        </div>
-        <hr class="border-gray-100 mb-4">
-        <div class="space-y-4 mb-6">
-          <% @tickets.each do |ticket| %>
-            <div class="flex justify-between items-center p-3 border border-gray-200 rounded-lg hover:border-red-200 transition">
-              <div>
-                <div class="font-bold text-gray-900"><%= ticket.title %></div>
-                <div class="text-sm text-gray-500">
-                  <%= ticket.price == 0 ? "Free" : number_to_currency(ticket.price, unit: "Ksh ", precision: 0) %>
-                </div>
-              </div>
-              <div class="w-20">
-                <%# Find if this ticket was already selected in the existing order %>
-                <% existing_qty = @order&.order_items&.find_by(ticket_id: ticket.id)&.quantity || 0 %>
-                <input type="number" name="tickets[<%= ticket.id %>]" value="<%= existing_qty %>" min="0" max="10" class="w-full border-gray-300 rounded-md text-center">
-              </div>
+  <div class="prose max-w-none text-gray-600 mb-12">
+    <%= simple_format @event.description %>
+  </div>
+  <div class="border-t border-gray-200 pt-10">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Available Tickets</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <% @event.tickets.where(status: true).each do |ticket| %>
+        <div class="border border-gray-200 rounded-xl p-6 hover:border-red-200 hover:shadow-md transition-all duration-200 flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold text-gray-900"><%= ticket.title %></h3>
+              <span class="bg-red-50 text-red-700 font-bold px-3 py-1 rounded-full text-sm">
+                <%= ticket.price == 0 ? "Free" : number_to_currency(ticket.price, unit: "Ksh ", precision: 0) %>
+              </span>
             </div>
+            <p class="text-gray-500 text-sm mb-6"><%= ticket.description %></p>
+          </div>
+          <% if ticket.sold_out? %>
+            <button disabled class="w-full bg-gray-100 text-gray-400 font-bold py-3 rounded-lg cursor-not-allowed">
+              Sold Out
+            </button>
+          <% else %>
+            <%# This links to the new dedicated purchase page for this ticket %>
+            <%= link_to new_event_order_path(@event, ticket_id: ticket.id), class: "block w-full bg-gray-900 text-white text-center font-bold py-3 rounded-lg hover:bg-red-600 transition-colors" do %>
+              Select Ticket <i class="fa-solid fa-arrow-right ml-2"></i>
+            <% end %>
           <% end %>
         </div>
-        <%= f.submit (@order ? "Update Order" : "Checkout"),
-                      class: "w-full bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700 transition cursor-pointer",
-                      onclick: "return validateTickets(event)" %>
       <% end %>
     </div>
   </div>
 </div>
-<script>
-  function validateTickets(event) {
-    const ticketInputs = document.querySelectorAll('input[name^="tickets["]');
-    let totalTickets = 0;
-
-    ticketInputs.forEach(input => {
-      totalTickets += parseInt(input.value) || 0;
-    });
-
-    if (totalTickets <= 0) {
-      alert("Please select at least one ticket to proceed.");
-      event.preventDefault();
-      return false;
-    }
-    return true;
-  }
-</script>
