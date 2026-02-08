@@ -46,6 +46,5 @@
 # Rails or not.
 #
 # Pagy::Calendar.localize_with_rails_i18n_gem(*your_locales)
-
 Pagy.options[:items] = 10
 Pagy.options[:overflow] = :last_page
