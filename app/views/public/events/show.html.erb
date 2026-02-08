@@ -33,17 +33,32 @@
                 </span>
               </div>
               <p class="text-gray-500 text-sm mb-6"><%= ticket.description %></p>
+              <hr class="border-gray-200 my-4">
+              <% if ticket.benefits.present? %>
+                <div class="mb-4">
+                  <h4 class="font-bold text-gray-700 text-sm mb-2">Includes:</h4>
+                  <ul class="space-y-2">
+                    <% ticket.benefits.split("\n").each do |benefit| %>
+                      <% next if benefit.blank? %>
+                      <li class="flex items-start text-sm text-gray-600">
+                        <i class="fa-solid fa-check text-green-500 mt-0.5 mr-2 flex-shrink-0"></i>
+                        <span><%= benefit %></span>
+                      </li>
+                    <% end %>
+                  </ul>
+                </div>
+                <hr class="border-gray-200 my-4">
+              <% end %>
             </div>
             <% if ticket.sold_out? %>
               <div class="w-full bg-gray-100 text-gray-400 font-bold py-3 rounded-lg text-center cursor-not-allowed">
                 Sold Out
               </div>
             <% else %>
-              <%#
               <div class="w-full bg-gray-900 text-white text-center font-bold py-3 rounded-lg group-hover:bg-red-600 transition-colors">
-                Select Ticket <i class="fa-solid fa-arrow-right ml-2"></i>
+                Buy <%= ticket.title %>
+                <%# <i class="fa-solid fa-arrow-right ml-2"></i> %>
               </div>
-              %>
             <% end %>
           </div>
         <% end %>

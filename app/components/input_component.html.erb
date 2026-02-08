@@ -20,7 +20,7 @@
         <textarea
       name="<%= @name %>"
       id="<%= @id %>"
-      rows="4"
+      rows="<%= @rows || 4 %>"
       class="<%= input_classes %>"
       placeholder="<%= @placeholder %>"
       <%= "required" if @required %>

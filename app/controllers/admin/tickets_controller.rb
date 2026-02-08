@@ -75,6 +75,6 @@ class Admin::TicketsController < Admin::BaseController
   end
 
   def ticket_params
-    params.require(:ticket).permit(:title, :price, :quantity, :description, :start_sale_date, :end_sale_date, :min_ticket, :max_ticket, :group_ticket_count, :status)
+    params.require(:ticket).permit(:title, :price, :quantity, :description, :start_sale_date, :end_sale_date, :min_ticket, :max_ticket, :group_ticket_count, :status, :benefits)
   end
 end
