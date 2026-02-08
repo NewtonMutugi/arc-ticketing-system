@@ -69,7 +69,7 @@
       <% end %>
       <div class="pt-4 border-t border-gray-100 flex justify-end gap-4">
         <% primary_ticket_id = @order.order_items.first&.ticket_id %>
-        <% back_link = primary_ticket_id ? new_event_order_path(@event, ticket_id: primary_ticket_id) : event_path(@event) %>
+        <% back_link = primary_ticket_id ? new_event_order_path(@event, ticket_id: primary_ticket_id, order_no: @order.order_no) : event_path(@event) %>
         <%= link_to back_link, class: "text-gray-600 hover:text-gray-900 flex items-center gap-2 font-medium" do %>
           <i class="fa-solid fa-arrow-left"></i>
           Edit Buyer information

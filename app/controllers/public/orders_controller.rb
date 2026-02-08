@@ -9,7 +9,16 @@ module Public
 
     def new
       @ticket = @event.tickets.find(params[:ticket_id])
-      @order = Order.new
+
+      if params[:order_no].present?
+        @order = Order.find_by(order_no: params[:order_no])
+
+        existing_item = @order.order_items.find_by(ticket: @ticket)
+        @quantity = existing_item&.quantity || 1
+      else
+        @order = Order.new
+        @quantity = 1
+      end
     end
 
     def create

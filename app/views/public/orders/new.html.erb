@@ -43,6 +43,9 @@
       <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
         <h3 class="text-xl font-bold mb-6">Buyer Information</h3>
         <%= form_with url: event_orders_path(@event), method: :post, local: true do |f| %>
+          <% if @order.persisted? %>
+            <%= hidden_field_tag :order_no, @order.order_no %>
+          <% end %>
           <div class="mb-8 bg-blue-50 p-4 rounded-lg border border-blue-100 flex justify-between items-center">
             <div>
               <label class="block font-bold text-gray-900">Quantity</label>
