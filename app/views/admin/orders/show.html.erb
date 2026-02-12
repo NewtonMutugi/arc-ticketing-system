@@ -8,7 +8,7 @@
           <p class="text-sm text-gray-500"><%= @order.created_at.strftime("%b %d, %Y at %H:%M") %></p>
         </div>
         <div class="flex items-center gap-2">
-          <% status_colors = { "paid" => "bg-green-100 text-green-800", "pending" => "bg-yellow-100 text-yellow-800", "failed" => "bg-red-100 text-red-800", "refunded" => "bg-gray-100 text-gray-800" } %>
+          <% status_colors = { "paid" => "bg-green-100 text-green-800", "submitted" => "bg-yellow-100 text-yellow-800", "failed" => "bg-red-100 text-red-800", "refunded" => "bg-gray-100 text-gray-800" } %>
           <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide <%= status_colors[@order.status] %>">
             <%= @order.status %>
           </span>
@@ -18,7 +18,7 @@
         </div>
       </div>
       <div class="p-6 overflow-y-auto">
-        <% if @order.pending? && @order.payment_reference.present? %>
+        <% if @order.submitted? && @order.payment_reference.present? %>
           <div class="mb-8 bg-blue-50 border border-blue-100 rounded-lg p-5">
             <h3 class="font-bold text-blue-900 mb-3 flex items-center">
               <i class="fa-solid fa-magnifying-glass mr-2"></i> Verify Payment

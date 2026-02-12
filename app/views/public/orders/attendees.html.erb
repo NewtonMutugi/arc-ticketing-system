@@ -16,9 +16,12 @@
       <p class="text-sm text-gray-500">Please provide details for each ticket holder.</p>
     </div>
     <%= form_with url: event_order_confirm_path(@event, @order), method: :patch, local: true, class: "p-6 space-y-8" do |f| %>
+      <%# Fetch existing attendees into an array to pull from %>
+      <% existing_attendees = @order.attendees.to_a %>
       <% counter = 0 %>
       <% @order.order_items.each do |item| %>
         <% item.quantity.times do |i| %>
+          <% attendee = existing_attendees[counter] %>
           <% counter += 1 %>
           <div class="p-4 rounded-lg border border-gray-200 hover:border-red-100 transition-colors relative group">
             <div class="absolute -top-3 left-4 bg-white px-2 text-sm font-bold text-gray-500 group-hover:text-red-600 transition-colors">
@@ -27,16 +30,37 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
               <input type="hidden" name="attendees[][ticket_id]" value="<%= item.ticket.id %>">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                <input type="text" name="attendees[][first_name]" required class="w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
+                <%= render InputComponent.new(
+                  label: "First Name",
+                  name: "attendees[][first_name]",
+                  id: "attendees_#{counter}_first_name",
+                  value: attendee&.first_name,
+                  type: "text",
+                  placeholder: "",
+                  required: true,
+                ) %>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                <input type="text" name="attendees[][last_name]" required class="w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
+                <%= render InputComponent.new(
+                  label: "Last Name",
+                  name: "attendees[][last_name]",
+                  id: "attendees_#{counter}_last_name",
+                  type: "text",
+                  placeholder: "",
+                  value: attendee&.last_name,
+                  required: true,
+                ) %>
               </div>
               <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                <input type="email" name="attendees[][email]" required class="w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
+                <%= render InputComponent.new(
+                  label: "Email Address",
+                  name: "attendees[][email]",
+                  id: "attendees_#{counter}_email",
+                  type: "email",
+                  placeholder: "",
+                  required: true,
+                  value: attendee&.email,
+                ) %>
                 <p class="text-xs text-gray-500 mt-1">We'll send the ticket to this email.</p>
               </div>
             </div>
@@ -44,6 +68,12 @@
         <% end %>
       <% end %>
       <div class="pt-4 border-t border-gray-100 flex justify-end gap-4">
+        <% primary_ticket_id = @order.order_items.first&.ticket_id %>
+        <% back_link = primary_ticket_id ? new_event_order_path(@event, ticket_id: primary_ticket_id, order_no: @order.order_no) : event_path(@event) %>
+        <%= link_to back_link, class: "text-gray-600 hover:text-gray-900 flex items-center gap-2 font-medium" do %>
+          <i class="fa-solid fa-arrow-left"></i>
+          Edit Buyer information
+        <% end %>
         <%= f.submit "Continue to Payment", class: "bg-red-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-red-700 transition shadow-lg cursor-pointer" %>
       </div>
     <% end %>

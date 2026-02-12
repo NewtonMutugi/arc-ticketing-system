@@ -59,6 +59,19 @@
             required: true
           ) %>
         </div>
+        <div class="col-span-1 md:col-span-2">
+          <%= render InputComponent.new(
+            label: "Ticket Benefits / Advantages",
+            name: "ticket[benefits]",
+            type: "textarea",
+            value: ticket.benefits,
+            placeholder: "2-Day Conference Access\nAll main stage talks\nCoffee & lunch included\nConference materials & badge",
+            required: false,
+            rows: 5,
+            className: "font-mono text-sm"
+          ) %>
+          <p class="text-xs text-gray-500 mt-1">Enter each advantage on a new line.</p>
+        </div>
         <div>
           <%= render InputComponent.new(
             label: "Start Sale Date",

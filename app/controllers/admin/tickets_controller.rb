@@ -19,9 +19,23 @@ class Admin::TicketsController < Admin::BaseController
   def create
     @ticket = @event.tickets.new(ticket_params)
     if @ticket.save
-      redirect_to admin_event_tickets_path(@event), notice: "Ticket created successfully."
+      # redirect_to admin_event_tickets_path(@event), notice: "Ticket created successfully."
+      respond_to do |format|
+        format.html { redirect_to admin_event_tickets_path(@event), notice: "Ticket created successfully." }
+
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.prepend(@ticket, partial: "admin/tickets/ticket", locals: { ticket: @ticket, event: @event }),
+            turbo_stream.update("modal", ""),
+            turbo_stream.append("flash-toasts", partial: "shared/flash_toast", locals: { type: :success, title: "Success", body: "Ticket created successfully." })
+          ]
+        end
+      end
     else
-      render :new, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render :new, status: :unprocessable_entity }
+        format.turbo_stream { render :new, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -61,6 +75,6 @@ class Admin::TicketsController < Admin::BaseController
   end
 
   def ticket_params
-    params.require(:ticket).permit(:title, :price, :quantity, :description, :start_sale_date, :end_sale_date, :min_ticket, :max_ticket, :group_ticket_count, :status)
+    params.require(:ticket).permit(:title, :price, :quantity, :description, :start_sale_date, :end_sale_date, :min_ticket, :max_ticket, :group_ticket_count, :status, :benefits)
   end
 end

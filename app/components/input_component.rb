@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class InputComponent < ViewComponent::Base
-  def initialize(name:, label:, id: nil, type: "text", placeholder: " ", value: nil, required: true, autocomplete: "off", options: nil, accept: nil, className: "")
+  def initialize(name:, label:, id: nil, type: "text", placeholder: " ", value: nil, required: true, autocomplete: "off", options: nil, accept: nil, className: "", rows: nil)
     @name = name
     @label = label
     @id = id || name
@@ -13,6 +13,7 @@ class InputComponent < ViewComponent::Base
     @options = options
     @accept = accept
     @class_name = className
+    @rows = rows
   end
 
   def input_classes

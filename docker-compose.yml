@@ -1,0 +1,48 @@
+services:
+  # web:
+  #   build: .
+  #   image: arc_events_system:latest
+  #   container_name: arc_events_web
+  #   restart: always
+  #   # Map port 3000 on your laptop to port 80 inside the container (Thruster)
+  #   ports:
+  #     - "3000:80"
+  #   environment:
+  #     # Connect to the 'db' service defined below
+  #     DATABASE_URL: postgres://postgres:password@db:5432/arc_events_production
+  #     # Rails 8 needs the master key to decrypt credentials/secrets
+  #     RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+  #     # Tell Rails to serve static files (though Thruster handles this usually)
+  #     RAILS_SERVE_STATIC_FILES: "true"
+  #     # Ensure logs go to stdout so Docker can see them
+  #     RAILS_LOG_TO_STDOUT: "true"
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   volumes:
+  #     # PERSISTENCE: Keep uploads safe since we aren't using S3
+  #     - rails_storage:/rails/storage
+
+  db:
+    image: postgres:16-alpine
+    container_name: arc_events_system-db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: arc_events_production
+    volumes:
+      # PERSISTENCE: Keep database data safe across restarts
+      - postgres_data:/var/lib/postgresql/data
+    # Healthcheck ensures Rails doesn't try to boot before DB is ready
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  rails_storage:

@@ -16,6 +16,9 @@ module Public
       # Only show tickets that are active and active sale dates
       @tickets = @event.tickets.where(status: true)
                                .where("start_sale_date <= ? AND end_sale_date >= ?", Date.today, Date.today)
+
+      # Check if there is an existing order ID in the URL/params to resume
+      @order = Order.find_by(order_no: params[:order_no]) if params[:order_no].present?
     end
   end
 end

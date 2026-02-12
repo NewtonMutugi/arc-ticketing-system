@@ -21,38 +21,12 @@
       </thead>
       <tbody class="bg-white divide-y divide-gray-200">
         <%= render partial: "admin/orders/order_row", collection: @orders, as: :order, locals: { event: @event } %>
-        <% @orders.each do |order| %>
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-indigo-600">
-              <%= order.order_no %>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900"><%= order.buyer_name %></div>
-              <div class="text-sm text-gray-500"><%= order.buyer_email %></div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              <%= order.created_at.strftime("%b %d, %Y") %>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              <%= order.total_items %> items
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-              <%= number_to_currency(order.total_cost, unit: "Ksh ") %>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <% status_colors = { "paid" => "bg-green-100 text-green-800", "pending" => "bg-yellow-100 text-yellow-800", "failed" => "bg-red-100 text-red-800" } %>
-              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= status_colors[order.status] || 'bg-gray-100 text-gray-800' %>">
-                <%= order.status.humanize %>
-              </span>
-            </td>
-          </tr>
-        <% end %>
       </tbody>
     </table>
   </div>
   <% if @pagy.pages > 1 %>
     <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-center">
-      <%== pagy_nav(@pagy) %>
+      <%== @pagy.series_nav %>
     </div>
   <% end %>
 </div>

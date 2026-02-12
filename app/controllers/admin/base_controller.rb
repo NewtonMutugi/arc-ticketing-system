@@ -7,7 +7,7 @@ class Admin::BaseController < ApplicationController
 
   def authenticate_user!
       if Current.user.nil?
-        redirect_to new_admin_session_path, alert: "Please sign in to access the dashboard."
+        redirect_to admin_new_session_path, alert: "Please sign in to access the dashboard."
       end
   end
 

@@ -22,15 +22,15 @@
       <div class="w-full sm:w-2/3 p-4 flex flex-col justify-center">
         <div class="grid grid-cols-3 gap-2 text-center mb-4 border-b border-gray-100 pb-3">
           <div>
-            <span class="block text-xl font-bold text-gray-800">0</span>
+            <span class="block text-md font-bold text-gray-800"><%= ticket.tickets_sold %></span>
             <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Sold</span>
           </div>
           <div class="border-l border-gray-100">
-            <span class="block text-xl font-bold text-gray-800"><%= ticket.quantity %></span>
+            <span class="block text-md font-bold text-gray-800"><%= ticket.tickets_left %></span>
             <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Left</span>
           </div>
           <div class="border-l border-gray-100">
-            <span class="block text-xl font-bold text-gray-800">0</span>
+            <span class="block text-md font-bold text-gray-800"><%= number_to_currency(ticket.revenue, unit: "Ksh ", precision: 0) %></span>
             <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Revenue</span>
           </div>
         </div>
