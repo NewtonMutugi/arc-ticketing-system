@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "webhooks/mpesa"
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end
@@ -11,6 +12,7 @@ Rails.application.routes.draw do
         patch "confirm", to: "orders#confirm"
         get "checkout", to: "orders#checkout"
         patch "pay", to: "orders#pay"
+        get "status", to: "orders#status", on: :member
       end
     end
   end
@@ -52,4 +54,9 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  post "webhooks/mpesa", to: "webhooks#mpesa"
+
+  post "paypal/create_order", to: "paypal#create_order"
+  post "paypal/capture_order", to: "paypal#capture_order"
 end

@@ -5,7 +5,7 @@ module Public
     allow_unauthenticated_access
     before_action :resume_session
 
-    before_action :set_order, only: [ :attendees, :confirm, :checkout, :pay, :show ]
+    before_action :set_order, only: [ :attendees, :confirm, :checkout, :pay, :show, :status ]
 
     def new
       @ticket = @event.tickets.find(params[:ticket_id])
@@ -106,15 +106,46 @@ module Public
     end
 
     def pay
-      if @order.update(payment_params.merge(status: :submitted))
-        # TODO: Send Email - deliver now
-        OrderMailer.receipt_email(@order).deliver_now
+      # 1. Handle M-PESA STK Push
+      if params[:payment_method] == "mpesa"
+        # Grab phone number (fallback to buyer's number if empty)
+        phone = params[:mpesa_phone_number].presence || @order.buyer_phone_no
 
-        # We keep status as 'pending' but now it has a reference number for Admin to check
-        redirect_to event_order_path(@event, @order), notice: "Payment details submitted for review!"
-      else
-        render :checkout, status: :unprocessable_entity
+        # Trigger Service
+        response = MpesaService.new(@order).stk_push(phone)
+
+        if response["ResponseCode"] == "0"
+          @order.update(
+            checkout_request_id: response["CheckoutRequestID"],
+            merchant_request_id: response["MerchantRequestID"],
+            status: :submitted,
+            payment_provider: "Mpesa"
+          )
+          redirect_to event_order_path(@event, @order), notice: "STK Push sent to #{phone}. Check your phone!"
+        else
+          redirect_to event_order_checkout_path(@event, @order), alert: "M-Pesa Error: #{response['CustomerMessage']}"
+        end
+        return # STOP execution here so we don't hit the code below
       end
+
+      # 2. Handle Manual Reference Code (Old/Fallback method)
+      # Only try to permit params if 'order' key exists
+      if params[:order].present?
+        if @order.update(payment_params.merge(status: :submitted))
+          # Trigger Email
+          OrderMailer.receipt_email(@order).deliver_later
+          redirect_to event_order_path(@event, @order), notice: "Payment details submitted for review!"
+        else
+          render :checkout, status: :unprocessable_entity
+        end
+      else
+        # 3. Handle cases where neither M-Pesa nor Manual Code was sent correctly
+        redirect_to event_order_checkout_path(@event, @order), alert: "Please select a valid payment method."
+      end
+    end
+
+    def status
+      render json: { status: @order.status }
     end
 
     private

@@ -87,5 +87,6 @@ gem "friendly_id", "~> 5.6"
 gem "dotenv-rails", "~> 3.2", groups: [ :development, :test ]
 
 
-gem 'rack-cors'
-gem 'rest-client'
+gem "rack-cors"
+gem "rest-client"
+gem "faraday"
