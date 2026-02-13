@@ -1,25 +1,56 @@
-<% content_for :title, "Ticket Confirmed" %>
+<% content_for :title, "Order Status" %>
 <div class="max-w-2xl mx-auto text-center py-12">
+  <%# --- STATE 1: SUCCESS --- %>
   <% if @order.paid? %>
     <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
       <i class="fa-solid fa-check text-4xl text-green-600"></i>
     </div>
     <h1 class="text-3xl font-bold text-gray-900 mb-2">Ticket Confirmed!</h1>
-    <p class="text-gray-500 mb-8">See you at the event!</p>
-  <% elsif @order.payment_reference.present? %>
-    <div class="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
-      <i class="fa-solid fa-hourglass-half text-4xl text-yellow-600"></i>
+    <p class="text-gray-500 mb-8">We have sent the tickets to <%= @order.buyer_email %>.</p>
+    <%= link_to "View My Tickets", "#", class: "bg-gray-900 text-white px-6 py-2 rounded-lg" %>
+    <%# --- STATE 2: PROCESSING (Polling) --- %>
+  <% elsif @order.status == "submitted" %>
+    <div id="status-poller" data-url="<%= status_event_order_path(@event, @order) %>">
+      <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 relative">
+        <div class="absolute inset-0 border-4 border-blue-200 rounded-full animate-pulse"></div>
+        <i class="fa-solid fa-mobile-screen-button text-3xl text-blue-600 animate-bounce"></i>
+      </div>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Check your Phone</h1>
+      <p class="text-gray-500 mb-8 text-lg">
+        Please enter your M-PESA PIN to complete the payment.
+      </p>
+      <div class="inline-flex items-center gap-2 text-sm text-gray-400">
+        <i class="fa-solid fa-spinner fa-spin"></i> Waiting for confirmation...
+      </div>
     </div>
-    <h1 class="text-3xl font-bold text-gray-900 mb-2">Payment Under Review</h1>
-    <p class="text-gray-500 mb-4">We have received your reference: <span class="font-mono font-bold"><%= @order.payment_reference %></span></p>
-    <div class="bg-yellow-50 text-yellow-800 p-4 rounded-lg text-sm max-w-md mx-auto mb-8">
-      Your ticket will be emailed to you as soon as an admin verifies this transaction.
-    </div>
-  <% else %>
+    <script>
+      document.addEventListener("turbo:load", function() {
+        const pollerDiv = document.getElementById('status-poller');
+        if (!pollerDiv) return;
+
+        const checkStatus = setInterval(() => {
+          fetch(pollerDiv.dataset.url, { headers: { "Accept": "application/json" } })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status === 'paid' || data.status === 'failed') {
+                clearInterval(checkStatus);
+                window.location.reload(); // Reload to show Success or Failed state
+              }
+            });
+        }, 3000); // Check every 3 seconds
+      });
+    </script>
+    <%# --- STATE 3: FAILED --- %>
+  <% elsif @order.status == "failed" %>
     <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-      <i class="fa-solid fa-exclamation text-4xl text-red-600"></i>
+      <i class="fa-solid fa-xmark text-4xl text-red-600"></i>
     </div>
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">Payment Failed</h1>
+    <p class="text-gray-500 mb-8">The transaction was cancelled or timed out.</p>
+    <%= link_to "Try Again", event_order_checkout_path(@event, @order), class: "bg-red-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-red-700 transition" %>
+    <%# --- STATE 4: PENDING --- %>
+  <% else %>
     <h1 class="text-3xl font-bold text-gray-900 mb-2">Payment Required</h1>
-    <%= link_to "Complete Payment", event_order_checkout_path(@event, @order), class: "inline-block mt-4 text-red-600 font-bold hover:underline" %>
+    <%= link_to "Complete Payment", event_order_checkout_path(@event, @order), class: "text-red-600 font-bold hover:underline" %>
   <% end %>
 </div>
