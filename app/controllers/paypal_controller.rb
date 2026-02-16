@@ -56,8 +56,8 @@ class PaypalController < ApplicationController
   private
 
   def get_access_token
-    client_id = Rails.application.credentials.dig(:paypal, :client_id)
-    secret = Rails.application.credentials.dig(:paypal, :client_secret)
+    client_id = ENV["PAYPAL_CLIENT_ID"]
+    secret = ENV["PAYPAL_CLIENT_SECRET"]
     auth = Base64.strict_encode64("#{client_id}:#{secret}")
 
     response = Faraday.post("#{BASE_URL}/v1/oauth2/token") do |req|

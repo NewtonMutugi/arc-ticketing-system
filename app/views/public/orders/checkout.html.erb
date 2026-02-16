@@ -73,6 +73,7 @@
 </div>
 <script>
   let isPayPalInitialized = false;
+  console.log("Checkout page loaded. PayPal Initialized:", isPayPalInitialized);
 
   function togglePayment(method) {
     // 1. Switch Tabs
@@ -90,13 +91,14 @@
       renderPayPalButtons();
     } else {
       const script = document.createElement('script');
-      script.src = "https://www.paypal.com/sdk/js?client-id=<%= Rails.application.credentials.dig(:paypal, :client_id) %>&currency=USD";
+      script.src = "https://www.paypal.com/sdk/js?client-id=<%= ENV['PAYPAL_CLIENT_ID'] %>&currency=USD";
       script.onload = renderPayPalButtons;
       document.head.appendChild(script);
     }
   }
 
   function renderPayPalButtons() {
+    console.log("Initializing PayPal Buttons...");
     if (isPayPalInitialized) return;
 
     paypal.Buttons({
