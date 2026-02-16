@@ -46,12 +46,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_08_162332) do
     t.datetime "checked_in_at"
     t.datetime "created_at", null: false
     t.string "email"
-    t.integer "event_id", null: false
+    t.bigint "event_id", null: false
     t.string "first_name"
     t.string "last_name"
-    t.integer "order_id", null: false
+    t.bigint "order_id", null: false
     t.string "preferred_name"
-    t.integer "ticket_id", null: false
+    t.bigint "ticket_id", null: false
     t.string "token"
     t.datetime "updated_at", null: false
     t.index ["event_id"], name: "index_attendees_on_event_id"
@@ -86,9 +86,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_08_162332) do
 
   create_table "order_items", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.integer "order_id", null: false
+    t.bigint "order_id", null: false
     t.integer "quantity"
-    t.integer "ticket_id", null: false
+    t.bigint "ticket_id", null: false
     t.decimal "unit_price", precision: 10, scale: 2
     t.datetime "updated_at", null: false
     t.index ["order_id"], name: "index_order_items_on_order_id"
@@ -115,7 +115,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_08_162332) do
     t.string "ip_address"
     t.datetime "updated_at", null: false
     t.string "user_agent"
-    t.integer "user_id", null: false
+    t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
@@ -245,7 +245,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_08_162332) do
     t.datetime "created_at", null: false
     t.text "description"
     t.date "end_sale_date"
-    t.integer "event_id", null: false
+    t.bigint "event_id", null: false
     t.integer "group_ticket_count"
     t.integer "max_ticket"
     t.integer "min_ticket"
