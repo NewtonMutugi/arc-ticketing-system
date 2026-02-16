@@ -85,7 +85,7 @@ class TicketPdfGenerator
 
       # Col 3: Date
       pdf.bounding_box([ 240, y_cursor ], width: 100, height: 35) do
-        label(pdf, "Date")
+        label(pdf, "Event Date")
         value(pdf, @event.start_date.strftime("%b %d, %Y").upcase, size: 10)
       end
 
