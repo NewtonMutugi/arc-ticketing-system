@@ -7,7 +7,7 @@
     </div>
     <h1 class="text-3xl font-bold text-gray-900 mb-2">Ticket Confirmed!</h1>
     <p class="text-gray-500 mb-8">We have sent the tickets to <%= @order.buyer_email %>.</p>
-    <%= link_to "View My Tickets", "#", class: "bg-gray-900 text-white px-6 py-2 rounded-lg" %>
+    <%#= link_to "View My Tickets", "#", class: "bg-gray-900 text-white px-6 py-2 rounded-lg" %>
     <%# --- STATE 2: PROCESSING (Polling) --- %>
   <% elsif @order.status == "submitted" %>
     <div id="status-poller" data-url="<%= status_event_order_path(@event, @order) %>">
