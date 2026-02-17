@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_08_162332) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_12_183228) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -99,13 +99,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_08_162332) do
     t.string "buyer_email"
     t.string "buyer_name"
     t.string "buyer_phone_no"
+    t.string "checkout_request_id"
     t.datetime "created_at", null: false
+    t.string "merchant_request_id"
     t.string "order_no"
     t.string "payment_provider"
     t.string "payment_reference"
+    t.string "paypal_order_id"
     t.integer "status", default: 0
     t.decimal "total_cost", precision: 10, scale: 2
     t.integer "total_items"
+    t.string "transaction_receipt"
     t.datetime "updated_at", null: false
     t.index ["order_no"], name: "index_orders_on_order_no", unique: true
   end

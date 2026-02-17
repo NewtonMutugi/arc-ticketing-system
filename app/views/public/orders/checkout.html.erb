@@ -16,71 +16,145 @@
       <label class="block cursor-pointer group">
         <input type="radio" name="payment_tab" value="mpesa" checked class="peer sr-only" onchange="togglePayment('mpesa')">
         <div class="p-4 rounded-xl border border-gray-200 peer-checked:border-green-500 peer-checked:bg-green-50 peer-checked:text-green-700 hover:border-gray-300 transition">
-          <div class="font-bold">M-PESA</div>
-          <div class="text-xs text-gray-500 mt-1">Paybill</div>
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 rounded-full border border-gray-400 peer-checked:border-green-600 peer-checked:bg-green-600"></div>
+            <div class="font-bold">M-PESA</div>
+          </div>
+          <div class="text-xs text-gray-500 mt-1 ml-6">Automatic STK Push</div>
         </div>
       </label>
       <label class="block cursor-pointer group">
         <input type="radio" name="payment_tab" value="paypal" class="peer sr-only" onchange="togglePayment('paypal')">
         <div class="p-4 rounded-xl border border-gray-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-gray-300 transition">
-          <div class="font-bold">PayPal</div>
-          <div class="text-xs text-gray-500 mt-1">Direct Transfer</div>
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 rounded-full border border-gray-400 peer-checked:border-blue-600 peer-checked:bg-blue-600"></div>
+            <div class="font-bold">PayPal / Card</div>
+          </div>
+          <div class="text-xs text-gray-500 mt-1 ml-6">International Cards</div>
         </div>
       </label>
     </div>
     <div class="md:col-span-2">
       <div class="mb-4">
         <%= link_to event_order_attendees_path(@event, @order), class: "text-sm text-gray-600 hover:text-red-600 flex items-center gap-1" do %>
-          <i class="fa-solid fa-chevron-left text-xs"></i>
-          Back to Attendee Details
+          <i class="fa-solid fa-chevron-left text-xs"></i> Back to Attendee Details
         <% end %>
       </div>
-      <%= form_with model: @order, url: event_order_pay_path(@event, @order), method: :patch, local: true, class: "bg-white p-6 rounded-xl border border-gray-200 shadow-sm" do |f| %>
+      <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm min-h-[350px]">
         <div id="mpesa-section" class="payment-section">
-          <div class="bg-green-50 border border-green-100 rounded-lg p-4 mb-6">
-            <h4 class="font-bold text-green-800 mb-2">How to pay via M-PESA</h4>
-            <ol class="list-decimal list-inside text-sm text-green-700 space-y-1">
-              <li>Go to M-PESA Menu</li>
-              <li>Select <strong>Lipa na M-PESA</strong></li>
-              <li>Select <strong>Paybill</strong></li>
-              <li>Business No: <span class="font-mono font-bold">123456</span></li>
-              <li>Account No: <span class="font-mono font-bold"><%= @order.order_no %></span></li>
-              <li>Amount: <span class="font-mono font-bold"><%= @order.total_cost.to_i %></span></li>
-            </ol>
-          </div>
-          <%= f.hidden_field :payment_provider, value: "Mpesa", id: "provider-input" %>
+          <%= form_with url: event_order_pay_path(@event, @order), method: :patch, local: true do |f| %>
+            <%= hidden_field_tag :payment_method, "mpesa" %>
+            <div class="text-center py-6">
+              <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-mobile-screen-button text-2xl"></i>
+              </div>
+              <h4 class="text-xl font-bold text-gray-900 mb-2">Pay with M-PESA</h4>
+              <p class="text-sm text-gray-500 mb-6">Enter the M-Pesa number to pay.</p>
+              <div class="max-w-xs mx-auto mb-8 relative">
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Phone Number</label>
+                <%= telephone_field_tag :mpesa_phone_number, @order.buyer_phone_no, class: "w-full text-center text-2xl font-bold text-gray-900 border-b-2 border-gray-200 focus:border-green-600 border-t-0 border-x-0 bg-transparent focus:ring-0 placeholder-gray-300 transition-colors py-2", placeholder: "07XX XXX XXX", required: true %>
+              </div>
+              <%= f.submit "Pay #{number_to_currency(@order.total_cost, unit: 'Ksh ', precision: 0)}", class: "w-full max-w-sm bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 transition shadow-lg cursor-pointer text-lg" %>
+            </div>
+          <% end %>
         </div>
         <div id="paypal-section" class="payment-section hidden">
-          <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6">
-            <h4 class="font-bold text-blue-800 mb-2">How to pay via PayPal</h4>
-            <p class="text-sm text-blue-700 mb-2">Send payment to: <span class="font-bold">payments@rubyconf.africa</span></p>
-            <p class="text-xs text-blue-600">Please include your Order Number (<%= @order.order_no %>) in the transaction notes.</p>
+          <div class="text-center py-6">
+            <h4 class="text-xl font-bold text-gray-900 mb-6">Pay via PayPal or Card</h4>
+            <div id="paypal-button-container" class="w-full max-w-sm mx-auto min-h-[150px]"></div>
+            <p class="text-xs text-gray-400 mt-4">
+              Total: <strong>$<%= (@order.total_cost / 130.0).round(2) %></strong> (Approx)
+            </p>
           </div>
         </div>
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Transaction Reference / Confirmation Code</label>
-            <%= f.text_field :payment_reference, required: true, placeholder: "e.g. QKH45...", class: "w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 uppercase font-mono" %>
-            <p class="text-xs text-gray-500 mt-1">Enter the code you received from M-PESA or PayPal.</p>
-          </div>
-        </div>
-        <div class="mt-8 pt-6 border-t border-gray-100">
-          <%= f.submit "Submit for Verification", class: "w-full bg-gray-900 text-white px-6 py-3 rounded-lg font-bold hover:bg-black transition cursor-pointer" %>
-        </div>
-      <% end %>
+      </div>
     </div>
   </div>
 </div>
 <script>
-  function togglePayment(method) {
-    // Hide all sections
-    document.querySelectorAll('.payment-section').forEach(el => el.classList.add('hidden'));
+  let isPayPalInitialized = false;
 
-    // Show selected section
+  function togglePayment(method) {
+    document.querySelectorAll('.payment-section').forEach(el => el.classList.add('hidden'));
     document.getElementById(method + '-section').classList.remove('hidden');
 
-    // Update hidden provider input
-    const providerName = method.charAt(0).toUpperCase() + method.slice(1); // 'Mpesa' or 'Paypal'
-    document.getElementById('provider-input').value = providerName;
+    if (method === 'paypal' && !isPayPalInitialized) {
+      loadPayPalSDK();
+    }
+  }
+
+  function loadPayPalSDK() {
+    if (window.paypal) {
+      renderPayPalButtons();
+    } else {
+      const script = document.createElement('script');
+      script.src = "https://www.paypal.com/sdk/js?client-id=<%= ENV['PAYPAL_CLIENT_ID'] %>&currency=USD";
+      script.onload = renderPayPalButtons;
+      document.head.appendChild(script);
+    }
+  }
+
+  function renderPayPalButtons() {
+    if (isPayPalInitialized) return;
+
+    paypal.Buttons({
+      style: { layout: 'vertical', color: 'blue', shape: 'rect', label: 'pay' },
+
+      // STEP 1: CREATE ORDER
+      createOrder: function(data, actions) {
+        return fetch('/paypal/create_order', {
+          method: 'post',
+          headers: {
+            'content-type': 'application/json',
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+          },
+          body: JSON.stringify({ order_no: "<%= @order.order_no %>" })
+        })
+        .then(async (res) => {
+          const json = await res.json();
+
+          // HANDLE SERVER ERRORS
+          if (!res.ok || json.error) {
+            console.error("Server Error:", json);
+            alert("Could not initiate payment: " + (json.error || "Unknown error"));
+            throw new Error("Server Error"); // This stops the PayPal flow
+          }
+
+          return json.id; // Return the valid ID
+        });
+      },
+
+      // STEP 2: CAPTURE ORDER
+      onApprove: function(data, actions) {
+        return fetch('/paypal/capture_order', {
+          method: 'post',
+          headers: {
+            'content-type': 'application/json',
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+          },
+          body: JSON.stringify({ orderID: data.orderID, order_no: "<%= @order.order_no %>" })
+        })
+        .then(async (res) => {
+          const json = await res.json();
+
+          // HANDLE CAPTURE ERRORS
+          if (!res.ok || json.error) {
+            console.error("Capture Error:", json);
+            alert("Payment failed: " + (json.error || "Please try again."));
+            // Restart the flow logic if needed, but do NOT redirect
+          } else if (json.status === 'COMPLETED') {
+            // SUCCESS REDIRECT
+            window.location.href = "<%= event_order_path(@event, @order) %>";
+          }
+        });
+      },
+
+      onError: function(err) {
+        console.error("PayPal SDK Error:", err);
+        alert("An error occurred with PayPal. Please try again.");
+      }
+    }).render('#paypal-button-container');
+
+    isPayPalInitialized = true;
   }
 </script>
