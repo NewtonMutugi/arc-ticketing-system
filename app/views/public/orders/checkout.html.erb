@@ -73,14 +73,11 @@
 </div>
 <script>
   let isPayPalInitialized = false;
-  console.log("Checkout page loaded. PayPal Initialized:", isPayPalInitialized);
 
   function togglePayment(method) {
-    // 1. Switch Tabs
     document.querySelectorAll('.payment-section').forEach(el => el.classList.add('hidden'));
     document.getElementById(method + '-section').classList.remove('hidden');
 
-    // 2. Initialize PayPal ONLY when tab is visible
     if (method === 'paypal' && !isPayPalInitialized) {
       loadPayPalSDK();
     }
@@ -98,12 +95,12 @@
   }
 
   function renderPayPalButtons() {
-    console.log("Initializing PayPal Buttons...");
     if (isPayPalInitialized) return;
 
     paypal.Buttons({
       style: { layout: 'vertical', color: 'blue', shape: 'rect', label: 'pay' },
 
+      // STEP 1: CREATE ORDER
       createOrder: function(data, actions) {
         return fetch('/paypal/create_order', {
           method: 'post',
@@ -112,9 +109,22 @@
             'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
           },
           body: JSON.stringify({ order_no: "<%= @order.order_no %>" })
-        }).then(res => res.json()).then(data => data.id);
+        })
+        .then(async (res) => {
+          const json = await res.json();
+
+          // HANDLE SERVER ERRORS
+          if (!res.ok || json.error) {
+            console.error("Server Error:", json);
+            alert("Could not initiate payment: " + (json.error || "Unknown error"));
+            throw new Error("Server Error"); // This stops the PayPal flow
+          }
+
+          return json.id; // Return the valid ID
+        });
       },
 
+      // STEP 2: CAPTURE ORDER
       onApprove: function(data, actions) {
         return fetch('/paypal/capture_order', {
           method: 'post',
@@ -123,13 +133,25 @@
             'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
           },
           body: JSON.stringify({ orderID: data.orderID, order_no: "<%= @order.order_no %>" })
-        }).then(res => res.json()).then(details => {
-          if (details.status === 'COMPLETED') {
+        })
+        .then(async (res) => {
+          const json = await res.json();
+
+          // HANDLE CAPTURE ERRORS
+          if (!res.ok || json.error) {
+            console.error("Capture Error:", json);
+            alert("Payment failed: " + (json.error || "Please try again."));
+            // Restart the flow logic if needed, but do NOT redirect
+          } else if (json.status === 'COMPLETED') {
+            // SUCCESS REDIRECT
             window.location.href = "<%= event_order_path(@event, @order) %>";
-          } else {
-            alert("Payment failed.");
           }
         });
+      },
+
+      onError: function(err) {
+        console.error("PayPal SDK Error:", err);
+        alert("An error occurred with PayPal. Please try again.");
       }
     }).render('#paypal-button-container');
 
