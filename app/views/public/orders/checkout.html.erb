@@ -88,7 +88,7 @@
       renderPayPalButtons();
     } else {
       const script = document.createElement('script');
-      script.src = "https://www.paypal.com/sdk/js?client-id=<%= ENV['PAYPAL_CLIENT_ID'] %>&currency=USD";
+      script.src = "https://www.paypal.com/sdk/js?client-id=<%= ENV['PROD_PAYPAL_CLIENT_ID'] %>&currency=USD";
       script.onload = renderPayPalButtons;
       document.head.appendChild(script);
     }
