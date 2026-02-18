@@ -4,6 +4,7 @@ require "json"
 
 class MpesaService
   BASE_URL = Rails.env.production? ? "https://api.safaricom.co.ke" : "https://sandbox.safaricom.co.ke"
+  CALLBACK_URL = Rails.env.production? ? ENV["PROD_MPESA_CALLBACK_URL"] : ENV["MPESA_CALLBACK_URL"]
 
   def initialize(order)
     @order = order
@@ -29,7 +30,7 @@ class MpesaService
         PartyA: formatted_phone, # Must be 2547...
         PartyB: shortcode,
         PhoneNumber: formatted_phone,
-        CallBackURL: ENV["MPESA_CALLBACK_URL"],
+        CallBackURL: CALLBACK_URL,
         AccountReference: @order.order_no,
         TransactionDesc: "Ticket Payment"
       }.to_json
