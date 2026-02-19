@@ -110,27 +110,22 @@ module Public
       if params[:payment_method] == "mpesa"
         # Grab phone number (fallback to buyer's number if empty)
         phone = params[:mpesa_phone_number].presence || @order.buyer_phone_no
-        begin
 
-          # Trigger Service
-          response = MpesaService.new(@order).stk_push(phone)
+        # Trigger Service
+        response = MpesaService.new(@order).stk_push(phone)
 
-          if response["ResponseCode"] == "0"
-            @order.update(
-              checkout_request_id: response["CheckoutRequestID"],
-              merchant_request_id: response["MerchantRequestID"],
-              status: :submitted,
-              payment_provider: "Mpesa"
-            )
-            redirect_to event_order_path(@event, @order), notice: "STK Push sent to #{phone}. Check your phone!"
-          else
-            message = response ? response["CustomerMessage"] : "Connection to M-Pesa failed. Please try again."
-            redirect_to event_order_checkout_path(@event, @order), alert: "M-Pesa Error: #{message}"
-          end
-        rescue StandardError => e
-          Rails.logger.error("MPESA CONTROLLER ERROR: #{e.message}")
-          redirect_to event_order_checkout_path(@event, @order), alert: "An unexpected error occurred. Please try again."
+        if response["ResponseCode"] == "0"
+          @order.update(
+            checkout_request_id: response["CheckoutRequestID"],
+            merchant_request_id: response["MerchantRequestID"],
+            status: :submitted,
+            payment_provider: "Mpesa"
+          )
+          redirect_to event_order_path(@event, @order), notice: "STK Push sent to #{phone}. Check your phone!"
+        else
+          redirect_to event_order_checkout_path(@event, @order), alert: "M-Pesa Error: #{response['CustomerMessage']}"
         end
+        return # STOP execution here so we don't hit the code below
       end
 
       # 2. Handle Manual Reference Code (Old/Fallback method)
@@ -148,7 +143,6 @@ module Public
         redirect_to event_order_checkout_path(@event, @order), alert: "Please select a valid payment method."
       end
     end
-  end
 
     def status
       render json: { status: @order.status }
@@ -172,4 +166,5 @@ module Public
     def payment_params
       params.require(:order).permit(:payment_provider, :payment_reference)
     end
+  end
 end
