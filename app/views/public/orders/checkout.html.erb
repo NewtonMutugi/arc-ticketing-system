@@ -72,16 +72,17 @@
   </div>
 </div>
 <script>
-  let isPayPalInitialized = false;
+  window.isPayPalInitialized = window.isPayPalInitialized || false;
 
-  function togglePayment(method) {
+  // Make the function available globally so the inline HTML onchange="" can find it
+  window.togglePayment = function(method) {
     document.querySelectorAll('.payment-section').forEach(el => el.classList.add('hidden'));
     document.getElementById(method + '-section').classList.remove('hidden');
 
-    if (method === 'paypal' && !isPayPalInitialized) {
+    if (method === 'paypal' && !window.isPayPalInitialized) {
       loadPayPalSDK();
     }
-  }
+  };
 
   function loadPayPalSDK() {
     if (window.paypal) {
@@ -89,7 +90,8 @@
     } else {
       const script = document.createElement('script');
       const clientId = "<%= ENV['PROD_PAYPAL_CLIENT_ID'] %>";
-      console.log(`PROD_PAYPAL_CLIENT_ID=${clientId}`)
+      console.log(`PROD_PAYPAL_CLIENT_ID=${clientId}`);
+
       script.src = "https://www.paypal.com/sdk/js?client-id=<%= ENV['PROD_PAYPAL_CLIENT_ID'] %>&currency=USD";
       script.onload = renderPayPalButtons;
       document.head.appendChild(script);
@@ -97,7 +99,11 @@
   }
 
   function renderPayPalButtons() {
-    if (isPayPalInitialized) return;
+    if (window.isPayPalInitialized) return;
+
+    // Safety check: Does the container actually exist on this page right now?
+    const container = document.getElementById('paypal-button-container');
+    if (!container) return;
 
     paypal.Buttons({
       style: { layout: 'vertical', color: 'blue', shape: 'rect', label: 'pay' },
@@ -115,14 +121,13 @@
         .then(async (res) => {
           const json = await res.json();
 
-          // HANDLE SERVER ERRORS
           if (!res.ok || json.error) {
             console.error("Server Error:", json);
             alert("Could not initiate payment: " + (json.error || "Unknown error"));
-            throw new Error("Server Error"); // This stops the PayPal flow
+            throw new Error("Server Error");
           }
 
-          return json.id; // Return the valid ID
+          return json.id;
         });
       },
 
@@ -139,13 +144,10 @@
         .then(async (res) => {
           const json = await res.json();
 
-          // HANDLE CAPTURE ERRORS
           if (!res.ok || json.error) {
             console.error("Capture Error:", json);
             alert("Payment failed: " + (json.error || "Please try again."));
-            // Restart the flow logic if needed, but do NOT redirect
           } else if (json.status === 'COMPLETED') {
-            // SUCCESS REDIRECT
             window.location.href = "<%= event_order_path(@event, @order) %>";
           }
         });
@@ -157,6 +159,12 @@
       }
     }).render('#paypal-button-container');
 
-    isPayPalInitialized = true;
+    window.isPayPalInitialized = true;
   }
+
+  // Ensure state resets if the user leaves the checkout page and comes back
+  document.addEventListener("turbo:before-cache", function() {
+    window.isPayPalInitialized = false;
+  }, { once: true });
 </script>
+
