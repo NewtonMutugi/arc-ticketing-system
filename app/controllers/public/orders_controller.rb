@@ -90,15 +90,12 @@ module Public
         end
       end
 
-      # For now, since we don't have payment, we redirect to a success page
-      # redirect_to event_order_path(@event, @order), notice: "Order confirmed!"
       redirect_to event_order_checkout_path(@event, @order), notice: "Attendees saved. Please verify payment."
 
     rescue ActiveRecord::RecordInvalid
       redirect_to event_order_attendees_path(@event, @order), alert: "Please check attendee details."
     end
 
-    # Add a simple show page for the "Success" state
     def show
     end
 
@@ -108,38 +105,40 @@ module Public
     def pay
       # 1. Handle M-PESA STK Push
       if params[:payment_method] == "mpesa"
-        # Grab phone number (fallback to buyer's number if empty)
         phone = params[:mpesa_phone_number].presence || @order.buyer_phone_no
 
-        # Trigger Service
-        response = MpesaService.new(@order).stk_push(phone)
+        begin
+          response = MpesaService.new(@order).stk_push(phone)
 
-        if response["ResponseCode"] == "0"
-          @order.update(
-            checkout_request_id: response["CheckoutRequestID"],
-            merchant_request_id: response["MerchantRequestID"],
-            status: :submitted,
-            payment_provider: "Mpesa"
-          )
-          redirect_to event_order_path(@event, @order), notice: "STK Push sent to #{phone}. Check your phone!"
-        else
-          redirect_to event_order_checkout_path(@event, @order), alert: "M-Pesa Error: #{response['CustomerMessage']}"
+          if response && response["ResponseCode"] == "0"
+            @order.update(
+              checkout_request_id: response["CheckoutRequestID"],
+              merchant_request_id: response["MerchantRequestID"],
+              status: :submitted,
+              payment_provider: "Mpesa"
+            )
+            redirect_to event_order_path(@event, @order), notice: "STK Push sent to #{phone}. Check your phone!"
+          else
+            # Graceful error handling (No 500 crash)
+            message = response ? response["CustomerMessage"] : "Connection to M-Pesa failed. Please try again."
+            redirect_to event_order_checkout_path(@event, @order), alert: "M-Pesa Error: #{message}"
+          end
+        rescue StandardError => e
+          Rails.logger.error("MPESA CONTROLLER ERROR: #{e.message}")
+          redirect_to event_order_checkout_path(@event, @order), alert: "An unexpected error occurred. Please try again."
         end
-        return # STOP execution here so we don't hit the code below
+        return
       end
 
       # 2. Handle Manual Reference Code (Old/Fallback method)
-      # Only try to permit params if 'order' key exists
       if params[:order].present?
         if @order.update(payment_params.merge(status: :submitted))
-          # Trigger Email
           OrderMailer.receipt_email(@order).deliver_later
           redirect_to event_order_path(@event, @order), notice: "Payment details submitted for review!"
         else
           render :checkout, status: :unprocessable_entity
         end
       else
-        # 3. Handle cases where neither M-Pesa nor Manual Code was sent correctly
         redirect_to event_order_checkout_path(@event, @order), alert: "Please select a valid payment method."
       end
     end
