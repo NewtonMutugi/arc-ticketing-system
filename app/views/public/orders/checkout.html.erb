@@ -88,6 +88,7 @@
       renderPayPalButtons();
     } else {
       const script = document.createElement('script');
+      console.log(`PROD_PAYPAL_CLIENT_ID=<%= ENV['PROD_PAYPAL_CLIENT_ID'] %>`);
       script.src = "https://www.paypal.com/sdk/js?client-id=<%= ENV['PROD_PAYPAL_CLIENT_ID'] %>&currency=USD";
       script.onload = renderPayPalButtons;
       document.head.appendChild(script);
@@ -148,6 +149,11 @@
           }
         });
       },
+
+      onCancel: function(data) {
+        console.log("Payment cancelled by user");
+      },
+
 
       onError: function(err) {
         console.error("PayPal SDK Error:", err);

@@ -44,6 +44,12 @@ class MpesaService
   def get_access_token
     key = ENV["MPESA_CONSUMER_KEY"]
     secret = ENV["MPESA_CONSUMER_SECRET"]
+
+    if key.blank? || secret.blank?
+      Rails.logger.error("MPESA CONFIG ERROR: Consumer Key or Secret is missing.")
+      return nil
+    end
+
     auth = Base64.strict_encode64("#{key}:#{secret}")
 
     response = connection.get("/oauth/v1/generate?grant_type=client_credentials") do |req|
