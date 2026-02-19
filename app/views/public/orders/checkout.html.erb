@@ -90,7 +90,7 @@
     } else {
       const script = document.createElement('script');
       const clientId = "<%= ENV['PROD_PAYPAL_CLIENT_ID'] %>";
-      console.log(`PROD_PAYPAL_CLIENT_ID=${clientId}`);
+      // console.log(`PROD_PAYPAL_CLIENT_ID=${clientId}`);
 
       script.src = "https://www.paypal.com/sdk/js?client-id=<%= ENV['PROD_PAYPAL_CLIENT_ID'] %>&currency=USD";
       script.onload = renderPayPalButtons;
