@@ -11,8 +11,8 @@ class PaypalController < ApplicationController
 
     # Validation: Ensure order exists
     unless order
-      render json: { error: "Order not found" }, status: :not_found
-      return
+      # render json: { error: "Order not found" }, status: :not_found
+      return render_error_toast("Order not found in the system. Please try again.")
     end
 
     # Calculate amount in USD
@@ -35,7 +35,9 @@ class PaypalController < ApplicationController
     else
       # LOG THE ERROR: This will show up in your terminal
       Rails.logger.error("PAYPAL CREATE ERROR: #{response.inspect}")
-      render json: { error: "PayPal API Error", details: response }, status: :unprocessable_entity
+      error_message = response["error"] || "Could not initiate PayPal payment. Please check configuration."
+      # render json: { error: "PayPal API Error", details: response }, status: :unprocessable_entity
+      render_error_toast(error_message)
     end
   end
 
@@ -59,16 +61,22 @@ class PaypalController < ApplicationController
         OrderMailer.confirmation_email(order).deliver_now
         render json: { status: "COMPLETED" }
       else
-        render json: { error: "Order not found in system" }, status: 404
+        # render json: { error: "Order not found in system" }, status: 404
+        render_error_toast("Payment successful, but order was not found.")
       end
     else
       # LOG THE ERROR
       Rails.logger.error("PAYPAL CAPTURE ERROR: #{response.inspect}")
-      render json: { error: "Capture failed", details: response }, status: :unprocessable_entity
+      # render json: { error: "Capture failed", details: response }, status: :unprocessable_entity
+      render_error_toast("Payment capture failed. Please try again.")
     end
   end
 
   private
+
+  def render_error_toast(message)
+    render turbo_stream: turbo_stream.append("flash-toasts", ToastComponent.new(type: :error, title: "PayPal Error", body: message)), status: :unprocessable_entity
+  end
 
   def get_access_token
     # Using ENV as requested
