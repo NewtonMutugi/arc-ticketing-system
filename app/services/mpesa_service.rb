@@ -50,7 +50,26 @@ class MpesaService
       req.headers["Authorization"] = "Basic #{auth}"
     end
 
-    JSON.parse(response.body)["access_token"]
+    # Catch empty bodies (Firewall drops / IP not whitelisted)
+    if response.body.blank?
+      Rails.logger.error("MPESA FATAL: Empty response! HTTP Status: #{response.status}")
+      Rails.logger.error("MPESA CHECK: Are your ENV keys loaded? Key present: #{key.present?}")
+      return nil
+    end
+
+    # Catch actual API errors (Bad credentials)
+    unless response.success?
+      Rails.logger.error("MPESA API ERROR #{response.status}: #{response.body}")
+      return nil
+    end
+
+    # Safely parse
+    begin
+      JSON.parse(response.body)["access_token"]
+    rescue JSON::ParserError => e
+      Rails.logger.error("MPESA PARSE ERROR: #{e.message} - Body was: #{response.body}")
+      nil
+    end
   end
 
   def connection
