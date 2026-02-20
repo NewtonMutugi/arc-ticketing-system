@@ -42,7 +42,7 @@
       </div>
       <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm min-h-[350px]">
         <div id="mpesa-section" class="payment-section">
-          <%= form_with url: event_order_pay_path(@event, @order), method: :patch, local: true do |f| %>
+          <%= form_with url: event_order_pay_path(@event, @order), method: :patch do |f| %>
             <%= hidden_field_tag :payment_method, "mpesa" %>
             <div class="text-center py-6">
               <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -167,4 +167,3 @@
     window.isPayPalInitialized = false;
   }, { once: true });
 </script>
-

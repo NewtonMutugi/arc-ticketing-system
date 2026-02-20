@@ -15,6 +15,13 @@ class MpesaService
     formatted_phone = format_phone(phone)
 
     token = get_access_token
+
+    unless token
+      return {
+        "ResponseCode" => "Error",
+        "CustomerMessage" => "Failed to retrieve MPESA access token. Please check configuration."
+      }
+    end
     timestamp = Time.now.strftime("%Y%m%d%H%M%S")
     password = Base64.strict_encode64("#{shortcode}#{passkey}#{timestamp}")
 
@@ -36,7 +43,19 @@ class MpesaService
       }.to_json
     end
 
-    JSON.parse(response.body)
+    begin
+      result = JSON.parse(response.body)
+
+      unless response.success?
+        error_msg = result["errorMessage"] || result["CustomerMessage"] || "M-Pesa API Error (#{response.status})"
+        Rails.logger.error("MPESA STK PUSH ERROR #{response.status}: #{error_msg}")
+        # Add the 'return' keyword here to stop execution
+        { "ResponseCode" => "Error", "CustomerMessage" => error_msg }
+      end
+    rescue JSON::ParserError => e
+      Rails.logger.error("MPESA STK PUSH PARSE ERROR. Status: #{response.status}, Body: #{response.body}")
+      { "ResponseCode" => "Error", "CustomerMessage" => "Invalid response from M-Pesa. Status: #{response.status}" }
+    end
   end
 
   private

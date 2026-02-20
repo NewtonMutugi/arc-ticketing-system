@@ -120,12 +120,29 @@ module Public
             redirect_to event_order_path(@event, @order), notice: "STK Push sent to #{phone}. Check your phone!"
           else
             # Graceful error handling (No 500 crash)
-            message = response ? response["CustomerMessage"] : "Connection to M-Pesa failed. Please try again."
-            redirect_to event_order_checkout_path(@event, @order), alert: "M-Pesa Error: #{message}"
+            message = response&.dig("CustomerMessage").presence || "M-Pesa is temporarily unavailable. Please try again."
+            # ERROR: Render the ToastComponent via Turbo Stream
+            respond_to do |format|
+              format.html { redirect_to event_order_checkout_path(@event, @order), alert: message }
+              format.turbo_stream do
+                # Note: ViewComponent supports passing the component directly to turbo_stream.append
+                render turbo_stream: turbo_stream.append("flash-toasts", ToastComponent.new(type: :error, title: "Payment Issue", body: message))
+              end
+            end
           end
         rescue StandardError => e
           Rails.logger.error("MPESA CONTROLLER ERROR: #{e.message}")
-          redirect_to event_order_checkout_path(@event, @order), alert: "An unexpected error occurred. Please try again."
+          # redirect_to event_order_checkout_path(@event, @order), alert: "An unexpected error occurred. Please try again."
+          message = "An unexpected error occurred connecting to M-Pesa."
+          # redirect_to event_order_checkout_path(@event, @order), alert: "M-Pesa Error: #{message}"
+
+          # ERROR: Render the ToastComponent via Turbo Stream
+          respond_to do |format|
+            format.html { redirect_to event_order_checkout_path(@event, @order), alert: message }
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.append("flash-toasts", ToastComponent.new(type: :error, title: "Connection Error", body: message))
+            end
+          end
         end
         return
       end
@@ -134,12 +151,31 @@ module Public
       if params[:order].present?
         if @order.update(payment_params.merge(status: :submitted))
           OrderMailer.receipt_email(@order).deliver_later
-          redirect_to event_order_path(@event, @order), notice: "Payment details submitted for review!"
+          # redirect_to event_order_path(@event, @order), notice: "Payment details submitted for review!"
+          respond_to do |format|
+            format.html { redirect_to event_order_path(@event, @order), notice: "Payment details submitted for review!" }
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.append("flash-toasts", ToastComponent.new(type: :success, title: "Payment Submitted", body: "Your payment details have been submitted for review!"))
+            end
+          end
+
         else
-          render :checkout, status: :unprocessable_entity
+          # render :checkout, status: :unprocessable_entity
+          respond_to do |format|
+            format.html { render :checkout, status: :unprocessable_entity }
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.append("flash-toasts", ToastComponent.new(type: :error, title: "Submission Failed", body: "Please check your payment details and try again."))
+            end
+          end
         end
       else
-        redirect_to event_order_checkout_path(@event, @order), alert: "Please select a valid payment method."
+        # redirect_to event_order_checkout_path(@event, @order), alert: "Please select a valid payment method."
+        respond_to do |format|
+          format.html { redirect_to event_order_checkout_path(@event, @order), alert: "Please select a valid payment method." }
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.append("flash-toasts", ToastComponent.new(type: :error, title: "Payment Method Error", body: "Please select a valid payment method."))
+            end
+          end
       end
     end
 

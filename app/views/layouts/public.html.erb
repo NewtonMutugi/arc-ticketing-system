@@ -29,6 +29,19 @@
       </div>
     </nav>
     <main class="max-w-5xl mx-auto px-4 py-8">
+      <div id="flash-toasts" class="fixed top-5 right-5 z-50 flex flex-col gap-4 w-96 pointer-events-none">
+        <% flash.each do |key, message| %>
+          <%
+            type = case key.to_s
+               when "notice" then :success
+               when "alert" then :error
+               else :info
+               end
+            title = type.to_s.humanize
+          %>
+          <%= render ToastComponent.new(type: type, title: title, body: message) %>
+        <% end %>
+      </div>
       <%= yield %>
     </main>
     <%= render "layouts/footer" %>
