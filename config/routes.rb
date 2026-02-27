@@ -34,6 +34,7 @@ Rails.application.routes.draw do
         member do
           patch :approve
           patch :disapprove
+          post :resend_confirmation_email
         end
       end
       resources :transactions, only: [ :index ]

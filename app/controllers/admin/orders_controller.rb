@@ -1,7 +1,7 @@
 class Admin::OrdersController < Admin::BaseController
   layout "event_dashboard"
   before_action :set_event
-  before_action :set_order, only: [ :show, :approve ]
+  before_action :set_order, only: [ :show, :approve, :resend_confirmation_email ]
 
   def index
     @query = @event.orders.includes(:order_items).order(created_at: :desc)
@@ -37,6 +37,23 @@ class Admin::OrdersController < Admin::BaseController
     end
   end
 
+  def resend_confirmation_email
+    if @order.paid?
+      OrderMailer.confirmation_email(@order).deliver_now
+
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.append("flash-toasts", partial: "shared/flash_toast", locals: { type: :success, title: "Confirmation resent", body: "Confirmation email for order ##{@order.order_no} resent." })
+        end
+      end
+    else
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.append("flash-toasts", partial: "shared/flash_toast", locals: { type: :error, title: "Error", body: "Can only resend confirmation for paid orders." })
+        end
+      end
+    end
+  end
 
   # USED FOR TESTING PURPOSES ONLY
   # def disapprove

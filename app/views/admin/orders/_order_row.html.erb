@@ -27,4 +27,13 @@
       </span>
     <% end %>
   </td>
+  <% if order.status == 'paid' %>
+    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+      <%= form_with url: resend_confirmation_email_admin_event_order_path(event, order), method: :post, data: { turbo_frame: "_top" } do %>
+        <%= render ButtonComponent.new(intent: :primary, type: "submit") do %>
+          Resend Confirmation
+        <% end %>
+      <% end %>
+    </td>
+  <% end %>
 </tr>
