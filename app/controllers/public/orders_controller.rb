@@ -105,42 +105,44 @@ module Public
     def pay
       # 1. Handle M-PESA STK Push
       if params[:payment_method] == "mpesa"
-        phone = params[:mpesa_phone_number].presence || @order.buyer_phone_no
+        if Setting.mpesa_mode == "automated"
+          phone = params[:mpesa_phone_number].presence || @order.buyer_phone_no
 
-        begin
-          response = MpesaService.new(@order).stk_push(phone)
+          begin
+            response = MpesaService.new(@order).stk_push(phone)
 
-          if response && response["ResponseCode"] == "0"
-            @order.update(
-              checkout_request_id: response["CheckoutRequestID"],
-              merchant_request_id: response["MerchantRequestID"],
-              status: :submitted,
-              payment_provider: "Mpesa"
-            )
-            redirect_to event_order_path(@event, @order), notice: "STK Push sent to #{phone}. Check your phone!"
-          else
-            # Graceful error handling (No 500 crash)
-            message = response&.dig("CustomerMessage").presence || "M-Pesa is temporarily unavailable. Please try again."
-            # ERROR: Render the ToastComponent via Turbo Stream
+            if response && response["ResponseCode"] == "0"
+              @order.update(
+                checkout_request_id: response["CheckoutRequestID"],
+                merchant_request_id: response["MerchantRequestID"],
+                status: :submitted,
+                payment_provider: "Mpesa"
+              )
+              redirect_to event_order_path(@event, @order), notice: "STK Push sent to #{phone}. Check your phone!"
+            else
+              message = response&.dig("CustomerMessage").presence || "M-Pesa is temporarily unavailable. Please try again."
+              respond_to do |format|
+                format.html { redirect_to event_order_checkout_path(@event, @order), alert: message }
+                format.turbo_stream do
+                  render turbo_stream: turbo_stream.append("flash-toasts", ToastComponent.new(type: :error, title: "Payment Issue", body: message))
+                end
+              end
+            end
+          rescue StandardError => e
+            Rails.logger.error("MPESA CONTROLLER ERROR: #{e.message}")
+            message = "An unexpected error occurred connecting to M-Pesa."
             respond_to do |format|
               format.html { redirect_to event_order_checkout_path(@event, @order), alert: message }
               format.turbo_stream do
-                # Note: ViewComponent supports passing the component directly to turbo_stream.append
-                render turbo_stream: turbo_stream.append("flash-toasts", ToastComponent.new(type: :error, title: "Payment Issue", body: message))
+                render turbo_stream: turbo_stream.append("flash-toasts", ToastComponent.new(type: :error, title: "Connection Error", body: message))
               end
             end
           end
-        rescue StandardError => e
-          Rails.logger.error("MPESA CONTROLLER ERROR: #{e.message}")
-          # redirect_to event_order_checkout_path(@event, @order), alert: "An unexpected error occurred. Please try again."
-          message = "An unexpected error occurred connecting to M-Pesa."
-          # redirect_to event_order_checkout_path(@event, @order), alert: "M-Pesa Error: #{message}"
-
-          # ERROR: Render the ToastComponent via Turbo Stream
+        else
           respond_to do |format|
-            format.html { redirect_to event_order_checkout_path(@event, @order), alert: message }
+            format.html { redirect_to event_order_checkout_path(@event, @order), alert: "Automated M-PESA is currently disabled." }
             format.turbo_stream do
-              render turbo_stream: turbo_stream.append("flash-toasts", ToastComponent.new(type: :error, title: "Connection Error", body: message))
+              render turbo_stream: turbo_stream.append("flash-toasts", ToastComponent.new(type: :error, title: "Payment Issue", body: "Automated M-PESA is currently disabled."))
             end
           end
         end
@@ -151,13 +153,7 @@ module Public
       if params[:order].present?
         if @order.update(payment_params.merge(status: :submitted))
           OrderMailer.receipt_email(@order).deliver_later
-          # redirect_to event_order_path(@event, @order), notice: "Payment details submitted for review!"
-          respond_to do |format|
-            format.html { redirect_to event_order_path(@event, @order), notice: "Payment details submitted for review!" }
-            format.turbo_stream do
-              render turbo_stream: turbo_stream.append("flash-toasts", ToastComponent.new(type: :success, title: "Payment Submitted", body: "Your payment details have been submitted for review!"))
-            end
-          end
+          redirect_to event_order_path(@event, @order), notice: "Payment details submitted for review!"
 
         else
           # render :checkout, status: :unprocessable_entity
