@@ -60,15 +60,18 @@ Rails.application.configure do
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "tickets.rubyconf.africa", protocol: "https" }
 
-  # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
+  # Specify outgoing SMTP server. Supports ENV vars with credentials fallback.
+  smtp_user_name = ENV["SMTP_USERNAME"].presence || Rails.application.credentials.dig(:smtp, :user_name)
+  smtp_password = ENV["SMTP_PASSWORD"].presence || Rails.application.credentials.dig(:smtp, :password)
+
   config.action_mailer.smtp_settings = {
-    user_name: Rails.application.credentials.dig(:smtp, :user_name),
-    password: Rails.application.credentials.dig(:smtp, :password),
-    address: "smtp.gmail.com",
-    port: 587,
-    authentication: :plain,
+    user_name: smtp_user_name,
+    password: smtp_password,
+    address: ENV.fetch("SMTP_ADDRESS", "smtp.gmail.com"),
+    port: ENV.fetch("SMTP_PORT", 587).to_i,
+    authentication: (smtp_user_name.present? && smtp_password.present?) ? :plain : nil,
     enable_starttls_auto: true
-  }
+  }.compact
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

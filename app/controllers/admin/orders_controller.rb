@@ -13,8 +13,7 @@ class Admin::OrdersController < Admin::BaseController
 
   def approve
     if @order.update(status: :paid)
-      # TODO: Trigger Email Delivery - change to deliver later
-      OrderMailer.confirmation_email(@order).deliver_now
+      OrderMailer.confirmation_email(@order).deliver_later
 
       respond_to do |format|
         format.html { redirect_to admin_event_orders_path(@event), notice: "Order approved." }
@@ -39,11 +38,11 @@ class Admin::OrdersController < Admin::BaseController
 
   def resend_confirmation_email
     if @order.paid?
-      OrderMailer.confirmation_email(@order).deliver_now
+      OrderMailer.confirmation_email(@order).deliver_later
 
       respond_to do |format|
         format.turbo_stream do
-          render turbo_stream: turbo_stream.append("flash-toasts", partial: "shared/flash_toast", locals: { type: :success, title: "Confirmation resent", body: "Confirmation email for order ##{@order.order_no} resent." })
+          render turbo_stream: turbo_stream.append("flash-toasts", partial: "shared/flash_toast", locals: { type: :success, title: "Confirmation queued", body: "Confirmation email for order ##{@order.order_no} has been queued." })
         end
       end
     else
