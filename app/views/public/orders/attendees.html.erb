@@ -11,9 +11,17 @@
     </div>
   </div>
   <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
-      <h2 class="text-lg font-medium text-gray-900">Who is attending?</h2>
-      <p class="text-sm text-gray-500">Please provide details for each ticket holder.</p>
+    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center flex-wrap gap-4">
+      <div>
+        <h2 class="text-lg font-medium text-gray-900">Who is attending?</h2>
+        <p class="text-sm text-gray-500">Please provide details for each ticket holder.</p>
+      </div>
+      <% if @order.buyer_name.present? || @order.buyer_email.present? %>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" id="use_buyer_info" class="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer">
+          <label for="use_buyer_info" class="text-sm text-gray-700 cursor-pointer font-medium">I am one of the attendees</label>
+        </div>
+      <% end %>
     </div>
     <%= form_with url: event_order_confirm_path(@event, @order), method: :patch, local: true, class: "p-6 space-y-8" do |f| %>
       <%# Fetch existing attendees into an array to pull from %>
@@ -79,3 +87,36 @@
     <% end %>
   </div>
 </div>
+
+<script>
+  document.addEventListener("turbo:load", function() {
+    const useBuyerInfoCheckbox = document.getElementById('use_buyer_info');
+    if (!useBuyerInfoCheckbox) return;
+
+    const buyerFirstName = "<%= j @order.buyer_name.to_s.split.first %>";
+    const buyerLastName = "<%= j @order.buyer_name.to_s.split[1..-1]&.join(' ') %>";
+    const buyerEmail = "<%= j @order.buyer_email %>";
+
+    const firstAttendeeFirstName = document.getElementById('attendees_1_first_name');
+    const firstAttendeeLastName = document.getElementById('attendees_1_last_name');
+    const firstAttendeeEmail = document.getElementById('attendees_1_email');
+
+    useBuyerInfoCheckbox.addEventListener('change', function(e) {
+      if (this.checked) {
+        if (firstAttendeeFirstName && !firstAttendeeFirstName.value) firstAttendeeFirstName.value = buyerFirstName;
+        if (firstAttendeeLastName && !firstAttendeeLastName.value) firstAttendeeLastName.value = buyerLastName;
+        if (firstAttendeeEmail && !firstAttendeeEmail.value) firstAttendeeEmail.value = buyerEmail;
+      } else {
+        if (firstAttendeeFirstName && firstAttendeeFirstName.value === buyerFirstName) firstAttendeeFirstName.value = '';
+        if (firstAttendeeLastName && firstAttendeeLastName.value === buyerLastName) firstAttendeeLastName.value = '';
+        if (firstAttendeeEmail && firstAttendeeEmail.value === buyerEmail) firstAttendeeEmail.value = '';
+      }
+    });
+
+    if (firstAttendeeFirstName && firstAttendeeFirstName.value === buyerFirstName &&
+        firstAttendeeLastName && firstAttendeeLastName.value === buyerLastName &&
+        firstAttendeeEmail && firstAttendeeEmail.value === buyerEmail && buyerEmail !== "") {
+      useBuyerInfoCheckbox.checked = true;
+    }
+  });
+</script>
