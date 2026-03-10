@@ -37,7 +37,13 @@
             </div>
           </div>
 
-          <div class="flex justify-end pt-4 border-t border-gray-100">
+          <div class="mt-8">
+            <label class="block text-sm font-bold text-gray-700 mb-2">M-PESA Business Number (Paybill/Till)</label>
+            <p class="text-sm text-gray-500 mb-4">This number is displayed to users when they choose Manual (Reference Code) payment.</p>
+            <%= f.text_field :mpesa_business_number, value: @mpesa_business_number, class: "w-full max-w-md border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 transition shadow-sm", placeholder: "e.g. 123456" %>
+          </div>
+
+          <div class="flex justify-end pt-8 border-t border-gray-100 mt-8">
             <%= f.submit "Save Settings", class: "bg-gray-900 text-white px-6 py-2 rounded-lg font-medium hover:bg-black transition cursor-pointer" %>
           </div>
         <% end %>

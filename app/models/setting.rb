@@ -10,4 +10,13 @@ class Setting < ApplicationRecord
     setting.value = mode
     setting.save!
   end
+  def self.mpesa_business_number
+    find_by(key: "mpesa_business_number")&.value || "123456"
+  end
+
+  def self.mpesa_business_number=(number)
+    setting = find_or_initialize_by(key: "mpesa_business_number")
+    setting.value = number
+    setting.save!
+  end
 end
