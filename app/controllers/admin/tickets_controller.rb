@@ -10,6 +10,32 @@ class Admin::TicketsController < Admin::BaseController
   end
 
   def destroy
+    @ticket = @event.tickets.find(params[:id])
+    if @ticket.destroy
+      respond_to do |format|
+        format.html { redirect_to admin_event_tickets_path(@event), notice: "Ticket deleted successfully." }
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.remove(@ticket),
+            turbo_stream.append("flash-toasts", partial: "shared/flash_toast", locals: { type: :success, title: "Success", body: "Ticket deleted successfully." })
+          ]
+        end
+      end
+    else
+      respond_to do |format|
+        format.html { redirect_to admin_event_tickets_path(@event), alert: "Could not delete ticket." }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.append("flash-toasts", partial: "shared/flash_toast", locals: { type: :error, title: "Error", body: "Could not delete ticket." })
+        end
+      end
+    end
+  rescue ActiveRecord::InvalidForeignKey
+    respond_to do |format|
+      format.html { redirect_to admin_event_tickets_path(@event), alert: "Cannot delete this ticket because it has orders attached to it." }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.append("flash-toasts", partial: "shared/flash_toast", locals: { type: :error, title: "Deletion Failed", body: "Cannot delete this ticket because it has orders attached to it." })
+      end
+    end
   end
 
   def new
