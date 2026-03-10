@@ -130,7 +130,7 @@ module Public
             end
           rescue StandardError => e
             Rails.logger.error("MPESA CONTROLLER ERROR: #{e.message}")
-            message = "An unexpected error occurred connecting to M-Pesa."
+            message = e.message
             respond_to do |format|
               format.html { redirect_to event_order_checkout_path(@event, @order), alert: message }
               format.turbo_stream do
