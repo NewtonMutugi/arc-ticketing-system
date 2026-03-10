@@ -5,6 +5,7 @@ module Admin
     def show
       @mpesa_mode = Setting.mpesa_mode
       @mpesa_business_number = Setting.mpesa_business_number
+      @users = User.all.order(created_at: :desc)
     end
 
     def update

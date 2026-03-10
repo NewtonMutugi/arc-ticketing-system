@@ -1,8 +1,10 @@
+<% content_for :title, "Forgot Password" %>
 <div class="fixed top-5 right-5 z-50 flex flex-col gap-4 w-96 pointer-events-none">
   <% flash.each do |key, message| %>
     <%
       # Map standard Rails flash keys to your Component types
       type = case key.to_s
+             when "notice" then :success
              when "alert" then :error
              else :info
              end
@@ -14,13 +16,13 @@
     <%= render ToastComponent.new(type: type, title: title, body: message) %>
   <% end %>
 </div>
-<div class="flex justify-center">
-  <%= render CardComponent.new(class: "max-w-xl w-full") do %>
+<div class="flex justify-center mt-8">
+  <%= render CardComponent.new(class: "max-w-xl w-full p-8") do %>
     <div class="flex justify-center mb-4">
       <%= image_tag("/arc_logo.png", alt: "Africa Ruby Community Logo", class: "h-14 w-auto") %>
     </div>
-    <h1>Forgot your password?</h1>
-    <%= form_with url: passwords_path do |form| %>
+    <h1 class="text-xl font-bold mb-6 text-center text-gray-800">Forgot your password?</h1>
+    <%= form_with url: admin_passwords_path do |form| %>
       <%= render InputComponent.new(
         label: "Email Address",
         name: "email_address",
@@ -31,12 +33,14 @@
         placeholder: "Enter your email address",
         autocomplete: "username"
       ) %>
-      <div class="py-4">
-        <%= render ButtonComponent.new(intent: :primary, type: "submit", class: "") do %>
+      <div class="py-4 mt-2">
+        <%= render ButtonComponent.new(intent: :primary, type: "submit", class: "w-full justify-center") do %>
           Email Reset Instructions
         <% end %>
       </div>
     <% end %>
-    <%= link_to 'Back to Login', "/session/new", class: "hover:text-blue-500 hover:underline" %>
+    <div class="text-center mt-2">
+      <%= link_to 'Back to Login', admin_new_session_path, class: "text-sm text-gray-500 hover:text-red-600 transition" %>
+    </div>
   <% end %>
 </div>

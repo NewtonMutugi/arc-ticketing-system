@@ -1,8 +1,10 @@
+<% content_for :title, "Update Password" %>
 <div class="fixed top-5 right-5 z-200 flex flex-col gap-4 w-96 pointer-events-none">
   <% flash.each do |key, message| %>
     <%
       # Map standard Rails flash keys to your Component types
       type = case key.to_s
+             when "notice" then :success
              when "alert" then :error
              else :info
              end
@@ -14,13 +16,13 @@
     <%= render ToastComponent.new(type: type, title: title, body: message) %>
   <% end %>
 </div>
-<div class="flex justify-center">
-  <%= render CardComponent.new(class: "max-w-xl w-full") do %>
+<div class="flex justify-center mt-8">
+  <%= render CardComponent.new(class: "max-w-xl w-full p-8") do %>
     <div class="flex justify-center mb-4">
       <%= image_tag("/arc_logo.png", alt: "Africa Ruby Community Logo", class: "h-14 w-auto") %>
     </div>
-    <h1>Update your password</h1>
-    <%= form_with url: password_path(params[:token]), method: :put do |form| %>
+    <h1 class="text-xl font-bold mb-6 text-center text-gray-800">Update your password</h1>
+    <%= form_with url: admin_password_path(params[:token]), method: :put do |form| %>
       <%= render InputComponent.new(
         label: "New Password",
         name: "password",
@@ -29,18 +31,20 @@
         placeholder: " ",
         autocomplete: "new-password"
       ) %>
-      <%= render InputComponent.new(
-        label: "Confirrm new Password",
-        name: "password_confirmation",
-        id: "password_confirmation",
-        type: "password",
-        placeholder: " ",
-        autocomplete: "new-password",
+      <div class="mt-4">
+        <%= render InputComponent.new(
+          label: "Confirm new Password",
+          name: "password_confirmation",
+          id: "password_confirmation",
+          type: "password",
+          placeholder: " ",
+          autocomplete: "new-password",
 
-      ) %>
-      <div class="py-4">
-        <%= render ButtonComponent.new(intent: :primary, type: "submit", class: "") do %>
-          Save
+        ) %>
+      </div>
+      <div class="py-4 mt-2">
+        <%= render ButtonComponent.new(intent: :primary, type: "submit", class: "w-full justify-center") do %>
+          Save Password
         <% end %>
       </div>
     <% end %>
