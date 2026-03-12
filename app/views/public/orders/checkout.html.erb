@@ -69,7 +69,10 @@
                 <div class="bg-gray-50 p-4 rounded-lg inline-block text-left mb-6 w-full max-w-sm">
                   <p class="text-sm text-gray-700 mb-2"><span class="font-bold">1.</span> Go to M-PESA &gt; Lipa na M-PESA &gt; Paybill</p>
                   <p class="text-sm text-gray-700 mb-2"><span class="font-bold">2.</span> Enter Business No: <span class="font-bold text-black border border-gray-300 px-2 py-1 rounded bg-white"><%= Setting.mpesa_business_number %></span></p>
-                  <p class="text-sm text-gray-700 mb-2"><span class="font-bold">3.</span> Enter Account No: <span class="font-bold text-black border border-gray-300 px-2 py-1 rounded bg-white"><%= @order.order_no %></span></p>
+                  <p class="text-sm text-gray-700 mb-2"><span class="font-bold">3.</span> Enter Account No: <span class="font-bold text-black border border-gray-300 px-2 py-1 rounded bg-white">
+                      <%# <%= @order.order_no %>
+                      [Your Name]
+                    </span></p>
                   <p class="text-sm text-gray-700"><span class="font-bold">4.</span> Amount: <span class="font-bold text-black border border-gray-300 px-2 py-1 rounded bg-white"><%= number_to_currency(@order.total_cost, unit: "Ksh ", precision: 0) %></span></p>
                 </div>
                 <div class="max-w-xs mx-auto mb-8 relative">
