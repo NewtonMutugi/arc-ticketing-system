@@ -37,6 +37,7 @@ Rails.application.routes.draw do
           patch :approve
           patch :disapprove
           post :resend_confirmation_email
+          patch :reject_payment
         end
       end
       resources :transactions, only: [ :index ]

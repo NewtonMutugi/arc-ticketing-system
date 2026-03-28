@@ -113,6 +113,16 @@
             %>
           </div>
         <% end %>
+        <% if @order.submitted? %>
+          <div class="mt-4">
+            <%= button_to "Reject Payment",
+                reject_payment_admin_event_order_path(@event, @order),
+                method: :patch,
+                class: "px-4 py-2 bg-red-600 text-white text-sm font-bold rounded hover:bg-red-700 transition shadow-sm cursor-pointer",
+                form: { data: { turbo_confirm: "Are you sure? This will mark the order as failed." } }
+            %>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>

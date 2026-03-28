@@ -1,7 +1,7 @@
 class Admin::OrdersController < Admin::BaseController
   layout "event_dashboard"
   before_action :set_event
-  before_action :set_order, only: [ :show, :approve, :resend_confirmation_email ]
+  before_action :set_order, only: [ :show, :approve, :resend_confirmation_email, :reject_payment ]
 
   def index
     @query = @event.orders.includes(:order_items).order(created_at: :desc)
@@ -51,6 +51,27 @@ class Admin::OrdersController < Admin::BaseController
           render turbo_stream: turbo_stream.append("flash-toasts", partial: "shared/flash_toast", locals: { type: :error, title: "Error", body: "Can only resend confirmation for paid orders." })
         end
       end
+    end
+  end
+
+  def reject_payment
+    if @order.update(status: :failed)
+      # Send rejection email to customer
+      OrderMailer.rejection_email(@order).deliver_later
+
+      respond_to do |format|
+        format.html { redirect_to admin_event_orders_path(@event), notice: "Payment rejected." }
+
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.replace("order_row_#{@order.id}", partial: "admin/orders/order_row", locals: { order: @order, event: @event }),
+            turbo_stream.replace("modal", template: "admin/orders/show"),
+            turbo_stream.append("flash-toasts", partial: "shared/flash_toast", locals: { type: :success, title: "Rejected", body: "Payment for order ##{@order.order_no} has been rejected." })
+          ]
+        end
+      end
+    else
+      redirect_to admin_event_order_path(@event, @order), alert: "Rejecting payment failed."
     end
   end
 
