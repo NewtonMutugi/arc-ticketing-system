@@ -17,12 +17,12 @@ class AuditLog < ApplicationRecord
   scope :by_action, ->(action) { where(action: action) }
   scope :by_model, ->(model_type) { where(auditable_type: model_type) }
 
-  def self.log_action(user, action, auditable, changes: nil, status: nil, reason: nil, ip_address: nil, user_agent: nil)
+  def self.log_action(user, action, auditable, change_data: nil, status: nil, reason: nil, ip_address: nil, user_agent: nil)
     create(
       user: user,
       action: action,
       auditable: auditable,
-      changes: changes&.to_json,
+      change_data: change_data&.to_json,
       status: status,
       reason: reason,
       ip_address: ip_address,
@@ -31,7 +31,7 @@ class AuditLog < ApplicationRecord
   end
 
   def changes_hash
-    return {} if changes.blank?
-    JSON.parse(changes)
+    return {} if change_data.blank?
+    JSON.parse(change_data)
   end
 end

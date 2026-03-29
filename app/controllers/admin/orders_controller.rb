@@ -20,13 +20,10 @@ class Admin::OrdersController < Admin::BaseController
 
         format.turbo_stream do
           render turbo_stream: [
-            # 1. Update the row in the background list to show 'Paid'
             turbo_stream.replace("order_row_#{@order.id}", partial: "admin/orders/order_row", locals: { order: @order, event: @event }),
 
-            # 2. Close the modal
             turbo_stream.update("modal", ""),
 
-            # 3. Show Success Toast
             turbo_stream.append("flash-toasts", partial: "shared/flash_toast", locals: { type: :success, title: "Approved", body: "Order ##{@order.order_no} verified." })
           ]
         end

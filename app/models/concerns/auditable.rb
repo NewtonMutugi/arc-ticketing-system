@@ -9,9 +9,9 @@ module Auditable
     def track_audit_on(*attributes)
       @track_audit_attributes = attributes
 
-      [ :create, :update, :destroy ].each do |action|
-        send("after_#{action}", :log_audit_action)
-      end
+      after_create { log_audit_action(:created) }
+      after_update { log_audit_action(:updated) }
+      after_destroy { log_audit_action(:deleted) }
     end
 
     def tracked_audit_attributes
@@ -21,29 +21,23 @@ module Auditable
 
   private
 
-  def log_audit_action
+  def log_audit_action(action)
     user = Current.user || User.first
     return unless user
 
-    action = case
-    when destroyed? then :deleted
-    when created? then :created
-    else :updated
-    end
-
     changes = if action == :updated
-                self.saved_changes.slice(*self.class.tracked_audit_attributes)
+      saved_changes.slice(*self.class.tracked_audit_attributes)
     elsif action == :deleted
-                attribute_changes_from_destroyed
+      attribute_changes_from_destroyed
     else
-                {}
+      {}
     end
 
     AuditLog.log_action(
       user,
       action,
       self,
-      changes: changes.presence,
+      change_data: changes.presence,
       ip_address: Current.ip_address,
       user_agent: Current.user_agent
     )
