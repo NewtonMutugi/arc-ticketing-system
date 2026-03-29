@@ -12,7 +12,7 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def approve
-    if @order.update(status: :paid)
+    if @order.update(status: :paid, approved_by_user_id: Current.user.id, approved_at: Time.current)
       OrderMailer.confirmation_email(@order).deliver_later
 
       respond_to do |format|
@@ -55,7 +55,7 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def reject_payment
-    if @order.update(status: :failed)
+    if @order.update(status: :failed, approved_by_user_id: Current.user.id, approval_notes: params[:rejection_reason])
       # Send rejection email to customer
       OrderMailer.rejection_email(@order).deliver_later
 

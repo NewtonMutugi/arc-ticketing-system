@@ -44,6 +44,7 @@ class Admin::TicketsController < Admin::BaseController
 
   def create
     @ticket = @event.tickets.new(ticket_params)
+    @ticket.created_by_user_id = Current.user.id
     if @ticket.save
       # redirect_to admin_event_tickets_path(@event), notice: "Ticket created successfully."
       respond_to do |format|

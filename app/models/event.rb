@@ -1,17 +1,21 @@
 class Event < ApplicationRecord
+  include Auditable
+
   extend FriendlyId
   friendly_id :title, use: :slugged
   has_many :tickets, dependent: :destroy
   has_many :attendees, dependent: :destroy
   has_many :order_items, through: :tickets
   has_many :orders, through: :order_items
-
+  belongs_to :user, foreign_key: "created_by_user_id", optional: true
 
   validates :title, :description,  presence: true
 
   has_one_attached :event_image
 
   validates :event_image, content_type: [ "image/png", "image/jpeg" ], size: { less_than: 5.megabytes }
+
+  track_audit_on :title, :description, :location, :start_date, :end_date, :publish
 
   def tickets_sold
     order_items.joins(:order).where(orders: { status: :paid }).sum(:quantity)
@@ -33,5 +37,9 @@ class Event < ApplicationRecord
 
   def should_generate_new_friendly_id?
     title_changed?
+  end
+
+  def created_by
+    user
   end
 end
