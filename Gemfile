@@ -34,7 +34,7 @@ gem "solid_cable", "~> 3.0"
 gem "bootsnap", "~> 1.20", require: false
 
 # Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
-gem "kamal", "~> 2.10", require: false
+gem "kamal", "~> 2.11", require: false
 
 # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
 gem "thruster", "~> 0.1", require: false
@@ -66,10 +66,10 @@ end
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara", "~> 3.40"
-  gem "selenium-webdriver", "~> 4.39"
+  gem "selenium-webdriver", "~> 4.41"
 end
 
-gem "pagy", "~> 43.2"
+gem "pagy", "~> 43.4"
 
 # Frontend Gems
 gem "view_component", "~> 4.2"
