@@ -382,7 +382,7 @@ GEM
       logger
     rubyzip (3.2.2)
     securerandom (0.4.1)
-    selenium-webdriver (4.39.0)
+    selenium-webdriver (4.41.0)
       base64 (~> 0.2)
       logger (~> 1.4)
       rexml (~> 3.2, >= 3.2.5)
@@ -496,7 +496,7 @@ DEPENDENCIES
   rest-client
   rqrcode (~> 3.2)
   rubocop-rails-omakase (~> 1.1)
-  selenium-webdriver (~> 4.39)
+  selenium-webdriver (~> 4.41)
   solid_cable (~> 3.0)
   solid_cache (~> 1.0)
   solid_queue (~> 1.2)
