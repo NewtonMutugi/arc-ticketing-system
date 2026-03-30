@@ -19,6 +19,7 @@ class Admin::EventsController < Admin::BaseController
 
   def create
     @event = Event.new(event_params)
+    @event.created_by_user_id = Current.user.id
     if @event.save
       redirect_to admin_events_path, status: :see_other, notice: "Event created successfully."
     else

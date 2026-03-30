@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_12_183228) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_29_223000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -60,8 +60,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_183228) do
     t.index ["token"], name: "index_attendees_on_token", unique: true
   end
 
+  create_table "audit_logs", force: :cascade do |t|
+    t.string "action", null: false
+    t.bigint "auditable_id", null: false
+    t.string "auditable_type", null: false
+    t.text "change_data"
+    t.datetime "created_at", null: false
+    t.string "ip_address"
+    t.text "reason"
+    t.string "status"
+    t.datetime "updated_at", null: false
+    t.string "user_agent"
+    t.bigint "user_id", null: false
+    t.index ["auditable_type", "auditable_id"], name: "index_audit_logs_on_auditable_type_and_auditable_id"
+    t.index ["created_at"], name: "index_audit_logs_on_created_at"
+    t.index ["user_id", "action"], name: "index_audit_logs_on_user_id_and_action"
+    t.index ["user_id"], name: "index_audit_logs_on_user_id"
+  end
+
   create_table "events", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.bigint "created_by_user_id"
     t.string "description"
     t.date "end_date"
     t.string "location"
@@ -70,7 +89,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_183228) do
     t.date "start_date"
     t.string "title"
     t.datetime "updated_at", null: false
+    t.bigint "updated_by_user_id"
+    t.index ["created_by_user_id"], name: "index_events_on_created_by_user_id"
     t.index ["slug"], name: "index_events_on_slug"
+    t.index ["updated_by_user_id"], name: "index_events_on_updated_by_user_id"
   end
 
   create_table "friendly_id_slugs", force: :cascade do |t|
@@ -96,6 +118,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_183228) do
   end
 
   create_table "orders", force: :cascade do |t|
+    t.text "approval_notes"
+    t.datetime "approved_at"
+    t.bigint "approved_by_user_id"
     t.string "buyer_email"
     t.string "buyer_name"
     t.string "buyer_phone_no"
@@ -111,6 +136,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_183228) do
     t.integer "total_items"
     t.string "transaction_receipt"
     t.datetime "updated_at", null: false
+    t.index ["approved_by_user_id"], name: "index_orders_on_approved_by_user_id"
     t.index ["order_no"], name: "index_orders_on_order_no", unique: true
   end
 
@@ -121,6 +147,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_183228) do
     t.string "user_agent"
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "settings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "key"
+    t.datetime "updated_at", null: false
+    t.text "value"
+    t.index ["key"], name: "index_settings_on_key", unique: true
   end
 
   create_table "solid_queue_blocked_executions", force: :cascade do |t|
@@ -247,6 +281,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_183228) do
   create_table "tickets", force: :cascade do |t|
     t.text "benefits"
     t.datetime "created_at", null: false
+    t.bigint "created_by_user_id"
     t.text "description"
     t.date "end_sale_date"
     t.bigint "event_id", null: false
@@ -259,10 +294,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_183228) do
     t.boolean "status"
     t.string "title"
     t.datetime "updated_at", null: false
+    t.bigint "updated_by_user_id"
+    t.index ["created_by_user_id"], name: "index_tickets_on_created_by_user_id"
     t.index ["event_id"], name: "index_tickets_on_event_id"
+    t.index ["updated_by_user_id"], name: "index_tickets_on_updated_by_user_id"
   end
 
   create_table "users", force: :cascade do |t|
+    t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false
     t.string "email_address", null: false
     t.string "first_name"
@@ -277,8 +316,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_183228) do
   add_foreign_key "attendees", "events"
   add_foreign_key "attendees", "orders"
   add_foreign_key "attendees", "tickets"
+  add_foreign_key "audit_logs", "users"
+  add_foreign_key "events", "users", column: "created_by_user_id"
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "tickets"
+  add_foreign_key "orders", "users", column: "approved_by_user_id"
   add_foreign_key "sessions", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
@@ -287,4 +329,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_183228) do
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "tickets", "events"
+  add_foreign_key "tickets", "users", column: "created_by_user_id"
 end

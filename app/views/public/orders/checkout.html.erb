@@ -20,7 +20,7 @@
             <div class="w-4 h-4 rounded-full border border-gray-400 peer-checked:border-green-600 peer-checked:bg-green-600"></div>
             <div class="font-bold">M-PESA</div>
           </div>
-          <div class="text-xs text-gray-500 mt-1 ml-6">Automatic STK Push</div>
+          <div class="text-xs text-gray-500 mt-1 ml-6"><%= Setting.mpesa_mode == 'automated' ? 'Automatic STK Push' : 'Manual Payment Confirmation' %></div>
         </div>
       </label>
       <label class="block cursor-pointer group">
@@ -42,20 +42,46 @@
       </div>
       <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm min-h-[350px]">
         <div id="mpesa-section" class="payment-section">
-          <%= form_with url: event_order_pay_path(@event, @order), method: :patch do |f| %>
-            <%= hidden_field_tag :payment_method, "mpesa" %>
-            <div class="text-center py-6">
-              <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fa-solid fa-mobile-screen-button text-2xl"></i>
+          <% if Setting.mpesa_mode == 'automated' %>
+            <%= form_with url: event_order_pay_path(@event, @order), method: :patch do |f| %>
+              <%= hidden_field_tag :payment_method, "mpesa" %>
+              <div class="text-center py-6">
+                <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <i class="fa-solid fa-mobile-screen-button text-2xl"></i>
+                </div>
+                <h4 class="text-xl font-bold text-gray-900 mb-2">Pay with M-PESA</h4>
+                <p class="text-sm text-gray-500 mb-6">Enter the M-Pesa number to pay.</p>
+                <div class="max-w-xs mx-auto mb-8 relative">
+                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Phone Number</label>
+                  <%= telephone_field_tag :mpesa_phone_number, @order.buyer_phone_no, class: "w-full text-center text-2xl font-bold text-gray-900 border-b-2 border-gray-200 focus:border-green-600 border-t-0 border-x-0 bg-transparent focus:ring-0 placeholder-gray-300 transition-colors py-2", placeholder: "07XX XXX XXX", required: true %>
+                </div>
+                <%= f.submit "Pay #{number_to_currency(@order.total_cost, unit: 'Ksh ', precision: 0)}", class: "w-full max-w-sm bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 transition shadow-lg cursor-pointer text-lg", data: { turbo_submits_with: "Loading..." } %>
               </div>
-              <h4 class="text-xl font-bold text-gray-900 mb-2">Pay with M-PESA</h4>
-              <p class="text-sm text-gray-500 mb-6">Enter the M-Pesa number to pay.</p>
-              <div class="max-w-xs mx-auto mb-8 relative">
-                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Phone Number</label>
-                <%= telephone_field_tag :mpesa_phone_number, @order.buyer_phone_no, class: "w-full text-center text-2xl font-bold text-gray-900 border-b-2 border-gray-200 focus:border-green-600 border-t-0 border-x-0 bg-transparent focus:ring-0 placeholder-gray-300 transition-colors py-2", placeholder: "07XX XXX XXX", required: true %>
+            <% end %>
+          <% else %>
+            <%= form_with model: @order, url: event_order_pay_path(@event, @order), method: :patch do |f| %>
+              <%= f.hidden_field :payment_provider, value: "Mpesa" %>
+              <div class="text-center py-6">
+                <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <i class="fa-solid fa-money-bill-transfer text-2xl"></i>
+                </div>
+                <h4 class="text-xl font-bold text-gray-900 mb-2">Manual M-PESA Payment</h4>
+                <div class="bg-gray-50 p-4 rounded-lg inline-block text-left mb-6 w-full max-w-sm">
+                  <p class="text-sm text-gray-700 mb-2"><span class="font-bold">1.</span> Go to M-PESA &gt; Lipa na M-PESA &gt; Paybill</p>
+                  <p class="text-sm text-gray-700 mb-2"><span class="font-bold">2.</span> Enter Business No: <span class="font-bold text-black border border-gray-300 px-2 py-1 rounded bg-white"><%= Setting.mpesa_business_number %></span></p>
+                  <p class="text-sm text-gray-700 mb-2"><span class="font-bold">3.</span> Enter Account No: <span class="font-bold text-black border border-gray-300 px-2 py-1 rounded bg-white">
+                      <%# <%= @order.order_no %>
+                      [Your Name]
+                    </span></p>
+                  <p class="text-sm text-gray-700"><span class="font-bold">4.</span> Amount: <span class="font-bold text-black border border-gray-300 px-2 py-1 rounded bg-white"><%= number_to_currency(@order.total_cost, unit: "Ksh ", precision: 0) %></span></p>
+                </div>
+                <div class="max-w-xs mx-auto mb-8 relative">
+                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">M-PESA Confirmation Code</label>
+                  <%= f.text_field :payment_reference, required: true, class: "w-full text-center text-xl font-bold text-gray-900 border-b-2 border-gray-200 focus:border-green-600 border-t-0 border-x-0 bg-transparent focus:ring-0 placeholder-gray-300 transition-colors py-2 uppercase", placeholder: "e.g. QLK2...", autocomplete: "off" %>
+                </div>
+                <%= f.submit "Verify Payment", class: "w-full max-w-sm bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 transition shadow-lg cursor-pointer text-lg", data: { turbo_submits_with: "Loading..." } %>
               </div>
-              <%= f.submit "Pay #{number_to_currency(@order.total_cost, unit: 'Ksh ', precision: 0)}", class: "w-full max-w-sm bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 transition shadow-lg cursor-pointer text-lg" %>
-            </div>
+            <% end %>
           <% end %>
         </div>
         <div id="paypal-section" class="payment-section hidden">

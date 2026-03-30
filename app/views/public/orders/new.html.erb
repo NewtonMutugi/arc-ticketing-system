@@ -53,7 +53,7 @@
             </div>
             <div class="flex items-center w-32">
               <button type="button" onclick="adjustQty(-1)" class="w-10 h-10 rounded-l-lg bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50">-</button>
-              <input type="number" id="ticket_qty" name="tickets[<%= @ticket.id %>]" value="1" min="1" max="10" class="w-full border-y border-gray-300 text-center h-10 focus:ring-0 z-10" readonly>
+              <input type="number" id="ticket_qty" name="tickets[<%= @ticket.id %>]" value="<%= @order.persisted? ? (@order.order_items.find { |oi| oi.ticket_id == @ticket.id }&.quantity || 1) : 1 %>" min="1" max="10" class="w-full border-y border-gray-300 text-center h-10 focus:ring-0 z-10" readonly>
               <button type="button" onclick="adjustQty(1)" class="w-10 h-10 rounded-r-lg bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50">+</button>
             </div>
           </div>

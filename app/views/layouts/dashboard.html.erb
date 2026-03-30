@@ -29,7 +29,7 @@
                 <% end %>
                 <%# Pop up Menu items %>
                 <% dropdown.with_item(title: "My Profile", href: "/admin/profile/", icon: "fa-solid fa-user") %>
-                <% dropdown.with_item(title: "Settings", href: "", icon: "fa-solid fa-cog") %>
+                <% dropdown.with_item(title: "Settings", href: admin_settings_path, icon: "fa-solid fa-cog") %>
                 <% dropdown.with_item(
                           title: "Sign Out",
                           href: admin_destroy_session_path,
