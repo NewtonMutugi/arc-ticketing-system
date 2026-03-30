@@ -98,6 +98,16 @@
             </div>
           <% end %>
         </div>
+        <div class="mt-4">
+          <% if @order.approved_by_user_id %>
+          <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Approved by</h4>
+            <div class="flex items-center">
+              <div class="font-medium">
+                <%= User.find_by(id: @order.approved_by_user_id).first_name %>
+              </div>
+            </div>
+          <% end %>
+        </div>
         <% if @order.paid? %>
           <div class="mt-8 pt-6 border-t border-gray-100">
             <h4 class="text-xs font-bold text-red-400 uppercase tracking-wider mb-2">Danger Zone</h4>

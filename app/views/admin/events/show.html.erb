@@ -1,6 +1,9 @@
 <% content_for :title, @event.title %>
 <h1 class="font-bold text-2xl"><%= @event.title %></h1>
 <h2 class="text-l">Welcome  <%= Current.user.first_name %> <%= Current.user.last_name %></h2>
+<% if @event.created_by_user_id %>
+  <h3 class="text-sm text-gray-500">Event created by: <%= User.find_by(id: @event.created_by_user_id).first_name %></h3>
+<% end %>
 <hr class="my-4 border-gray-200"/>
 <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8 mt-2">
   <%# Orders tile with events count and calendar icon %>
