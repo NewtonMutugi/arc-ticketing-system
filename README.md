@@ -183,4 +183,4 @@ Suggested structure for this section:
 
 ## 9. License
 
-Add your project license here (for example, MIT, Apache-2.0, or proprietary).
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
