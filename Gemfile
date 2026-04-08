@@ -69,7 +69,7 @@ group :test do
   gem "selenium-webdriver", "~> 4.41"
 end
 
-gem "pagy", "~> 43.4"
+gem "pagy", "~> 43.5"
 
 # Frontend Gems
 gem "view_component", "~> 4.2"
