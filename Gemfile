@@ -9,7 +9,7 @@ gem "propshaft", "~> 1.3"
 # Use PG as the database for Active Record
 gem "pg", "~> 1.5", ">= 1.5.9"
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", "~> 7.1"
+gem "puma", "~> 8.0"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem "importmap-rails", "~> 2.2"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]b
