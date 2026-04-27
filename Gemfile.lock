@@ -96,7 +96,7 @@ GEM
       smart_properties
     bigdecimal (4.1.0)
     bindex (0.8.1)
-    bootsnap (1.20.1)
+    bootsnap (1.24.0)
       msgpack (~> 1.2)
     brakeman (8.0.4)
       racc
@@ -474,7 +474,7 @@ PLATFORMS
 DEPENDENCIES
   active_storage_validations (~> 3.0)
   bcrypt (~> 3.1.22)
-  bootsnap (~> 1.20)
+  bootsnap (~> 1.24)
   brakeman
   capybara (~> 3.40)
   debug (~> 1.11)
