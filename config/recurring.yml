@@ -18,3 +18,8 @@ production:
   cleanup_abandoned_orders:
     class: Orders::CleanupPendingJob
     schedule: every day at midnight
+
+development:
+  cleanup_abandoned_orders:
+    class: Orders::CleanupPendingJob
+    schedule: every minute
