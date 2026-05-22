@@ -81,7 +81,7 @@ gem "prawn", "~> 2.1" # Pdf generator
 gem "rqrcode", "~> 3.2" # QR Code generator
 
 # Slug generation
-gem "friendly_id", "~> 5.6"
+gem "friendly_id", "~> 5.7"
 
 # Handle dot env
 gem "dotenv-rails", "~> 3.2", groups: [ :development, :test ]
