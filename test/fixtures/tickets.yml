@@ -11,6 +11,7 @@ one:
   max_ticket: 1
   group_ticket_count: 1
   status: false
+  event: one
 
 two:
   title: MyString
@@ -23,3 +24,4 @@ two:
   max_ticket: 1
   group_ticket_count: 1
   status: false
+  event: two

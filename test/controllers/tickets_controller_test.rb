@@ -2,7 +2,8 @@ require "test_helper"
 
 class TicketsControllerTest < ActionDispatch::IntegrationTest
   test "should get index" do
-    get tickets_index_url
+    sign_in_as(User.take)
+    get admin_event_tickets_url(Event.take || events(:one))
     assert_response :success
   end
 end

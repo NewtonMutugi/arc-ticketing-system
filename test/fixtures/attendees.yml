@@ -5,7 +5,7 @@ one:
   last_name: MyString
   preferred_name: MyString
   email: MyString
-  checked_in: false
+  checked_in_at: nil
   order: one
   event: one
   ticket: one
@@ -15,7 +15,7 @@ two:
   last_name: MyString
   preferred_name: MyString
   email: MyString
-  checked_in: false
+  checked_in_at: nil
   order: two
   event: two
   ticket: two
