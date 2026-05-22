@@ -506,7 +506,7 @@ DEPENDENCIES
   thruster (~> 0.1)
   turbo-rails (~> 2.0)
   tzinfo-data
-  view_component (~> 4.2)
+  view_component (~> 4.10)
   web-console (~> 4.3)
 
 BUNDLED WITH
