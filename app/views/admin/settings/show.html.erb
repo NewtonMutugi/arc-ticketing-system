@@ -4,28 +4,33 @@
     <h1 class="text-3xl font-bold text-gray-900">Settings</h1>
     <p class="mt-2 text-sm text-gray-500">Manage global application settings.</p>
   </div>
-
   <div x-data="{ activeTab: 'payment' }" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
     <!-- Tabs Navigation -->
     <div class="border-b border-gray-200">
       <nav class="flex -mb-px" aria-label="Tabs">
-        <button 
+        <button
           @click="activeTab = 'payment'"
           :class="{ 'border-red-500 text-red-600': activeTab === 'payment', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'payment' }"
           class="w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors cursor-pointer"
         >
           <i class="fa-solid fa-credit-card mr-2"></i> Payment Methods
         </button>
-        <button 
+        <button
           @click="activeTab = 'users'"
           :class="{ 'border-red-500 text-red-600': activeTab === 'users', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'users' }"
           class="w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors cursor-pointer"
         >
           <i class="fa-solid fa-users mr-2"></i> User Management
         </button>
+        <button
+          @click="activeTab = 'site'"
+          :class="{ 'border-red-500 text-red-600': activeTab === 'site', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'users' }"
+          class="w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors cursor-pointer"
+        >
+          <i class="fa-solid fa-globe mr-2"></i> SIte Settings
+        </button>
       </nav>
     </div>
-
     <!-- Payment Methods Tab -->
     <div x-show="activeTab === 'payment'" class="p-6">
       <h2 class="text-lg font-bold text-gray-900 mb-4">Payment Methods</h2>
@@ -34,7 +39,6 @@
           <div>
             <label class="block text-sm font-bold text-gray-700 mb-2">M-PESA Payment Mode</label>
             <p class="text-sm text-gray-500 mb-4">Choose how you want to handle M-PESA payments during checkout.</p>
-
             <div class="space-y-4">
               <label class="flex items-start gap-3 cursor-pointer p-4 border rounded-lg <%= 'border-green-500 bg-green-50' if @mpesa_mode == 'automated' %> hover:bg-gray-50 transition" onclick="document.querySelectorAll('label').forEach(l => l.classList.remove('border-green-500', 'bg-green-50')); this.classList.add('border-green-500', 'bg-green-50')">
                 <div class="flex items-center h-5">
@@ -45,7 +49,6 @@
                   <div class="text-sm text-gray-500 mt-1">Prompt users on their phone directly for payment using M-PESA API.</div>
                 </div>
               </label>
-
               <label class="flex items-start gap-3 cursor-pointer p-4 border rounded-lg <%= 'border-green-500 bg-green-50' if @mpesa_mode == 'manual' %> hover:bg-gray-50 transition" onclick="document.querySelectorAll('label').forEach(l => l.classList.remove('border-green-500', 'bg-green-50')); this.classList.add('border-green-500', 'bg-green-50')">
                 <div class="flex items-center h-5">
                   <%= f.radio_button :mpesa_mode, 'manual', checked: @mpesa_mode == 'manual', class: "w-4 h-4 text-green-600 focus:ring-green-500 border-gray-300" %>
@@ -57,31 +60,27 @@
               </label>
             </div>
           </div>
-
           <div class="mt-8">
             <label class="block text-sm font-bold text-gray-700 mb-2">M-PESA Business Number (Paybill/Till)</label>
             <p class="text-sm text-gray-500 mb-4">This number is displayed to users when they choose Manual (Reference Code) payment.</p>
             <%= f.text_field :mpesa_business_number, value: @mpesa_business_number, class: "w-full max-w-md border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 transition shadow-sm", placeholder: "e.g. 123456" %>
           </div>
-
           <div class="flex justify-end pt-8 border-t border-gray-100 mt-8">
             <%= f.submit "Save Settings", class: "bg-gray-900 text-white px-6 py-2 rounded-lg font-medium hover:bg-black transition cursor-pointer" %>
           </div>
         <% end %>
       </div>
     </div>
-
     <!-- User Management Tab -->
     <div x-show="activeTab === 'users'" x-cloak class="p-6">
       <h2 class="text-lg font-bold text-gray-900 mb-4">User Management</h2>
       <p class="text-sm text-gray-500 mb-6">Invite new administrators and manage existing users. When you add a new user, they will receive an email to set their own password.</p>
-
       <!-- Add New User Form -->
       <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-8">
         <h3 class="text-md font-bold text-gray-900 mb-4">Add New User</h3>
         <%= form_with url: admin_users_path, method: :post, class: "flex items-end gap-4 flex-wrap" do |f| %>
           <div class="grow min-w-[200px]">
-             <%= render InputComponent.new(
+            <%= render InputComponent.new(
               label: "First Name",
               name: "first_name",
               id: "first_name",
@@ -91,7 +90,7 @@
             ) %>
           </div>
           <div class="grow min-w-[200px]">
-             <%= render InputComponent.new(
+            <%= render InputComponent.new(
               label: "Last Name",
               name: "last_name",
               id: "last_name",
@@ -101,7 +100,7 @@
             ) %>
           </div>
           <div class="grow min-w-[250px]">
-             <%= render InputComponent.new(
+            <%= render InputComponent.new(
               label: "Email Address",
               name: "email_address",
               id: "email_address",
@@ -117,7 +116,6 @@
           </div>
         <% end %>
       </div>
-
       <!-- Users List -->
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
@@ -158,4 +156,4 @@
         </table>
       </div>
     </div>
-</div>
+  </div>

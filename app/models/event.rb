@@ -26,7 +26,7 @@ class Event < ApplicationRecord
   end
 
   def total_order_count
-    orders.distinct.count
+    orders.where(status: [ :submitted, :paid ]).distinct.count
   end
 
   def revenue

@@ -9,7 +9,7 @@ gem "propshaft", "~> 1.3"
 # Use PG as the database for Active Record
 gem "pg", "~> 1.5", ">= 1.5.9"
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", "~> 7.1"
+gem "puma", "~> 8.0"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem "importmap-rails", "~> 2.2"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]b
@@ -66,13 +66,13 @@ end
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara", "~> 3.40"
-  gem "selenium-webdriver", "~> 4.41"
+  gem "selenium-webdriver", "~> 4.44"
 end
 
-gem "pagy", "~> 43.4"
+gem "pagy", "~> 43.5"
 
 # Frontend Gems
-gem "view_component", "~> 4.2"
+gem "view_component", "~> 4.10"
 
 gem "tailwindcss-rails", "~> 4.4"
 
@@ -81,7 +81,7 @@ gem "prawn", "~> 2.1" # Pdf generator
 gem "rqrcode", "~> 3.2" # QR Code generator
 
 # Slug generation
-gem "friendly_id", "~> 5.6"
+gem "friendly_id", "~> 5.7"
 
 # Handle dot env
 gem "dotenv-rails", "~> 3.2", groups: [ :development, :test ]
