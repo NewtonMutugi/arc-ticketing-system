@@ -446,11 +446,10 @@ GEM
       actionview (>= 7.1.0)
       activesupport (>= 7.1.0)
       concurrent-ruby (~> 1)
-    web-console (4.2.1)
-      actionview (>= 6.0.0)
-      activemodel (>= 6.0.0)
+    web-console (4.3.0)
+      actionview (>= 8.0.0)
       bindex (>= 0.4.0)
-      railties (>= 6.0.0)
+      railties (>= 8.0.0)
     websocket (1.2.11)
     websocket-driver (0.8.0)
       base64
@@ -507,8 +506,8 @@ DEPENDENCIES
   thruster (~> 0.1)
   turbo-rails (~> 2.0)
   tzinfo-data
-  view_component (~> 4.10)
-  web-console (~> 4.2)
+  view_component (~> 4.2)
+  web-console (~> 4.3)
 
 BUNDLED WITH
    2.7.1

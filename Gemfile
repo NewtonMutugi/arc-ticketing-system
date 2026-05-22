@@ -57,7 +57,7 @@ end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
-  gem "web-console", "~> 4.2"
+  gem "web-console", "~> 4.3"
   gem "erb_lint", "~> 0.9"
   gem "letter_opener", "~> 1.10"
   gem "letter_opener_web", "~> 3.0"
