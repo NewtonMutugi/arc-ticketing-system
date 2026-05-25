@@ -72,7 +72,7 @@ end
 gem "pagy", "~> 43.5"
 
 # Frontend Gems
-gem "view_component", "~> 4.10"
+gem "view_component", "~> 4.11"
 
 gem "tailwindcss-rails", "~> 4.4"
 
