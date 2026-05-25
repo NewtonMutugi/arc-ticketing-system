@@ -40,7 +40,7 @@ gem "kamal", "~> 2.11", require: false
 gem "thruster", "~> 0.1", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-gem "image_processing", "~> 1.14"
+gem "image_processing", "~> 2.0"
 gem "active_storage_validations", "~> 3.0"
 
 
