@@ -4,14 +4,17 @@ class Admin::OrdersController < Admin::BaseController
   before_action :set_order, only: [ :show, :approve, :resend_confirmation_email, :reject_payment ]
 
   def index
+    authorize Order
     @query = @event.orders.includes(:order_items).order(created_at: :desc)
     @pagy, @orders = pagy(@query)
   end
 
   def show
+    authorize @order if defined?(@order)
   end
 
   def approve
+    authorize @order
     if @order.update(status: :paid, approved_by_user_id: Current.user.id, approved_at: Time.current)
       OrderMailer.confirmation_email(@order).deliver_later
 
@@ -34,6 +37,7 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def resend_confirmation_email
+    authorize @order
     if @order.paid?
       OrderMailer.confirmation_email(@order).deliver_later
 
@@ -52,6 +56,7 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def reject_payment
+    authorize @order
     if @order.update(status: :failed, approved_by_user_id: Current.user.id, approval_notes: params[:rejection_reason])
       # Send rejection email to customer
       OrderMailer.rejection_email(@order).deliver_later

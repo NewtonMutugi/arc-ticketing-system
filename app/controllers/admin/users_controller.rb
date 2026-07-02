@@ -1,6 +1,7 @@
 module Admin
   class UsersController < BaseController
     def create
+      authorize User
       # Check if user already exists
       if User.exists?(email_address: params[:email_address])
         redirect_to admin_settings_path, alert: "User with that email already exists."
@@ -14,13 +15,14 @@ module Admin
         first_name: params[:first_name],
         last_name: params[:last_name],
         email_address: params[:email_address],
+        role: params[:role] || "viewer",
         password: random_password,
         password_confirmation: random_password
       )
 
       if @user.save
         # Send a password reset email so the user can set their own password
-        PasswordsMailer.reset(@user).deliver_now
+        PasswordsMailer.reset(@user).deliver_later
         redirect_to admin_settings_path, notice: "User created successfully. An email has been sent to them to set their password."
       else
         error_msg = @user.errors.full_messages.to_sentence
@@ -30,6 +32,7 @@ module Admin
 
     def destroy
       @user = User.find(params[:id])
+      authorize @user
 
       # Prevent user from deleting themselves
       if @user == Current.user

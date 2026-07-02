@@ -1,0 +1,2 @@
+class TicketPolicy < ApplicationPolicy
+end

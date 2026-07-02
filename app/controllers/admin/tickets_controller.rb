@@ -3,14 +3,17 @@ class Admin::TicketsController < Admin::BaseController
   before_action :set_event
 
   def index
+    authorize Ticket
     @tickets = @event.tickets
   end
 
   def show
+    authorize @ticket if defined?(@ticket)
   end
 
   def destroy
     @ticket = @event.tickets.find(params[:id])
+    authorize @ticket
     if @ticket.destroy
       respond_to do |format|
         format.html { redirect_to admin_event_tickets_path(@event), notice: "Ticket deleted successfully." }
@@ -39,10 +42,12 @@ class Admin::TicketsController < Admin::BaseController
   end
 
   def new
+    authorize Ticket
     @ticket = @event.tickets.new
   end
 
   def create
+    authorize Ticket
     @ticket = @event.tickets.new(ticket_params)
     @ticket.created_by_user_id = Current.user.id
     if @ticket.save
@@ -68,10 +73,12 @@ class Admin::TicketsController < Admin::BaseController
 
   def edit
     @ticket = @event.tickets.find(params[:id])
+    authorize @ticket
   end
 
   def update
     @ticket = @event.tickets.find(params[:id])
+    authorize @ticket
     if @ticket.update(ticket_params)
 
       respond_to do |format|

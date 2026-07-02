@@ -3,6 +3,7 @@ require "test_helper"
 class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = User.take
+    @user.update(role: :admin)
     sign_in_as(@user)
   end
 

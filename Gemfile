@@ -90,3 +90,5 @@ gem "dotenv-rails", "~> 3.2", groups: [ :development, :test ]
 gem "rack-cors"
 gem "rest-client"
 gem "faraday"
+
+gem "pundit", "~> 2.5"
