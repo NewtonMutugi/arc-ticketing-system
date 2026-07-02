@@ -1,0 +1,35 @@
+<%= turbo_frame_tag "modal" do %>
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm p-4 overflow-y-auto">
+    <div class="relative w-full max-w-md transform transition-all">
+      <%= form_with(model: [:admin, @user], local: true, class: "w-full") do |f| %>
+        <div class="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
+          <div class="flex justify-between items-center p-5 border-b border-gray-100 bg-gray-50">
+            <h4 class="text-lg font-bold text-gray-900">
+              <i class="fa-solid fa-user-shield text-red-600 mr-2"></i>
+              Edit User Role
+            </h4>
+            <%= link_to admin_settings_path, class: "text-gray-400 hover:text-gray-600 transition-colors" do %>
+              <i class="fa-solid fa-xmark text-xl"></i>
+            <% end %>
+          </div>
+          <div class="p-6 space-y-4">
+            <div>
+              <p class="text-sm text-gray-600">Update the access role for <strong><%= @user.full_name %></strong> (<%= @user.email_address %>).</p>
+            </div>
+            <div>
+              <label for="role" class="block text-sm font-bold text-gray-700 mb-2">Role</label>
+              <%= f.select :role,
+                options_for_select(User.roles.keys.map { |role| [role.titleize, role] }, @user.role),
+                {},
+                class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 text-sm h-[42px] px-3 border outline-none" %>
+            </div>
+          </div>
+          <div class="p-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
+            <%= link_to "Cancel", admin_settings_path, class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50" %>
+            <%= f.submit "Update Role", class: "px-4 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm hover:bg-black cursor-pointer transition-colors" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
