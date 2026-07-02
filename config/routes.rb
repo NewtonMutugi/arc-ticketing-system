@@ -21,7 +21,7 @@ Rails.application.routes.draw do
     get "verifications/show"
     root "dashboard#index"
     resource :settings, only: [ :show, :update ]
-    resources :users, only: [ :create, :destroy ]
+    resources :users, only: [ :create, :destroy, :edit, :update ]
 
     # resource :session
     get "login",  to: "sessions#new",     as: :new_session
