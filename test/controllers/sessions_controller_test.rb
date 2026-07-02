@@ -50,4 +50,19 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_operator session.reload.updated_at, :>, original_updated_at
   end
+
+  test "expires sessions after dynamic timeout setting" do
+    # Change setting to 30 minutes
+    Setting.session_timeout = "30"
+
+    sign_in_as(@user, 40.minutes.ago)
+
+    get admin_root_path
+
+    assert_redirected_to admin_new_session_path
+    assert_empty cookies[:session_id]
+
+    # Reset setting
+    Setting.session_timeout = "120"
+  end
 end

@@ -11,23 +11,23 @@
         <button
           @click="activeTab = 'payment'"
           :class="{ 'border-red-500 text-red-600': activeTab === 'payment', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'payment' }"
-          class="w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors cursor-pointer"
+          class="w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors cursor-pointer"
         >
           <i class="fa-solid fa-credit-card mr-2"></i> Payment Methods
         </button>
         <button
           @click="activeTab = 'users'"
           :class="{ 'border-red-500 text-red-600': activeTab === 'users', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'users' }"
-          class="w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors cursor-pointer"
+          class="w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors cursor-pointer"
         >
           <i class="fa-solid fa-users mr-2"></i> User Management
         </button>
         <button
           @click="activeTab = 'site'"
-          :class="{ 'border-red-500 text-red-600': activeTab === 'site', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'users' }"
-          class="w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors cursor-pointer"
+          :class="{ 'border-red-500 text-red-600': activeTab === 'site', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'site' }"
+          class="w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors cursor-pointer"
         >
-          <i class="fa-solid fa-globe mr-2"></i> SIte Settings
+          <i class="fa-solid fa-globe mr-2"></i> Site Settings
         </button>
       </nav>
     </div>
@@ -133,7 +133,7 @@
                 <td class="px-4 py-3">
                   <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold text-xs uppercase">
-                      <%= user.first_name[0] %><%= user.last_name[0] %>
+                      <%= user.first_name.to_s[0] %><%= user.last_name.to_s[0] %>
                     </div>
                     <span class="font-medium text-gray-900"><%= user.full_name %></span>
                     <% if user == Current.user %>
@@ -154,6 +154,22 @@
             <% end %>
           </tbody>
         </table>
+      </div>
+    </div>
+    <!-- Site Settings Tab -->
+    <div x-show="activeTab === 'site'" x-cloak class="p-6">
+      <h2 class="text-lg font-bold text-gray-900 mb-4">Site Settings</h2>
+      <div class="pt-2">
+        <%= form_with url: admin_settings_path, method: :patch, class: "space-y-6" do |f| %>
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">Session Timeout (Minutes)</label>
+            <p class="text-sm text-gray-500 mb-4">Set the number of minutes of inactivity after which a user session is automatically invalidated and logged out.</p>
+            <%= f.number_field :session_timeout, value: @session_timeout, min: 1, class: "w-full max-w-md border border-gray-300 rounded-lg px-4 py-2 focus:ring-red-500 focus:border-red-500 transition shadow-sm", required: true %>
+          </div>
+          <div class="flex justify-end pt-8 border-t border-gray-100 mt-8">
+            <%= f.submit "Save Settings", class: "bg-gray-900 text-white px-6 py-2 rounded-lg font-medium hover:bg-black transition cursor-pointer" %>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>

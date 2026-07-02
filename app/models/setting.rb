@@ -19,4 +19,14 @@ class Setting < ApplicationRecord
     setting.value = number
     setting.save!
   end
+
+  def self.session_timeout
+    find_by(key: "session_timeout")&.value || "120"
+  end
+
+  def self.session_timeout=(timeout)
+    setting = find_or_initialize_by(key: "session_timeout")
+    setting.value = timeout.to_s
+    setting.save!
+  end
 end

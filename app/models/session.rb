@@ -1,11 +1,13 @@
 class Session < ApplicationRecord
-  MAX_AGE = 2.hours
-
   belongs_to :user
 
-  scope :active, -> { where("updated_at > ?", MAX_AGE.ago) }
+  scope :active, -> { where("updated_at > ?", max_age.ago) }
+
+  def self.max_age
+    Setting.session_timeout.to_i.minutes
+  end
 
   def expired?
-    updated_at <= MAX_AGE.ago
+    updated_at <= self.class.max_age.ago
   end
 end
