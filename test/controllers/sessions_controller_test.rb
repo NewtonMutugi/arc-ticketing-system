@@ -30,4 +30,24 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
     assert_empty cookies[:session_id]
   end
+
+  test "expires sessions after two hours" do
+    sign_in_as(@user, 3.hours.ago)
+
+    get admin_root_path
+
+    assert_redirected_to admin_new_session_path
+    assert_empty cookies[:session_id]
+  end
+
+  test "sliding expiration extends session life" do
+    sign_in_as(@user, 1.hour.ago)
+    session = Current.session
+    original_updated_at = session.updated_at
+
+    get admin_root_path
+
+    assert_response :success
+    assert_operator session.reload.updated_at, :>, original_updated_at
+  end
 end

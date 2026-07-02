@@ -19,7 +19,15 @@ production:
     class: Orders::CleanupPendingJob
     schedule: every day at midnight
 
+  cleanup_expired_sessions:
+    class: Sessions::CleanupExpiredJob
+    schedule: every hour
+
 development:
   cleanup_abandoned_orders:
     class: Orders::CleanupPendingJob
+    schedule: every minute
+
+  cleanup_expired_sessions:
+    class: Sessions::CleanupExpiredJob
     schedule: every minute
