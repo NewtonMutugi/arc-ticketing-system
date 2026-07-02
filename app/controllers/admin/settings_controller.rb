@@ -12,6 +12,8 @@ module Admin
 
     def update
       authorize Setting
+
+
       Setting.mpesa_mode = params[:mpesa_mode] if params[:mpesa_mode].present?
       Setting.mpesa_business_number = params[:mpesa_business_number] if params[:mpesa_business_number].present?
       Setting.session_timeout = params[:session_timeout] if params[:session_timeout].present?

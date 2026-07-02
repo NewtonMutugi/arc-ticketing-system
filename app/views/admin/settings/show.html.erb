@@ -1,11 +1,11 @@
 <% content_for :title, "Settings" %>
+<%= turbo_frame_tag "modal" %>
 <div class="max-w-4xl mx-auto py-8">
   <div class="mb-8">
     <h1 class="text-3xl font-bold text-gray-900">Settings</h1>
     <p class="mt-2 text-sm text-gray-500">Manage global application settings.</p>
   </div>
   <div x-data="{ activeTab: 'payment' }" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-    <!-- Tabs Navigation -->
     <div class="border-b border-gray-200">
       <nav class="flex -mb-px" aria-label="Tabs">
         <button
@@ -74,7 +74,7 @@
     <!-- User Management Tab -->
     <div x-show="activeTab === 'users'" x-cloak class="p-6">
       <h2 class="text-lg font-bold text-gray-900 mb-4">User Management</h2>
-      <p class="text-sm text-gray-500 mb-6">Invite new administrators and manage existing users. When you add a new user, they will receive an email to set their own password.</p>
+      <p class="text-sm text-gray-500 mb-6">Invite new users, update their roles inline, and manage existing accounts. When you add a new user, they will receive an email to set their own password.</p>
       <!-- Add New User Form -->
       <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-8">
         <h3 class="text-md font-bold text-gray-900 mb-4">Add New User</h3>
@@ -138,33 +138,7 @@
           </thead>
           <tbody class="divide-y divide-gray-100">
             <% @users.each do |user| %>
-              <tr class="hover:bg-gray-50 transition-colors">
-                <td class="px-4 py-3">
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold text-xs uppercase">
-                      <%= user.first_name.to_s[0] %><%= user.last_name.to_s[0] %>
-                    </div>
-                    <span class="font-medium text-gray-900"><%= user.full_name %></span>
-                    <% if user == Current.user %>
-                      <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold ml-2">YOU</span>
-                    <% end %>
-                  </div>
-                </td>
-                <td class="px-4 py-3 text-gray-600"><%= user.email_address %></td>
-                <td class="px-4 py-3 text-gray-600">
-                  <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-                    <%= user.role.titleize if user.role.present? %>
-                  </span>
-                </td>
-                <td class="px-4 py-3 text-gray-500 text-sm"><%= time_ago_in_words(user.created_at) %> ago</td>
-                <td class="px-4 py-3 text-right">
-                  <% if user != Current.user %>
-                    <%= button_to admin_user_path(user), method: :delete, class: "text-red-500 hover:text-red-700 transition font-medium text-sm border-none bg-transparent cursor-pointer", form: { data: { turbo_confirm: 'Are you sure you want to remove this user?' } } do %>
-                      <i class="fa-solid fa-trash-can mr-1"></i> Remove
-                    <% end %>
-                  <% end %>
-                </td>
-              </tr>
+              <%= render "admin/users/user_row", user: user %>
             <% end %>
           </tbody>
         </table>

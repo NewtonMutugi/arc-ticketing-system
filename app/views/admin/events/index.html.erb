@@ -39,11 +39,11 @@
           </div>
           <div class="grid grid-cols-2 divide-x divide-gray-100 bg-gray-50 border-b border-gray-100">
             <div class="p-4 text-center">
-              <span class="block text-2xl font-bold text-gray-800"><%= @tickets_sold %></span>
+              <span class="block text-2xl font-bold text-gray-800"><%= event.tickets_sold %></span>
               <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Tickets</span>
             </div>
             <div class="p-4 text-center">
-              <span class="block text-2xl font-bold text-gray-800">Ksh <%= number_with_delimiter(@revenue) %></span>
+              <span class="block text-2xl font-bold text-gray-800">Ksh <%= number_with_delimiter(event.revenue) %></span>
               <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Revenue</span>
             </div>
           </div>
@@ -57,9 +57,9 @@
             <%= link_to admin_event_path(event), class: "flex-1 flex items-center justify-center py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors" do %>
               <i class="fa-solid fa-eye mr-2"></i> View
             <% end %>
-          <% end %>
+          </div>
         <% end %>
       <% end %>
-    </div>
+    <% end %>
   <% end %>
 </div>

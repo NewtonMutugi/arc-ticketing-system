@@ -1,5 +1,7 @@
 module Admin
   class UsersController < BaseController
+    layout "dashboard"
+
     def create
       authorize User
       # Check if user already exists
@@ -44,6 +46,39 @@ module Admin
         redirect_to admin_settings_path, notice: "User deleted successfully."
       else
         redirect_to admin_settings_path, alert: "Could not delete user."
+      end
+    end
+
+    def edit
+      @user = User.find(params[:id])
+      authorize @user
+    end
+
+    def update
+      @user = User.find(params[:id])
+      authorize @user
+
+      role = params.dig(:user, :role) || params[:role]
+
+      if User.roles.key?(role)
+        @user.update!(role: role)
+        respond_to do |format|
+          format.html { redirect_to admin_settings_path, notice: "User role updated successfully." }
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.replace("user_#{@user.id}", partial: "admin/users/user_row", locals: { user: @user }),
+              turbo_stream.update("modal", ""),
+              turbo_stream.append("flash-toasts", partial: "shared/flash_toast", locals: { type: :success, title: "Success", body: "User role updated successfully." })
+            ]
+          end
+        end
+      else
+        respond_to do |format|
+          format.html { redirect_to admin_settings_path, alert: "Invalid role selected." }
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.append("flash-toasts", partial: "shared/flash_toast", locals: { type: :error, title: "Error", body: "Invalid role selected." })
+          end
+        end
       end
     end
   end
