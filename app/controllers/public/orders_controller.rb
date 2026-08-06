@@ -90,7 +90,13 @@ module Public
         end
       end
 
-      redirect_to event_order_checkout_path(@event, @order), notice: "Attendees saved. Please verify payment."
+      if @order.total_cost.to_f <= 0
+        @order.update!(status: :paid, approved_at: Time.current)
+        OrderMailer.confirmation_email(@order).deliver_later
+        redirect_to event_order_path(@event, @order), notice: "Your free ticket is confirmed!"
+      else
+        redirect_to event_order_checkout_path(@event, @order), notice: "Attendees saved. Please verify payment."
+      end
 
     rescue ActiveRecord::RecordInvalid
       redirect_to event_order_attendees_path(@event, @order), alert: "Please check attendee details."
@@ -100,6 +106,7 @@ module Public
     end
 
     def checkout
+      redirect_to event_order_path(@event, @order) if @order.paid? || @order.total_cost.to_f <= 0
     end
 
     def pay
