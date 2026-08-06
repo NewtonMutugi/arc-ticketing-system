@@ -15,9 +15,9 @@ production:
     schedule: every hour at minute 12
 
   # Clear out pending orders that have been abandoned for more than 24 hours
-  cleanup_abandoned_orders:
-    class: Orders::CleanupPendingJob
-    schedule: every day at midnight
+  # cleanup_abandoned_orders:
+  #   class: Orders::CleanupPendingJob
+  #   schedule: every day at midnight
 
   cleanup_expired_sessions:
     class: Sessions::CleanupExpiredJob
