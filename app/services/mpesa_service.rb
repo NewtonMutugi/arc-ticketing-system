@@ -35,7 +35,7 @@ class MpesaService
         TransactionType: "CustomerBuyGoodsOnline",
         Amount: @order.total_cost.to_i,
         PartyA: formatted_phone, # Must be 2547...
-        PartyB: shortcode,
+        PartyB: till_number,
         PhoneNumber: formatted_phone,
         CallBackURL: CALLBACK_URL,
         AccountReference: @order.order_no,
@@ -107,6 +107,10 @@ class MpesaService
 
   def shortcode
     ENV["MPESA_SHORTCODE"]
+  end
+
+  def till_number
+    ENV["MPESA_TILL_NUMBER"] || shortcode
   end
 
   def passkey
