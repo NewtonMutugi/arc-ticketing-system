@@ -1,5 +1,6 @@
 class Ticket < ApplicationRecord
   include Auditable
+  include Hashid::Rails
 
   belongs_to :event
   belongs_to :user, foreign_key: "created_by_user_id", optional: true

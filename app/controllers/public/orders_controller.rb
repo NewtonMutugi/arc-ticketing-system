@@ -8,7 +8,7 @@ module Public
     before_action :set_order, only: [ :attendees, :confirm, :checkout, :pay, :show, :status ]
 
     def new
-      @ticket = @event.tickets.find(params[:ticket_id])
+      @ticket = @event.tickets.find(Ticket.decode_id(params[:ticket_id]))
 
       if params[:order_no].present?
         @order = Order.find_by(order_no: params[:order_no])
@@ -81,7 +81,7 @@ module Public
           # Create the attendee linked to Event, Ticket, and Order
           @order.attendees.create!(
             event: @event,
-            ticket_id: attendee_data[:ticket_id],
+            ticket_id: Ticket.find(attendee_data[:ticket_id]).id,
             first_name: attendee_data[:first_name],
             last_name: attendee_data[:last_name],
             email: attendee_data[:email],

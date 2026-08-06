@@ -92,3 +92,5 @@ gem "rest-client"
 gem "faraday"
 
 gem "pundit", "~> 2.5"
+
+gem "hashid-rails", "~> 1.4"
