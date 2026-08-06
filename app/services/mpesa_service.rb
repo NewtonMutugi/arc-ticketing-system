@@ -46,10 +46,11 @@ class MpesaService
     begin
       result = JSON.parse(response.body)
 
-      unless response.success?
+      if response.success?
+        result
+      else
         error_msg = result["errorMessage"] || result["CustomerMessage"] || "M-Pesa API Error (#{response.status})"
         Rails.logger.error("MPESA STK PUSH ERROR #{response.status}: #{error_msg}")
-        # Add the 'return' keyword here to stop execution
         { "ResponseCode" => "Error", "CustomerMessage" => error_msg }
       end
     rescue JSON::ParserError => e
