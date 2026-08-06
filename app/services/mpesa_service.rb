@@ -61,6 +61,15 @@ class MpesaService
   private
 
   def get_access_token
+    # Daraja tokens are valid ~1hr. Caching avoids hitting /oauth/v1/generate
+    # on every STK push, which otherwise trips Safaricom's WAF bot-protection
+    # under repeated requests.
+    Rails.cache.fetch("mpesa_access_token_#{Rails.env}", expires_in: 55.minutes, skip_nil: true) do
+      fetch_new_access_token
+    end
+  end
+
+  def fetch_new_access_token
     key = ENV["MPESA_CONSUMER_KEY"]
     secret = ENV["MPESA_CONSUMER_SECRET"]
     auth = Base64.strict_encode64("#{key}:#{secret}")
