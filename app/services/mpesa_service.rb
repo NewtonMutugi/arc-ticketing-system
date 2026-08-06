@@ -32,7 +32,7 @@ class MpesaService
         BusinessShortCode: shortcode,
         Password: password,
         Timestamp: timestamp,
-        TransactionType: "CustomerPayBillOnline",
+        TransactionType: "CustomerBuyGoodsOnline",
         Amount: @order.total_cost.to_i,
         PartyA: formatted_phone, # Must be 2547...
         PartyB: shortcode,
