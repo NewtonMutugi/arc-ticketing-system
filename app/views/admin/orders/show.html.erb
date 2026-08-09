@@ -84,6 +84,10 @@
             </tr>
           </tbody>
         </table>
+        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Payment Provider</h4>
+        <div class="flex items-center mb-4 gap-2">
+          <div class="<%= @order.payment_provider == 'PayPal' ? 'bg-blue-600' : 'bg-green-600' %> font-medium text-white text-xs px-1.5 py-0.5 rounded"><%= @order.payment_provider %></div>
+        </div>
         <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Attendees</h4>
         <div class="space-y-2">
           <% @order.attendees.each do |attendee| %>
