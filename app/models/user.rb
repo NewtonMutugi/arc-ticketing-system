@@ -13,7 +13,7 @@ class User < ApplicationRecord
   has_one_attached :avatar
 
   validates :avatar, content_type: [ "image/png", "image/jpeg" ], size: { less_than: 5.megabytes }
-  
+
   enum :role, { viewer: 0, editor: 1, admin: 2 }
 
   def full_name

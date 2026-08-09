@@ -4,7 +4,7 @@ class Admin::BaseController < ApplicationController
   layout :resolve_layout
   before_action :set_user
   before_action :authenticate_user!
-  
+
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   private
