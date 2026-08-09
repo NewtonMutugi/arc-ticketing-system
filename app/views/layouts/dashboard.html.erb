@@ -3,7 +3,7 @@
   <head>
     <%= render "layouts/head" %>
   </head>
-  <body class="bg-gray-50">
+  <body class="bg-gray-50 font-sans antialiased text-gray-900">
     <div class="flex h-screen overflow-hidden" data-controller="sidebar">
       <aside class="w-64 shrink-0 bg-white overflow-y-auto overflow-x-hidden transition-all duration-300" data-sidebar-target="sidebar">
         <%= render SidebarComponent.new(logo_text: "") do |sidebar| %>
