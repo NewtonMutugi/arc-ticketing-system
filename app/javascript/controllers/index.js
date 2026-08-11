@@ -21,3 +21,6 @@ application.register("sidebar", SidebarController)
 
 import ToastController from "controllers/toast_controller"
 application.register("toast", ToastController)
+
+import OrderPricingController from "controllers/order_pricing_controller"
+application.register("order-pricing", OrderPricingController)

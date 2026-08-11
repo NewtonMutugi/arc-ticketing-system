@@ -9,6 +9,52 @@ class Admin::OrdersController < Admin::BaseController
     @pagy, @orders = pagy(@query)
   end
 
+  def new
+    @order = Order.new
+    @tickets = @event.tickets
+    authorize @order
+  end
+
+  def create
+    @order = Order.new(order_params)
+    authorize @order
+
+    ticket = @event.tickets.find(params[:order][:ticket_id])
+    quantity = params[:order][:quantity].to_i
+    
+    @order.order_items.build(ticket: ticket, quantity: quantity)
+    @order.total_items = quantity
+
+    # Use override cost if provided, otherwise calculate
+    override_cost = params[:order][:total_cost]
+    if override_cost.present?
+      @order.total_cost = override_cost.to_d
+    else
+      @order.total_cost = ticket.price * quantity
+    end
+
+    if @order.save
+      if @order.paid?
+        # Manual trigger because callback only fires on update
+        @order.send(:generate_attendees)
+      end
+
+      respond_to do |format|
+        format.html { redirect_to admin_event_orders_path(@event), notice: "Order created successfully." }
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.prepend("orders_list", partial: "admin/orders/order_row", locals: { order: @order, event: @event }),
+            turbo_stream.update("modal", ""),
+            turbo_stream.append("flash-toasts", partial: "shared/flash_toast", locals: { type: :success, title: "Order Created", body: "Order ##{@order.order_no} created." })
+          ]
+        end
+      end
+    else
+      @tickets = @event.tickets
+      render :new, status: :unprocessable_entity
+    end
+  end
+
   def show
     authorize @order if defined?(@order)
   end
@@ -106,5 +152,9 @@ class Admin::OrdersController < Admin::BaseController
   def set_order
     identifier = params[:order_no] || params[:order_order_no] || params[:id]
     @order = @event.orders.find_by!(order_no: identifier)
+  end
+
+  def order_params
+    params.require(:order).permit(:buyer_name, :buyer_email, :buyer_phone_no, :status, :payment_provider)
   end
 end
