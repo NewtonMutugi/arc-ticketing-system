@@ -1,4 +1,4 @@
-<%= form_with model: order, url: admin_event_orders_path(event), class: "w-full", data: { controller: "order-pricing" } do |f| %>
+<%= form_with model: order, url: admin_event_orders_path(event), class: "w-full", data: { controller: "order-pricing dynamic-attendees payment-provider" } do |f| %>
   <div class="modal-content bg-white rounded-lg shadow-xl overflow-hidden">
     <div class="modal-header flex justify-between items-center p-4 border-b border-gray-100">
       <h4 class="text-lg font-bold text-gray-800">
@@ -24,7 +24,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
         <div class="col-span-1 md:col-span-2">
           <label for="order_ticket_id" class="relative block py-2 my-2">
-            <select name="order[ticket_id]" id="order_ticket_id" required class="peer mt-0.5 w-full rounded border-gray-300 px-3 py-3 shadow-sm placeholder-transparent focus:border-red-600 focus:outline-none focus:ring-red-600 sm:text-sm" data-order-pricing-target="ticket" data-action="change->order-pricing#updatePrice">
+            <select name="order[ticket_id]" id="order_ticket_id" required class="peer mt-0.5 w-full rounded border-gray-300 px-3 py-3 shadow-sm placeholder-transparent focus:border-red-600 focus:outline-none focus:ring-red-600 sm:text-sm" data-order-pricing-target="ticket" data-dynamic-attendees-target="ticket" data-action="change->order-pricing#updatePrice change->dynamic-attendees#updateFields">
               <option value="" disabled selected>Select a ticket</option>
               <% tickets.each do |t| %>
                 <option value="<%= t.id %>" data-price="<%= t.price %>"><%= t.title %> - <%= number_to_currency(t.price, unit: 'KES ') %></option>
@@ -36,7 +36,7 @@
 
         <div>
           <label for="order_quantity" class="relative block py-2 my-2">
-            <input type="number" name="order[quantity]" id="order_quantity" value="1" min="1" required class="peer mt-0.5 w-full rounded border-gray-300 px-3 py-3 shadow-sm placeholder-transparent focus:border-red-600 focus:outline-none focus:ring-red-600 sm:text-sm" placeholder=" " data-order-pricing-target="quantity" data-action="input->order-pricing#updatePrice">
+            <input type="number" name="order[quantity]" id="order_quantity" value="1" min="1" required class="peer mt-0.5 w-full rounded border-gray-300 px-3 py-3 shadow-sm placeholder-transparent focus:border-red-600 focus:outline-none focus:ring-red-600 sm:text-sm" placeholder=" " data-order-pricing-target="quantity" data-dynamic-attendees-target="quantity" data-action="input->order-pricing#updatePrice input->dynamic-attendees#updateFields">
             <span class="pointer-events-none absolute start-3 top-0 -translate-y-1/2 bg-white px-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Quantity</span>
           </label>
         </div>
@@ -49,7 +49,7 @@
           <p class="text-xs text-gray-500 mt-1">Leave blank to auto-calculate</p>
         </div>
 
-        <div class="col-span-1 md:col-span-2 mt-4 border-t border-gray-100 pt-4">
+        <div class="col-span-1 md:col-span-2 mt-4 border-t border-gray-100 pt-4 flex justify-between items-center">
           <h4 class="text-sm font-medium text-gray-700 mb-2">Buyer Details</h4>
         </div>
 
@@ -84,6 +84,50 @@
           ) %>
         </div>
 
+        <!-- Attendees Section -->
+        <div class="col-span-1 md:col-span-2 mt-4 border-t border-gray-100 pt-4 flex justify-between items-center">
+          <h4 class="text-sm font-medium text-gray-700">Attendees</h4>
+          <div class="flex items-center gap-2">
+            <input type="checkbox" id="use_buyer_info" class="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer" data-action="change->dynamic-attendees#copyBuyerDetails">
+            <label for="use_buyer_info" class="text-xs text-gray-700 cursor-pointer font-medium">I am one of the attendees</label>
+          </div>
+        </div>
+
+        <div class="col-span-1 md:col-span-2 space-y-4" data-dynamic-attendees-target="container">
+          <!-- Dynamic attendee blocks will be appended here -->
+        </div>
+
+        <template data-dynamic-attendees-target="template">
+          <div class="p-4 rounded-lg border border-gray-200 bg-gray-50 relative group">
+            <div class="absolute -top-3 left-4 bg-gray-50 px-2 text-xs font-bold text-gray-500">
+              Attendee #INDEX
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+              <input type="hidden" name="attendees[][ticket_id]" value="TICKET_ID_PLACEHOLDER">
+              <div>
+                <label class="relative block py-2 my-2">
+                  <input type="text" name="attendees[][first_name]" required class="peer mt-0.5 w-full rounded border-gray-300 px-3 py-3 shadow-sm placeholder-transparent focus:border-red-600 focus:outline-none focus:ring-red-600 sm:text-sm" placeholder=" ">
+                  <span class="pointer-events-none absolute start-3 top-0 -translate-y-1/2 bg-gray-50 px-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">First Name</span>
+                </label>
+              </div>
+              <div>
+                <label class="relative block py-2 my-2">
+                  <input type="text" name="attendees[][last_name]" required class="peer mt-0.5 w-full rounded border-gray-300 px-3 py-3 shadow-sm placeholder-transparent focus:border-red-600 focus:outline-none focus:ring-red-600 sm:text-sm" placeholder=" ">
+                  <span class="pointer-events-none absolute start-3 top-0 -translate-y-1/2 bg-gray-50 px-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Last Name</span>
+                </label>
+              </div>
+              <div class="md:col-span-2">
+                <label class="relative block py-2 my-2">
+                  <input type="email" name="attendees[][email]" required class="peer mt-0.5 w-full rounded border-gray-300 px-3 py-3 shadow-sm placeholder-transparent focus:border-red-600 focus:outline-none focus:ring-red-600 sm:text-sm" placeholder=" ">
+                  <span class="pointer-events-none absolute start-3 top-0 -translate-y-1/2 bg-gray-50 px-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Email Address</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </template>
+        <!-- End Attendees Section -->
+
+
         <div class="col-span-1 md:col-span-2 mt-2 border-t border-gray-100 pt-4">
           <h4 class="text-sm font-medium text-gray-700 mb-2">Order Status</h4>
         </div>
@@ -99,13 +143,21 @@
         </div>
 
         <div>
-          <%= render InputComponent.new(
-            label: "Payment Provider",
-            name: "order[payment_provider]",
-            type: "select",
-            value: order.payment_provider,
-            options: [['M-Pesa', 'M-Pesa'], ['PayPal', 'PayPal']]
-          ) %>
+          <label for="order_payment_provider" class="relative block py-2 my-2">
+            <select name="order[payment_provider]" id="order_payment_provider" class="peer mt-0.5 w-full rounded border-gray-300 px-3 py-3 shadow-sm placeholder-transparent focus:border-red-600 focus:outline-none focus:ring-red-600 sm:text-sm" data-payment-provider-target="provider" data-action="change->payment-provider#toggle">
+              <option value="" selected="selected">Select Provider</option>
+              <option value="M-Pesa" <%= 'selected' if order.payment_provider == 'M-Pesa' %>>M-Pesa</option>
+              <option value="PayPal" <%= 'selected' if order.payment_provider == 'PayPal' %>>PayPal</option>
+            </select>
+            <span class="pointer-events-none absolute start-3 top-0 -translate-y-1/2 bg-white px-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Payment Provider</span>
+          </label>
+        </div>
+
+        <div class="col-span-1 md:col-span-2 hidden" data-payment-provider-target="referenceContainer">
+          <label for="order_payment_reference" class="relative block py-2 my-2">
+            <input type="text" name="order[payment_reference]" id="order_payment_reference" value="<%= order.payment_reference %>" class="peer mt-0.5 w-full rounded border-gray-300 px-3 py-3 shadow-sm placeholder-transparent focus:border-red-600 focus:outline-none focus:ring-red-600 sm:text-sm" placeholder=" " data-payment-provider-target="referenceInput">
+            <span class="pointer-events-none absolute start-3 top-0 -translate-y-1/2 bg-white px-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Transaction Code</span>
+          </label>
         </div>
       </div>
     </div>

@@ -19,24 +19,50 @@ class Admin::OrdersController < Admin::BaseController
     @order = Order.new(order_params)
     authorize @order
 
-    ticket = @event.tickets.find(params[:order][:ticket_id])
+    ticket_id_param = params[:order][:ticket_id]
+    ticket = @event.tickets.find(Ticket.decode_id(ticket_id_param) || ticket_id_param)
     quantity = params[:order][:quantity].to_i
     
-    @order.order_items.build(ticket: ticket, quantity: quantity)
-    @order.total_items = quantity
-
     # Use override cost if provided, otherwise calculate
     override_cost = params[:order][:total_cost]
     if override_cost.present?
       @order.total_cost = override_cost.to_d
+      unit_price = override_cost.to_d / quantity
     else
       @order.total_cost = ticket.price * quantity
+      unit_price = ticket.price
+    end
+
+    @order.order_items.build(ticket: ticket, quantity: quantity, unit_price: unit_price)
+    @order.total_items = quantity
+
+    # If the admin creates it directly as paid, mark it approved
+    if @order.paid?
+      @order.approved_by_user_id = Current.user.id
+      @order.approved_at = Time.current
     end
 
     if @order.save
-      if @order.paid?
-        # Manual trigger because callback only fires on update
+      if params[:attendees].present?
+        params[:attendees].each do |attendee_params|
+          @order.attendees.create!(
+            event: @event,
+            ticket: ticket,
+            email: attendee_params[:email],
+            first_name: attendee_params[:first_name],
+            last_name: attendee_params[:last_name],
+            token: SecureRandom.hex(6).upcase
+          )
+        end
+      elsif @order.paid?
+        # Fallback if no attendees provided but status is paid
         @order.send(:generate_attendees)
+      end
+
+      if @order.paid?
+        OrderMailer.confirmation_email(@order).deliver_later
+      elsif @order.submitted?
+        OrderMailer.receipt_email(@order).deliver_later
       end
 
       respond_to do |format|
@@ -155,6 +181,6 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def order_params
-    params.require(:order).permit(:buyer_name, :buyer_email, :buyer_phone_no, :status, :payment_provider)
+    params.require(:order).permit(:buyer_name, :buyer_email, :buyer_phone_no, :status, :payment_provider, :payment_reference)
   end
 end
