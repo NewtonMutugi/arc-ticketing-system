@@ -1,6 +1,7 @@
 class Admin::TicketsController < Admin::BaseController
   layout "event_dashboard"
   before_action :set_event
+  before_action :set_ticket, only: [ :show, :edit, :update, :destroy ]
 
   def index
     authorize Ticket
@@ -8,11 +9,10 @@ class Admin::TicketsController < Admin::BaseController
   end
 
   def show
-    authorize @ticket if defined?(@ticket)
+    authorize @ticket
   end
 
   def destroy
-    @ticket = @event.tickets.find(params[:id])
     authorize @ticket
     if @ticket.destroy
       respond_to do |format|
@@ -72,12 +72,10 @@ class Admin::TicketsController < Admin::BaseController
   end
 
   def edit
-    @ticket = @event.tickets.find(params[:id])
     authorize @ticket
   end
 
   def update
-    @ticket = @event.tickets.find(params[:id])
     authorize @ticket
     if @ticket.update(ticket_params)
 
@@ -106,6 +104,10 @@ class Admin::TicketsController < Admin::BaseController
     @event = Event.friendly.find(params[:event_id])
   rescue ActiveRecord::RecordNotFound
     redirect_to admin_events_path, alert: "Event not found"
+  end
+
+  def set_ticket
+    @ticket = @event.tickets.find(Ticket.decode_id(params[:id]) || params[:id])
   end
 
   def ticket_params

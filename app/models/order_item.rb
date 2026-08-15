@@ -3,6 +3,6 @@ class OrderItem < ApplicationRecord
   belongs_to :ticket
 
   def total_price
-    quantity * unit_price
+    quantity * (unit_price || ticket.price || 0)
   end
 end

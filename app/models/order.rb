@@ -50,7 +50,7 @@ class Order < ApplicationRecord
           email: buyer_email,
           first_name: buyer_name.split.first,
           last_name: buyer_name.split.last,
-          private_reference: SecureRandom.hex(6).upcase
+          token: SecureRandom.hex(6).upcase
         )
       end
     end

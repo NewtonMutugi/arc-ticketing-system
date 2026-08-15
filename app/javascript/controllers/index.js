@@ -24,3 +24,9 @@ application.register("toast", ToastController)
 
 import OrderPricingController from "controllers/order_pricing_controller"
 application.register("order-pricing", OrderPricingController)
+
+import DynamicAttendeesController from "controllers/dynamic_attendees_controller"
+application.register("dynamic-attendees", DynamicAttendeesController)
+
+import PaymentProviderController from "controllers/payment_provider_controller"
+application.register("payment-provider", PaymentProviderController)
