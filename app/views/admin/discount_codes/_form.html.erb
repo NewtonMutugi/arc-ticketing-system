@@ -1,0 +1,103 @@
+<%= form_with(model: [:admin, @event, @discount_code], local: true, class: "w-full") do |f| %>
+  <div class="modal-content bg-white rounded-lg shadow-xl overflow-hidden">
+    <div class="modal-header flex justify-between items-center p-4 border-b border-gray-100">
+      <h4 class="text-lg font-bold text-gray-800">
+        <i class="fa fa-tag text-red-600 mr-2"></i>
+        <%= @discount_code.new_record? ? "Create New Discount Code" : "Edit Discount Code" %>
+      </h4>
+      <%= link_to admin_event_discount_codes_path(@event), class: "text-gray-400 hover:text-gray-600 transition-colors" do %>
+        <i class="fa-solid fa-times text-xl"></i>
+      <% end %>
+    </div>
+    <div class="modal-body p-6 max-h-[80vh] overflow-y-auto">
+      <% if @discount_code.errors.any? %>
+        <div class="mb-4 p-4 bg-red-50 text-red-700 rounded border border-red-200 text-sm">
+          <ul class="list-disc ml-5">
+            <% @discount_code.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div class="col-span-1 md:col-span-2">
+          <%= render InputComponent.new(
+            label: "Discount Code",
+            name: "discount_code[code]",
+            value: @discount_code.code,
+            placeholder: "e.g. SUMMER50",
+            required: true
+          ) %>
+          <p class="text-xs text-gray-500 mt-1">Must be unique for this event.</p>
+        </div>
+        <div>
+          <%= render InputComponent.new(
+            label: "Discount Type",
+            name: "discount_code[discount_type]",
+            type: "select",
+            value: @discount_code.discount_type,
+            options: [['Percentage (%)', 'percentage'], ['Fixed Amount', 'fixed_amount']]
+          ) %>
+        </div>
+        <div>
+          <%= render InputComponent.new(
+            label: "Discount Amount",
+            name: "discount_code[discount_amount]",
+            type: "number",
+            value: @discount_code.discount_amount,
+            placeholder: "e.g. 10 or 500",
+            required: true
+          ) %>
+        </div>
+        <div>
+          <%= render InputComponent.new(
+            label: "Max Uses (optional)",
+            name: "discount_code[max_uses]",
+            type: "number",
+            value: @discount_code.max_uses,
+            placeholder: "Leave empty for unlimited",
+            required: false
+          ) %>
+        </div>
+        <div>
+          <%= render InputComponent.new(
+            label: "Valid Until (optional)",
+            name: "discount_code[valid_until]",
+            type: "datetime",
+            value: @discount_code.valid_until&.strftime("%Y-%m-%dT%H:%M")
+          ) %>
+        </div>
+        <div>
+          <%= render InputComponent.new(
+            label: "Active?",
+            name: "discount_code[active]",
+            type: "select",
+            value: @discount_code.active,
+            options: [['Yes', true], ['No', false]]
+          ) %>
+        </div>
+        
+        <div class="col-span-1 md:col-span-2 pt-4 border-t border-gray-100 mt-2">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Applies to Tickets</label>
+          <div class="space-y-2 bg-gray-50 p-4 rounded border border-gray-200">
+            <% @event.tickets.each do |ticket| %>
+              <div class="flex items-center">
+                <input type="checkbox" name="discount_code[ticket_ids][]" value="<%= ticket.id %>" id="ticket_<%= ticket.id %>" <%= 'checked' if @discount_code.ticket_ids.include?(ticket.id) %> class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded cursor-pointer">
+                <label for="ticket_<%= ticket.id %>" class="ml-2 block text-sm text-gray-900 cursor-pointer">
+                  <%= ticket.title %> (Price: <%= number_to_currency(ticket.price, unit: 'Ksh ', precision: 0) %>)
+                </label>
+              </div>
+            <% end %>
+            <% if @event.tickets.empty? %>
+              <p class="text-sm text-gray-500">No tickets found. Please create tickets first.</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer p-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
+      <%= link_to "Cancel", admin_event_discount_codes_path(@event), class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-50" %>
+      <%= f.submit @discount_code.new_record? ? "Create Code" : "Update Code", class: "px-4 py-2 text-sm font-medium text-white bg-green-600 rounded shadow-sm hover:bg-green-700 cursor-pointer" %>
+    </div>
+  </div>
+<% end %>

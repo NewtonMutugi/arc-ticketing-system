@@ -1,0 +1,9 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  discount_code: one
+  ticket: one
+
+two:
+  discount_code: two
+  ticket: two
