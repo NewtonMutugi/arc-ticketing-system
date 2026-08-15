@@ -42,22 +42,41 @@ module Public
         @order.order_no = "ORD-#{SecureRandom.hex(4).upcase}"
       end
 
+      # Handle discount code
+      discount_code = nil
+      if params[:discount_code].present?
+        code = params[:discount_code].to_s.strip.upcase
+        discount_code = @event.discount_codes.find_by(code: code)
+      end
+
       # Calculate Costs and items
       total = 0
+      total_discount = 0
       if params[:tickets]
         params[:tickets].each do |ticket_id, quantity|
           qty = quantity.to_i
           next if qty <= 0
 
           ticket = Ticket.find(ticket_id)
+          
+          if discount_code && discount_code.valid_for_use? && discount_code.applies_to?(ticket)
+            discount_per_ticket = discount_code.calculate_discount(ticket.price, 1)
+            total_discount += (discount_per_ticket * qty)
+          end
+
           # Create the OrderItems in memory
           @order.order_items.build(ticket: ticket, quantity: qty, unit_price: ticket.price)
           total += (ticket.price * qty)
         end
       end
 
-      @order.total_cost = total
+      @order.total_cost = [total - total_discount, 0].max
       @order.total_items = @order.order_items.sum(&:quantity)
+      
+      if total_discount > 0 && discount_code
+        @order.discount_code_id = discount_code.id
+        @order.discount_amount = total_discount
+      end
 
       if @order.save
         # Redirect to Step 2: Attendee Details

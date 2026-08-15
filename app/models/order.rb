@@ -5,11 +5,13 @@ class Order < ApplicationRecord
   has_many :tickets, through: :order_items
   has_many :attendees, dependent: :destroy
   belongs_to :user, foreign_key: "approved_by_user_id", optional: true
+  belongs_to :discount_code, optional: true
 
   before_create :generate_order_number
 
   after_update :generate_attendees, if: -> { saved_change_to_status? && paid? }
   after_update :log_payment_approval, if: :status_changed?
+  after_update :increment_discount_usage, if: -> { saved_change_to_status? && paid? }
 
   enum :status, {
     draft: 0,   # Safe to auto-delete after 7 days
@@ -86,5 +88,9 @@ class Order < ApplicationRecord
 
   def status_changed?
     saved_change_to_status?
+  end
+
+  def increment_discount_usage
+    discount_code&.increment!(:uses_count)
   end
 end

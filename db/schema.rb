@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_02_105612) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_15_173621) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -78,6 +78,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_02_105612) do
     t.index ["user_id"], name: "index_audit_logs_on_user_id"
   end
 
+  create_table "discount_code_tickets", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "discount_code_id", null: false
+    t.bigint "ticket_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["discount_code_id"], name: "index_discount_code_tickets_on_discount_code_id"
+    t.index ["ticket_id"], name: "index_discount_code_tickets_on_ticket_id"
+  end
+
+  create_table "discount_codes", force: :cascade do |t|
+    t.boolean "active"
+    t.string "code"
+    t.datetime "created_at", null: false
+    t.decimal "discount_amount"
+    t.integer "discount_type"
+    t.bigint "event_id", null: false
+    t.integer "max_uses"
+    t.datetime "updated_at", null: false
+    t.integer "uses_count"
+    t.datetime "valid_until"
+    t.index ["event_id"], name: "index_discount_codes_on_event_id"
+  end
+
   create_table "events", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "created_by_user_id"
@@ -126,6 +149,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_02_105612) do
     t.string "buyer_phone_no"
     t.string "checkout_request_id"
     t.datetime "created_at", null: false
+    t.decimal "discount_amount"
+    t.bigint "discount_code_id"
     t.string "merchant_request_id"
     t.string "order_no"
     t.string "payment_provider"
@@ -137,6 +162,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_02_105612) do
     t.string "transaction_receipt"
     t.datetime "updated_at", null: false
     t.index ["approved_by_user_id"], name: "index_orders_on_approved_by_user_id"
+    t.index ["discount_code_id"], name: "index_orders_on_discount_code_id"
     t.index ["order_no"], name: "index_orders_on_order_no", unique: true
   end
 
@@ -317,9 +343,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_02_105612) do
   add_foreign_key "attendees", "orders"
   add_foreign_key "attendees", "tickets"
   add_foreign_key "audit_logs", "users"
+  add_foreign_key "discount_code_tickets", "discount_codes"
+  add_foreign_key "discount_code_tickets", "tickets"
+  add_foreign_key "discount_codes", "events"
   add_foreign_key "events", "users", column: "created_by_user_id"
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "tickets"
+  add_foreign_key "orders", "discount_codes"
   add_foreign_key "orders", "users", column: "approved_by_user_id"
   add_foreign_key "sessions", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

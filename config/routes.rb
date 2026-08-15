@@ -7,6 +7,7 @@ Rails.application.routes.draw do
     root "events#index"
 
     resources :events, only: [ :show ] do
+      get "discount_codes/validate", to: "discount_codes#validate"
       resources :orders, only: [ :new, :create, :show ], param: :order_no do
         get "attendees", to: "orders#attendees"
         patch "confirm", to: "orders#confirm"
@@ -41,6 +42,7 @@ Rails.application.routes.draw do
         end
       end
       resources :transactions, only: [ :index ]
+      resources :discount_codes
     end
 
     resource :profile, only: [ :show, :update ]

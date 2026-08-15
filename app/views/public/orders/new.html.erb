@@ -10,8 +10,8 @@
       <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 sticky top-4">
         <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">Selected Ticket</h3>
         <h2 class="text-2xl font-bold text-gray-900 mb-2"><%= @ticket.title %></h2>
-        <div class="text-xl font-bold text-red-600 mb-4">
-          <%= @ticket.price == 0 ? "Free" : number_to_currency(@ticket.price, unit: "Ksh ", precision: 0) %>
+        <div class="text-xl font-bold text-red-600 mb-4" id="ticket-price-container" data-original-price="<%= @ticket.price %>">
+          <span id="price-display"><%= @ticket.price == 0 ? "Free" : number_to_currency(@ticket.price, unit: "Ksh ", precision: 0) %></span>
           <span class="text-xs text-gray-500 font-normal">/ ticket</span>
         </div>
         <hr class="border-gray-200 my-4">
@@ -85,6 +85,15 @@
               required: true,
               value: @order&.buyer_phone_no,
             ) %>
+            
+            <div class="mt-4 pt-4 border-t border-gray-100">
+              <label class="block text-sm font-bold text-gray-900 mb-2">Discount Code (optional)</label>
+              <div class="flex gap-2">
+                <input type="text" name="discount_code" id="discount_code" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 uppercase" placeholder="Enter code here" value="<%= @order&.discount_code&.code %>">
+                <button type="button" onclick="applyDiscount()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-bold text-sm whitespace-nowrap">Apply</button>
+              </div>
+              <p id="discount_message" class="text-xs mt-2 font-medium"></p>
+            </div>
           </div>
           <div class="mt-8">
             <%= f.submit "Continue to Attendee Details",
@@ -101,6 +110,56 @@
     let newVal = parseInt(input.value) + amount;
     if (newVal >= 1 && newVal <= 10) {
       input.value = newVal;
+    }
+  }
+
+  async function applyDiscount() {
+    const codeInput = document.getElementById('discount_code');
+    const msgEl = document.getElementById('discount_message');
+    const priceDisplay = document.getElementById('price-display');
+    const container = document.getElementById('ticket-price-container');
+    const code = codeInput.value.trim();
+    const originalPrice = parseFloat(container.dataset.originalPrice);
+
+    if (!code) {
+      msgEl.textContent = "Please enter a discount code.";
+      msgEl.className = "text-xs mt-2 font-medium text-red-600";
+      return;
+    }
+
+    msgEl.textContent = "Validating...";
+    msgEl.className = "text-xs mt-2 font-medium text-gray-500";
+
+    try {
+      const response = await fetch(`/events/<%= @event.slug %>/discount_codes/validate?code=${encodeURIComponent(code)}&ticket_id=<%= @ticket.hashid %>`);
+      const data = await response.json();
+
+      if (data.valid) {
+        msgEl.textContent = data.message;
+        msgEl.className = "text-xs mt-2 font-medium text-green-600";
+        
+        let newPrice = originalPrice;
+        if (data.discount_type === 'percentage') {
+          newPrice = originalPrice - (originalPrice * (parseFloat(data.discount_amount) / 100));
+        } else {
+          newPrice = originalPrice - parseFloat(data.discount_amount);
+        }
+        
+        if (newPrice < 0) newPrice = 0;
+        
+        const formattedOld = new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', maximumFractionDigits: 0 }).format(originalPrice).replace('KES', 'Ksh');
+        const formattedNew = new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', maximumFractionDigits: 0 }).format(newPrice).replace('KES', 'Ksh');
+        
+        priceDisplay.innerHTML = `<span class="line-through text-gray-400 text-sm mr-2">${formattedOld}</span><span>${formattedNew}</span>`;
+      } else {
+        msgEl.textContent = data.error;
+        msgEl.className = "text-xs mt-2 font-medium text-red-600";
+        // Reset to original
+        priceDisplay.textContent = originalPrice === 0 ? "Free" : new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', maximumFractionDigits: 0 }).format(originalPrice).replace('KES', 'Ksh');
+      }
+    } catch (error) {
+      msgEl.textContent = "An error occurred while validating the code.";
+      msgEl.className = "text-xs mt-2 font-medium text-red-600";
     }
   }
 </script>

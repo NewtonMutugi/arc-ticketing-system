@@ -76,6 +76,19 @@
                 </td>
               </tr>
             <% end %>
+            <% if @order.discount_amount.to_i > 0 %>
+              <tr class="bg-red-50">
+                <td class="py-2 pl-3 text-sm text-red-600">
+                  <span class="font-bold">Discount</span>
+                  <% if @order.discount_code %>
+                    <span class="text-xs ml-1">(Code: <%= @order.discount_code.code %>)</span>
+                  <% end %>
+                </td>
+                <td class="py-2 pr-3 text-sm text-right text-red-600">
+                  -<%= number_to_currency(@order.discount_amount, unit: "Ksh ", precision: 0) %>
+                </td>
+              </tr>
+            <% end %>
             <tr class="bg-gray-50">
               <td class="py-3 pl-3 text-sm font-bold text-gray-900">Total</td>
               <td class="py-3 pr-3 text-sm text-right font-bold text-gray-900">

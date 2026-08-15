@@ -7,6 +7,9 @@ class Ticket < ApplicationRecord
   has_many :order_items
   has_many :orders, through: :order_items
 
+  has_many :discount_code_tickets, dependent: :destroy
+  has_many :discount_codes, through: :discount_code_tickets
+
   has_one_attached :ticket_image
 
   validates :ticket_image, content_type: [ "image/png", "image/jpeg" ], size: { less_than: 5.megabytes }

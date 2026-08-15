@@ -7,6 +7,7 @@ class Event < ApplicationRecord
   has_many :attendees, dependent: :destroy
   has_many :order_items, through: :tickets
   has_many :orders, through: :order_items
+  has_many :discount_codes, dependent: :destroy
   belongs_to :user, foreign_key: "created_by_user_id", optional: true
 
   validates :title, :description,  presence: true
