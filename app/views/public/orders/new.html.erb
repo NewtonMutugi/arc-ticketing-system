@@ -1,62 +1,81 @@
 <% content_for :title, "Buy #{@ticket.title}" %>
-<div class="max-w-3xl mx-auto">
+<div class="max-w-4xl mx-auto">
   <div class="mb-6">
     <%= link_to event_path(@event), class: "text-gray-500 hover:text-gray-900 flex items-center gap-2 text-sm" do %>
       <i class="fa-solid fa-arrow-left"></i> Back to Event
     <% end %>
   </div>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-    <div class="md:col-span-1">
-      <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 sticky top-4">
-        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">Selected Ticket</h3>
-        <h2 class="text-2xl font-bold text-gray-900 mb-2"><%= @ticket.title %></h2>
-        <div class="text-xl font-bold text-red-600 mb-4" id="ticket-price-container" data-original-price="<%= @ticket.price %>">
-          <span id="price-display"><%= @ticket.price == 0 ? "Free" : number_to_currency(@ticket.price, unit: "Ksh ", precision: 0) %></span>
-          <span class="text-xs text-gray-500 font-normal">/ ticket</span>
-        </div>
-        <hr class="border-gray-200 my-4">
-        <div class="text-sm text-gray-600">
-          <p class="mb-1"><i class="fa-regular fa-calendar mr-2"></i> <%= @event.start_date.to_fs(:short) %></p>
-          <p><i class="fa-solid fa-location-dot mr-2"></i> <%= @event.location %></p>
-        </div>
-        <hr class="border-gray-200 my-4">
-        <div class="text-sm text-gray-600">
-          <% if @ticket.benefits.present? %>
-            <div class="mb-4">
-              <h4 class="font-bold text-gray-700 text-sm mb-2">Includes:</h4>
-              <ul class="space-y-2">
-                <% @ticket.benefits.split("\n").each do |benefit| %>
-                  <% next if benefit.blank? %>
-                  <li class="flex items-start text-sm text-gray-600">
-                    <i class="fa-solid fa-check text-green-500 mt-0.5 mr-2 flex-shrink-0"></i>
-                    <span><%= benefit %></span>
-                  </li>
-                <% end %>
-              </ul>
-            </div>
-            <hr class="border-gray-200 my-4">
-          <% end %>
-        </div>
-      </div>
-    </div>
-    <div class="md:col-span-2">
-      <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
-        <h3 class="text-xl font-bold mb-6">Buyer Information</h3>
-        <%= form_with url: event_orders_path(@event), method: :post, local: true do |f| %>
-          <% if @order.persisted? %>
-            <%= hidden_field_tag :order_no, @order.order_no %>
-          <% end %>
-          <div class="mb-8 bg-blue-50 p-4 rounded-lg border border-blue-100 flex justify-between items-center">
-            <div>
-              <label class="block font-bold text-gray-900">Quantity</label>
-              <p class="text-xs text-gray-500">How many tickets?</p>
-            </div>
-            <div class="flex items-center w-32">
-              <button type="button" onclick="adjustQty(-1)" class="w-10 h-10 rounded-l-lg bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50">-</button>
-              <input type="number" id="ticket_qty" name="tickets[<%= @ticket.hashid %>]" value="<%= @order.persisted? ? (@order.order_items.find { |oi| oi.ticket_id == @ticket.id }&.quantity || 1) : 1 %>" min="1" max="10" class="w-full border-y border-gray-300 text-center h-10 focus:ring-0 z-10" readonly>
-              <button type="button" onclick="adjustQty(1)" class="w-10 h-10 rounded-r-lg bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50">+</button>
+
+  <%= form_with url: event_orders_path(@event), method: :post, local: true, id: "order-form" do |f| %>
+    <% if @order.persisted? %>
+      <%= hidden_field_tag :order_no, @order.order_no %>
+    <% end %>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+      
+      <!-- LEFT PANEL: Order Summary -->
+      <div class="md:col-span-5">
+        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 sticky top-4">
+          <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">Order Summary</h3>
+          <h2 class="text-xl font-bold text-gray-900 mb-2"><%= @ticket.title %></h2>
+          
+          <div class="text-lg font-bold text-red-600 mb-4" id="ticket-price-container" data-original-price="<%= @ticket.price %>">
+            <span id="price-display"><%= @ticket.price == 0 ? "Free" : number_to_currency(@ticket.price, unit: "Ksh ", precision: 0) %></span>
+            <span class="text-xs text-gray-500 font-normal">/ ticket</span>
+          </div>
+
+          <hr class="border-gray-200 my-4">
+
+          <div class="mb-4">
+            <label class="block font-bold text-gray-900 mb-2">Quantity</label>
+            <div class="flex items-center w-full">
+              <button type="button" onclick="adjustQty(-1)" class="w-12 h-12 rounded-l-lg bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition text-lg font-bold text-gray-600">-</button>
+              <input type="number" id="ticket_qty" name="tickets[<%= @ticket.hashid %>]" value="<%= @order.persisted? ? (@order.order_items.find { |oi| oi.ticket_id == @ticket.id }&.quantity || 1) : 1 %>" min="1" max="10" class="w-full border-y border-gray-300 text-center h-12 focus:ring-0 z-10 font-bold text-lg bg-white" readonly>
+              <button type="button" onclick="adjustQty(1)" class="w-12 h-12 rounded-r-lg bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition text-lg font-bold text-gray-600">+</button>
             </div>
           </div>
+
+          <hr class="border-gray-200 my-4">
+
+          <div class="mb-4">
+            <%= render InputComponent.new(
+              label: "Discount Code",
+              name: "discount_code",
+              id: "discount_code",
+              type: "text",
+              placeholder: "Enter code here",
+              required: false,
+              value: @order&.discount_code&.code,
+            ) %>
+            <button type="button" onclick="applyDiscount()" class="w-full mt-2 bg-gray-800 text-white px-4 py-3 rounded-lg hover:bg-gray-700 font-bold text-sm transition">Apply Discount</button>
+            <p id="discount_message" class="text-xs mt-2 font-medium"></p>
+          </div>
+
+          <hr class="border-gray-200 my-4">
+
+          <div class="space-y-3">
+            <div class="flex justify-between text-gray-600 font-medium">
+              <span>Subtotal</span>
+              <span id="subtotal-display">...</span>
+            </div>
+            <div class="flex justify-between text-red-600 font-medium hidden" id="discount-row">
+              <span>Discount</span>
+              <span id="discount-display">...</span>
+            </div>
+            <div class="flex justify-between text-2xl font-bold text-gray-900 mt-3 pt-3 border-t border-gray-200">
+              <span>Total</span>
+              <span id="total-display">...</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL: Buyer Information -->
+      <div class="md:col-span-7">
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-100">
+          <h3 class="text-xl font-bold mb-6">Buyer Information</h3>
+          
           <div class="space-y-4">
             <%= render InputComponent.new(
               label: "Full Name",
@@ -85,45 +104,97 @@
               required: true,
               value: @order&.buyer_phone_no,
             ) %>
-            
-            <div class="mt-4 pt-4 border-t border-gray-100">
-              <label class="block text-sm font-bold text-gray-900 mb-2">Discount Code (optional)</label>
-              <div class="flex gap-2">
-                <input type="text" name="discount_code" id="discount_code" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 uppercase" placeholder="Enter code here" value="<%= @order&.discount_code&.code %>">
-                <button type="button" onclick="applyDiscount()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-bold text-sm whitespace-nowrap">Apply</button>
-              </div>
-              <p id="discount_message" class="text-xs mt-2 font-medium"></p>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-gray-100">
+            <div class="text-sm text-gray-600 mb-6">
+              <% if @ticket.benefits.present? %>
+                <h4 class="font-bold text-gray-700 text-sm mb-3">Your Ticket Includes:</h4>
+                <ul class="space-y-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <% @ticket.benefits.split("\n").each do |benefit| %>
+                    <% next if benefit.blank? %>
+                    <li class="flex items-start text-sm text-gray-600">
+                      <i class="fa-solid fa-check text-green-500 mt-0.5 mr-2 flex-shrink-0"></i>
+                      <span><%= benefit %></span>
+                    </li>
+                  <% end %>
+                </ul>
+              <% end %>
             </div>
-          </div>
-          <div class="mt-8">
+            
             <%= f.submit "Continue to Attendee Details",
-                class: "w-full bg-red-600 text-white font-bold py-4 rounded-lg hover:bg-red-700 transition shadow-lg cursor-pointer flex justify-center items-center" %>
+                class: "w-full bg-red-600 text-white font-bold py-4 rounded-lg hover:bg-red-700 transition shadow-lg cursor-pointer flex justify-center items-center text-lg" %>
           </div>
-        <% end %>
+        </div>
       </div>
+      
     </div>
-  </div>
+  <% end %>
 </div>
+
 <script>
+  let currentDiscountType = null;
+  let currentDiscountAmount = 0;
+
   function adjustQty(amount) {
     const input = document.getElementById('ticket_qty');
     let newVal = parseInt(input.value) + amount;
     if (newVal >= 1 && newVal <= 10) {
       input.value = newVal;
+      updateTotals();
     }
+  }
+
+  function updateTotals() {
+    const container = document.getElementById('ticket-price-container');
+    const originalPrice = parseFloat(container.dataset.originalPrice);
+    const qty = parseInt(document.getElementById('ticket_qty').value);
+    
+    const subtotal = originalPrice * qty;
+    let totalDiscount = 0;
+
+    if (currentDiscountAmount > 0) {
+      let discountPerTicket = 0;
+      if (currentDiscountType === 'percentage') {
+        discountPerTicket = originalPrice * (currentDiscountAmount / 100);
+      } else {
+        discountPerTicket = currentDiscountAmount;
+      }
+      if (discountPerTicket > originalPrice) discountPerTicket = originalPrice;
+      totalDiscount = discountPerTicket * qty;
+    }
+
+    let total = subtotal - totalDiscount;
+    if (total < 0) total = 0;
+
+    const formatCurrency = (amount) => {
+      return new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', maximumFractionDigits: 0 }).format(amount).replace('KES', 'Ksh');
+    };
+
+    document.getElementById('subtotal-display').textContent = formatCurrency(subtotal);
+    
+    const discountRow = document.getElementById('discount-row');
+    if (totalDiscount > 0) {
+      discountRow.classList.remove('hidden');
+      document.getElementById('discount-display').textContent = `-${formatCurrency(totalDiscount)}`;
+    } else {
+      discountRow.classList.add('hidden');
+    }
+
+    document.getElementById('total-display').textContent = formatCurrency(total);
   }
 
   async function applyDiscount() {
     const codeInput = document.getElementById('discount_code');
     const msgEl = document.getElementById('discount_message');
-    const priceDisplay = document.getElementById('price-display');
-    const container = document.getElementById('ticket-price-container');
     const code = codeInput.value.trim();
-    const originalPrice = parseFloat(container.dataset.originalPrice);
 
     if (!code) {
       msgEl.textContent = "Please enter a discount code.";
       msgEl.className = "text-xs mt-2 font-medium text-red-600";
+      currentDiscountType = null;
+      currentDiscountAmount = 0;
+      updateTotals();
       return;
     }
 
@@ -138,28 +209,32 @@
         msgEl.textContent = data.message;
         msgEl.className = "text-xs mt-2 font-medium text-green-600";
         
-        let newPrice = originalPrice;
-        if (data.discount_type === 'percentage') {
-          newPrice = originalPrice - (originalPrice * (parseFloat(data.discount_amount) / 100));
-        } else {
-          newPrice = originalPrice - parseFloat(data.discount_amount);
-        }
-        
-        if (newPrice < 0) newPrice = 0;
-        
-        const formattedOld = new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', maximumFractionDigits: 0 }).format(originalPrice).replace('KES', 'Ksh');
-        const formattedNew = new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', maximumFractionDigits: 0 }).format(newPrice).replace('KES', 'Ksh');
-        
-        priceDisplay.innerHTML = `<span class="line-through text-gray-400 text-sm mr-2">${formattedOld}</span><span>${formattedNew}</span>`;
+        currentDiscountType = data.discount_type;
+        currentDiscountAmount = parseFloat(data.discount_amount);
       } else {
         msgEl.textContent = data.error;
         msgEl.className = "text-xs mt-2 font-medium text-red-600";
-        // Reset to original
-        priceDisplay.textContent = originalPrice === 0 ? "Free" : new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', maximumFractionDigits: 0 }).format(originalPrice).replace('KES', 'Ksh');
+        currentDiscountType = null;
+        currentDiscountAmount = 0;
       }
     } catch (error) {
       msgEl.textContent = "An error occurred while validating the code.";
       msgEl.className = "text-xs mt-2 font-medium text-red-600";
+      currentDiscountType = null;
+      currentDiscountAmount = 0;
     }
+    
+    updateTotals();
   }
+
+  // Initialize totals on page load
+  document.addEventListener('turbo:load', function() {
+    updateTotals();
+    // If there is already a discount code pre-filled from an edit, we might want to validate it again or it just won't show the discount amount visually until clicked.
+    // For now, updateTotals handles the UI. If a user returns to this page with a code, they should click Apply again to see the visual breakdown.
+  });
+  // Also run on plain DOM load for non-turbo navigations
+  document.addEventListener('DOMContentLoaded', function() {
+    updateTotals();
+  });
 </script>
