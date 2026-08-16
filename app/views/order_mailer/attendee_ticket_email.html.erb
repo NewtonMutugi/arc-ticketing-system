@@ -1,0 +1,28 @@
+<% attendee_name = @attendee.preferred_name.present? ? @attendee.preferred_name : "#{@attendee.first_name} #{@attendee.last_name}".strip %>
+<p style="margin: 0 0 14px; font-size: 16px; line-height: 1.6;">Hi <strong><%= attendee_name %></strong>,</p>
+
+<p style="margin: 0 0 18px; font-size: 16px; line-height: 1.7; color: #374151;">
+  You've been registered to attend <strong><%= @event.title %></strong>!
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 20px; border: 1px solid #e5e7eb; border-radius: 10px; background-color: #f9fafb;">
+  <tr>
+    <td style="padding: 14px 16px;">
+      <p style="margin: 0 0 6px; font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.6px;">Ticket Type</p>
+      <p style="margin: 0; font-size: 20px; line-height: 1.3; font-weight: 800; color: #111827;"><%= @attendee.ticket.title %></p>
+    </td>
+  </tr>
+</table>
+
+<h3 style="margin: 0 0 10px; font-size: 18px; line-height: 1.4; color: #111827;">Your Ticket</h3>
+<p style="margin: 0 0 16px; font-size: 15px; line-height: 1.7; color: #374151;">
+  We have attached your individual ticket PDF to this email. Please save this file and present the QR code at the event entrance for scanning.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 12px; background-color: #fef2f2;">
+  <tr>
+    <td style="padding: 12px 14px; font-size: 14px; line-height: 1.6; color: #7f1d1d;">
+      Tip: Download your ticket PDF now and keep it accessible on your phone for a faster check-in.
+    </td>
+  </tr>
+</table>

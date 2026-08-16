@@ -111,7 +111,7 @@ module Public
 
       if @order.total_cost.to_f <= 0
         @order.update!(status: :paid, approved_at: Time.current)
-        OrderMailer.confirmation_email(@order).deliver_later
+        @order.send_confirmation_emails!
         redirect_to event_order_path(@event, @order), notice: "Your free ticket is confirmed!"
       else
         redirect_to event_order_checkout_path(@event, @order), notice: "Attendees saved. Please verify payment."

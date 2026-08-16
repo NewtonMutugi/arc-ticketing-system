@@ -31,6 +31,17 @@ class Order < ApplicationRecord
     user
   end
 
+  def send_confirmation_emails!
+    # Send to buyer
+    OrderMailer.confirmation_email(self).deliver_later
+
+    # Send to each attendee
+    attendees.each do |attendee|
+      next if attendee.email.blank?
+      OrderMailer.attendee_ticket_email(attendee).deliver_later
+    end
+  end
+
   private
 
   def generate_order_number

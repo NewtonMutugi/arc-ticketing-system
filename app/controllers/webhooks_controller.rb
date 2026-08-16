@@ -23,7 +23,7 @@ class WebhooksController < ApplicationController
       )
 
       # Send Email
-      OrderMailer.confirmation_email(order).deliver_later
+      order.send_confirmation_emails!
     else
       order.update(status: :failed)
     end

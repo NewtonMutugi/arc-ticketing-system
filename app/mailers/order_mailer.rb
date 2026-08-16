@@ -57,4 +57,26 @@ class OrderMailer < ApplicationMailer
       subject: "Payment Rejected for Order ##{@order.order_no}"
     )
   end
+
+  def attendee_ticket_email(attendee)
+    @attendee = attendee
+    @order = attendee.order
+    @event = attendee.ticket.event
+
+    # Attach logo inline for email display
+    attachments.inline["ruby_conf_logo_white.png"] = File.read(Rails.root.join("app/assets/images/ruby_conf_logo_white.png"))
+
+    # Attach individual ticket PDF
+    pdf = TicketPdfGenerator.new(@order, [@attendee]).render
+    attachments["RubyConf_Ticket_#{@attendee.token}.pdf"] = pdf
+
+    # Set layout variables
+    @email_subtitle = "Your Ticket"
+    @email_title = "See you at #{@event.title}!"
+
+    mail(
+      to: @attendee.email,
+      subject: "Your ticket for #{@event.title}"
+    )
+  end
 end

@@ -60,7 +60,7 @@ class Admin::OrdersController < Admin::BaseController
       end
 
       if @order.paid?
-        OrderMailer.confirmation_email(@order).deliver_later
+        @order.send_confirmation_emails!
       elsif @order.submitted?
         OrderMailer.receipt_email(@order).deliver_later
       end
@@ -88,7 +88,7 @@ class Admin::OrdersController < Admin::BaseController
   def approve
     authorize @order
     if @order.update(status: :paid, approved_by_user_id: Current.user.id, approved_at: Time.current)
-      OrderMailer.confirmation_email(@order).deliver_later
+      @order.send_confirmation_emails!
 
       respond_to do |format|
         format.html { redirect_to admin_event_orders_path(@event), notice: "Order approved." }
@@ -111,7 +111,7 @@ class Admin::OrdersController < Admin::BaseController
   def resend_confirmation_email
     authorize @order
     if @order.paid?
-      OrderMailer.confirmation_email(@order).deliver_later
+      @order.send_confirmation_emails!
 
       respond_to do |format|
         format.turbo_stream do

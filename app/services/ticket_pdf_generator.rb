@@ -7,15 +7,16 @@ class TicketPdfGenerator
   PAGE_WIDTH = 612
   PAGE_HEIGHT = 180
 
-  def initialize(order)
+  def initialize(order, attendees = nil)
     @order = order
     @event = order.order_items.first.ticket.event
+    @attendees = attendees || order.attendees
   end
 
   def render
     # Margin 0 is crucial for the full-bleed background
     Prawn::Document.new(page_size: [ PAGE_WIDTH, PAGE_HEIGHT ], margin: 0) do |pdf|
-      @order.attendees.each_with_index do |attendee, index|
+      @attendees.each_with_index do |attendee, index|
         pdf.start_new_page if index > 0
         draw_ticket(pdf, attendee)
       end

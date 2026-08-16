@@ -58,7 +58,7 @@ class PaypalController < ApplicationController
           payment_reference: response["id"]
         )
         # Send Email
-        OrderMailer.confirmation_email(order).deliver_now
+        order.send_confirmation_emails!
         render json: { status: "COMPLETED" }
       else
         # render json: { error: "Order not found in system" }, status: 404
