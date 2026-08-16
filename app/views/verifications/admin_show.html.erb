@@ -6,12 +6,18 @@
       </div>
       <h1 class="text-2xl font-bold text-green-800 mb-2">Verified!</h1>
       <p class="text-gray-600 mb-6">Welcome, <%= @attendee.first_name %>.</p>
-    <% else %>
+    <% elsif @status == :already_checked_in %>
       <div class="rounded-full bg-yellow-100 p-4 w-20 h-20 mx-auto flex items-center justify-center mb-4">
         <svg class="w-10 h-10 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
       </div>
       <h1 class="text-2xl font-bold text-yellow-800 mb-2">Duplicate Scan</h1>
-      <p class="text-gray-600 mb-6">Checked in at <%= @attendee.checked_in_at.strftime("%I:%M %p") %></p>
+      <p class="text-gray-600 mb-6">Already checked in for today.</p>
+    <% else %>
+      <div class="rounded-full bg-red-100 p-4 w-20 h-20 mx-auto flex items-center justify-center mb-4">
+        <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </div>
+      <h1 class="text-2xl font-bold text-red-800 mb-2">Invalid Date</h1>
+      <p class="text-gray-600 mb-6">Today's date is outside event dates.</p>
     <% end %>
     <div class="border-t border-gray-200 pt-4 text-left">
       <div class="flex justify-between mb-2">

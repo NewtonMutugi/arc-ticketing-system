@@ -17,6 +17,7 @@
           <% sidebar.with_item_link(title: "Tickets", href: admin_event_tickets_path(@event), icon: "fa fa-ticket") %>
           <% sidebar.with_item_link(title: "Orders", href: admin_event_orders_path(@event), icon: "fa fa-cart-arrow-down") %>
           <% sidebar.with_item_link(title: "Attendees", href: admin_event_attendees_path(@event), icon: "fa fa-users") %>
+          <% sidebar.with_item_link(title: "Check-ins", href: admin_event_check_ins_path(@event), icon: "fa fa-check-circle") %>
           <% sidebar.with_item_link(title: "Discount Codes", href: admin_event_discount_codes_path(@event), icon: "fa fa-tags") %>
           <% sidebar.with_item_link(title: "Transactions", href: admin_event_transactions_path(@event), icon: "fa fa-money-bill") %>
           <% if policy(@event).edit? %>
