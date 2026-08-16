@@ -1,7 +1,12 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-  <div class="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
+<% content_for :title, "Ticket Verification" %>
+<% content_for :hide_footer, true %>
+<div class="min-h-screen flex items-center justify-center p-4 relative bg-cover bg-center bg-no-repeat"
+     style="<%= @event.event_image.attached? ? "background-image: url('#{url_for(@event.event_image)}');" : "background-color: #f3f4f6;" %>">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm z-0"></div>
+
+  <div class="bg-white p-8 rounded-lg shadow-xl max-w-md w-full relative z-10">
     <div class="text-center mb-6">
-      <h1 class="text-3xl font-bold text-gray-900"><%= @event.name %></h1>
+      <h1 class="text-3xl font-bold text-gray-900"><%= @event.title %></h1>
       <p class="text-gray-500 mt-2">
         <%= @event.start_date.strftime("%b %d, %Y") %> - <%= @event.end_date.strftime("%b %d, %Y") %>
       </p>
@@ -35,7 +40,8 @@
     </div>
 
     <div class="bg-gray-50 -mx-8 -mb-8 p-6 rounded-b-lg border-t border-gray-200 text-center">
-      <p class="text-sm text-gray-500">Please present this ticket to the event staff for check-in.</p>
+      <p class="text-sm text-gray-500 mb-2">Please present this ticket to the event staff for check-in.</p>
+      <p class="text-xs text-gray-400">&copy; <%= Time.current.year %> <a href="https://rubycommunity.africa" target="_blank" class="text-red-600 hover:text-red-800 transition-colors">Africa Ruby Community</a>. All rights reserved.</p>
     </div>
   </div>
 </div>
