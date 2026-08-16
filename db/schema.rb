@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_15_173621) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_16_041213) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -43,7 +43,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_15_173621) do
   end
 
   create_table "attendees", force: :cascade do |t|
-    t.datetime "checked_in_at"
     t.datetime "created_at", null: false
     t.string "email"
     t.bigint "event_id", null: false
@@ -76,6 +75,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_15_173621) do
     t.index ["created_at"], name: "index_audit_logs_on_created_at"
     t.index ["user_id", "action"], name: "index_audit_logs_on_user_id_and_action"
     t.index ["user_id"], name: "index_audit_logs_on_user_id"
+  end
+
+  create_table "check_ins", force: :cascade do |t|
+    t.bigint "attendee_id", null: false
+    t.datetime "created_at", null: false
+    t.date "date"
+    t.datetime "updated_at", null: false
+    t.index ["attendee_id", "date"], name: "index_check_ins_on_attendee_id_and_date", unique: true
+    t.index ["attendee_id"], name: "index_check_ins_on_attendee_id"
   end
 
   create_table "discount_code_tickets", force: :cascade do |t|
@@ -343,6 +351,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_15_173621) do
   add_foreign_key "attendees", "orders"
   add_foreign_key "attendees", "tickets"
   add_foreign_key "audit_logs", "users"
+  add_foreign_key "check_ins", "attendees"
   add_foreign_key "discount_code_tickets", "discount_codes"
   add_foreign_key "discount_code_tickets", "tickets"
   add_foreign_key "discount_codes", "events"
