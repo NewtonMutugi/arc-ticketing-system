@@ -19,7 +19,6 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
-    get "verifications/show"
     root "dashboard#index"
     resource :settings, only: [ :show, :update ]
     resources :users, only: [ :create, :destroy, :edit, :update ]
@@ -47,11 +46,16 @@ Rails.application.routes.draw do
       end
       resources :transactions, only: [ :index ]
       resources :discount_codes
+      resources :check_ins, only: [ :index, :create, :destroy ]
     end
 
     resource :profile, only: [ :show, :update ]
-    get "verify/:token", to: "verifications#show", as: :verify_attendee
+    
+    # Backward compatibility for existing QR codes
+    get "verify/:token", to: redirect("/verify/%{token}")
   end
+
+  get "verify/:token", to: "verifications#show", as: :verify_attendee
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
