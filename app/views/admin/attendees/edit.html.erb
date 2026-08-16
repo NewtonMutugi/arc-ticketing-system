@@ -1,0 +1,77 @@
+<%= turbo_frame_tag "modal" do %>
+  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-opacity-0 backdrop-blur-sm p-4 overflow-y-auto">
+    <%= link_to "", admin_event_order_path(@event, @attendee.order), class: "absolute inset-0 cursor-default", aria: { label: "Close" } %>
+    <div class="relative w-full max-w-lg">
+      <%= form_with model: [:admin, @event, @attendee], data: { turbo_frame: "modal" }, class: "w-full" do |f| %>
+        <div class="modal-content bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col">
+          <div class="modal-header px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+            <h4 class="text-xl font-bold text-gray-900">
+              <i class="fa-solid fa-user-pen text-indigo-600 mr-2"></i>
+              Edit Attendee
+            </h4>
+            <%= link_to admin_event_order_path(@event, @attendee.order), class: "text-gray-400 hover:text-gray-600 transition-colors" do %>
+              <i class="fa-solid fa-xmark text-xl"></i>
+            <% end %>
+          </div>
+
+          <div class="modal-body p-6 max-h-[80vh] overflow-y-auto">
+            <% if @attendee.errors.any? %>
+              <div class="mb-4 p-4 bg-red-50 text-red-700 rounded border border-red-200 text-sm">
+                <ul class="list-disc ml-5">
+                  <% @attendee.errors.full_messages.each do |msg| %>
+                    <li><%= msg %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <%= render InputComponent.new(
+                  label: "First Name",
+                  name: "attendee[first_name]",
+                  value: @attendee.first_name,
+                  required: true
+                ) %>
+              </div>
+
+              <div>
+                <%= render InputComponent.new(
+                  label: "Last Name",
+                  name: "attendee[last_name]",
+                  value: @attendee.last_name,
+                  required: true
+                ) %>
+              </div>
+
+              <div class="md:col-span-2">
+                <%= render InputComponent.new(
+                  label: "Preferred Name (Optional)",
+                  name: "attendee[preferred_name]",
+                  value: @attendee.preferred_name,
+                  placeholder: "e.g. Nickname to be displayed on badge",
+                  required: false
+                ) %>
+              </div>
+
+              <div class="md:col-span-2">
+                <%= render InputComponent.new(
+                  label: "Email",
+                  name: "attendee[email]",
+                  type: "email",
+                  value: @attendee.email,
+                  required: true
+                ) %>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer p-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
+            <%= link_to "Cancel", admin_event_order_path(@event, @attendee.order), class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50" %>
+            <%= f.submit "Save Changes", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg shadow-sm hover:bg-indigo-700 cursor-pointer" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

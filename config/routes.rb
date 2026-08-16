@@ -32,7 +32,11 @@ Rails.application.routes.draw do
 
     resources :events do
       resources :tickets
-      resources :attendees
+      resources :attendees do
+        member do
+          post :resend_ticket
+        end
+      end
       resources :orders, param: :order_no do
         member do
           patch :approve

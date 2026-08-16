@@ -104,13 +104,22 @@
         <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Attendees</h4>
         <div class="space-y-2">
           <% @order.attendees.each do |attendee| %>
-            <div class="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+            <div class="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100 group">
               <div>
-                <div class="text-sm font-medium text-gray-900"><%= attendee.first_name %> <%= attendee.last_name %></div>
+                <% attendee_name = attendee.preferred_name.present? ? attendee.preferred_name : "#{attendee.first_name} #{attendee.last_name}" %>
+                <div class="text-sm font-medium text-gray-900"><%= attendee_name %></div>
                 <div class="text-xs text-gray-500"><%= attendee.email %></div>
               </div>
-              <div class="text-xs font-mono bg-white border border-gray-200 px-2 py-1 rounded text-gray-600">
-                <%= attendee.token %>
+              <div class="flex items-center gap-2">
+                <div class="text-xs font-mono bg-white border border-gray-200 px-2 py-1 rounded text-gray-600">
+                  <%= attendee.token %>
+                </div>
+                <%= link_to edit_admin_event_attendee_path(@event, attendee), class: "text-gray-400 hover:text-indigo-600 transition", title: "Edit Attendee", data: { turbo_frame: "modal" } do %>
+                  <i class="fa-solid fa-pen-to-square"></i>
+                <% end %>
+                <%= button_to resend_ticket_admin_event_attendee_path(@event, attendee), method: :post, class: "text-gray-400 hover:text-green-600 transition", title: "Resend Ticket", data: { turbo_confirm: "Resend ticket to #{attendee.email}?" } do %>
+                  <i class="fa-solid fa-paper-plane"></i>
+                <% end %>
               </div>
             </div>
           <% end %>
