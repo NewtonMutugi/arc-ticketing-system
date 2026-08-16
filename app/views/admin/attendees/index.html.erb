@@ -1,4 +1,5 @@
 <% content_for :title, "Attendees | #{@event.title}" %>
+<%= turbo_frame_tag "modal" %>
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
   <div>
     <h1 class="text-2xl font-bold text-gray-900">Attendees</h1>
@@ -55,9 +56,9 @@
                 #<%= attendee.order.order_no %>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button class="text-gray-400 hover:text-indigo-600">
-                  <i class="fa-solid fa-ellipsis-vertical"></i>
-                </button>
+                <%= link_to edit_admin_event_attendee_path(@event, attendee, return_to: request.fullpath), data: { turbo_frame: "modal" }, class: "text-gray-400 hover:text-indigo-600 transition-colors inline-block", title: "View & Edit Attendee Details" do %>
+                  <i class="fa-solid fa-pen-to-square"></i>
+                <% end %>
               </td>
             </tr>
           <% end %>

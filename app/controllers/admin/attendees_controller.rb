@@ -18,8 +18,8 @@ class Admin::AttendeesController < Admin::BaseController
 
   def update
     if @attendee.update(attendee_params)
-      # Redirect back to the order show page
-      redirect_to admin_event_order_path(@event, @attendee.order), notice: "Attendee details updated successfully."
+      # Redirect back to the return_to path or order show page
+      redirect_to params[:return_to].presence || admin_event_order_path(@event, @attendee.order), notice: "Attendee details updated successfully."
     else
       render :edit, status: :unprocessable_entity
     end
