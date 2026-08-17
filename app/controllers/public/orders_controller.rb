@@ -13,6 +13,11 @@ module Public
       if params[:order_no].present?
         @order = Order.find_by(order_no: params[:order_no])
 
+        # Clear the discount code from the order in memory if it doesn't apply to this ticket
+        if @order&.discount_code && !@order.discount_code.applies_to?(@ticket)
+          @order.discount_code = nil
+        end
+
         existing_item = @order.order_items.find_by(ticket: @ticket)
         @quantity = existing_item&.quantity || 1
       else
@@ -47,6 +52,19 @@ module Public
       if params[:discount_code].present?
         code = params[:discount_code].to_s.strip.upcase
         discount_code = @event.discount_codes.find_by(code: code)
+
+        if discount_code.nil? || !discount_code.valid_for_use?
+          redirect_to new_event_order_path(@event, ticket_id: params[:tickets].keys.first), alert: "Invalid or expired discount code."
+          return
+        end
+        
+        # Check if it applies to the selected ticket
+        ticket_id = params[:tickets].keys.first
+        ticket = Ticket.find(ticket_id)
+        unless discount_code.applies_to?(ticket)
+          redirect_to new_event_order_path(@event, ticket_id: ticket_id), alert: "This discount code does not apply to the selected ticket."
+          return
+        end
       end
 
       # Calculate Costs and items
@@ -59,7 +77,7 @@ module Public
 
           ticket = Ticket.find(ticket_id)
           
-          if discount_code && discount_code.valid_for_use? && discount_code.applies_to?(ticket)
+          if discount_code
             discount_per_ticket = discount_code.calculate_discount(ticket.price, 1)
             total_discount += (discount_per_ticket * qty)
           end
@@ -76,6 +94,9 @@ module Public
       if total_discount > 0 && discount_code
         @order.discount_code_id = discount_code.id
         @order.discount_amount = total_discount
+      else
+        @order.discount_code_id = nil
+        @order.discount_amount = 0
       end
 
       if @order.save
