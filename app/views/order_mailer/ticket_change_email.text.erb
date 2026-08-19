@@ -1,0 +1,10 @@
+Hi <%= @attendee.preferred_name.present? ? @attendee.preferred_name : "#{@attendee.first_name} #{@attendee.last_name}".strip %>,
+
+Your ticket for <%= @event.title %> has been updated!
+
+Previous Ticket: <%= @old_ticket.title %>
+New Ticket Type: <%= @attendee.ticket.title %>
+
+We have attached your updated ticket PDF to this email. Please discard any previous tickets and use this new file. Present the QR code at the event entrance for scanning.
+
+Tip: Download your ticket PDF now and keep it accessible on your phone for a faster check-in.

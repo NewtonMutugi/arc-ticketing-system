@@ -28,6 +28,17 @@
             <% end %>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="md:col-span-2">
+                <%= render InputComponent.new(
+                  label: "Ticket Type",
+                  name: "attendee[ticket_id]",
+                  type: "select",
+                  options: @event.tickets.map { |t| [t.title, t.id] },
+                  value: @attendee.ticket_id,
+                  required: true
+                ) %>
+              </div>
+
               <div>
                 <%= render InputComponent.new(
                   label: "First Name",

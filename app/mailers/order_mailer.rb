@@ -75,4 +75,30 @@ class OrderMailer < ApplicationMailer
       subject: "Your ticket for #{@event.title}"
     )
   end
+
+  def ticket_change_email(attendee, old_ticket)
+    @attendee = attendee
+    @order = attendee.order
+    @event = attendee.ticket.event
+    @old_ticket = old_ticket
+
+    # Attach logo inline for email display
+    attachments.inline["ruby_conf_logo_white.png"] = File.read(Rails.root.join("app/assets/images/ruby_conf_logo_white.png"))
+
+    # Attach the new individual ticket PDF
+    pdf = TicketPdfGenerator.new(@order, [@attendee]).render
+    attachments["RubyConf_Ticket_#{@attendee.token}.pdf"] = pdf
+
+    # Set layout variables
+    @email_subtitle = "Ticket Update"
+    @email_title = "Your ticket has been updated"
+
+    # Send to both the attendee and the buyer
+    recipients = [@attendee.email, @order.buyer_email].compact.map(&:downcase).uniq
+
+    mail(
+      to: recipients,
+      subject: "Ticket Update for #{@event.title}"
+    )
+  end
 end
