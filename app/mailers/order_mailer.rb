@@ -26,10 +26,6 @@ class OrderMailer < ApplicationMailer
     # Attach logo inline for email display
     attachments.inline["ruby_conf_logo_white.png"] = File.read(Rails.root.join("app/assets/images/ruby_conf_logo_white.png"))
 
-    # Attach ticket PDF
-    pdf = TicketPdfGenerator.new(@order).render
-    attachments["RubyConf_Tickets_#{@order.order_no}.pdf"] = pdf
-
     # Set layout variables
     event_name = @order.order_items.first&.ticket&.event&.title || "the event"
     @email_subtitle = "Payment Verified"
