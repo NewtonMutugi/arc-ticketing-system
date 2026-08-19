@@ -134,8 +134,8 @@
 </div>
 
 <script>
-  let currentDiscountType = null;
-  let currentDiscountAmount = 0;
+  var currentDiscountType = null;
+  var currentDiscountAmount = 0;
 
   function adjustQty(amount) {
     const input = document.getElementById('ticket_qty');
@@ -148,8 +148,11 @@
 
   function updateTotals() {
     const container = document.getElementById('ticket-price-container');
+    if (!container) return; // safety check
     const originalPrice = parseFloat(container.dataset.originalPrice);
-    const qty = parseInt(document.getElementById('ticket_qty').value);
+    const qtyInput = document.getElementById('ticket_qty');
+    if (!qtyInput) return;
+    const qty = parseInt(qtyInput.value);
     
     const subtotal = originalPrice * qty;
     let totalDiscount = 0;
@@ -172,22 +175,28 @@
       return new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', maximumFractionDigits: 0 }).format(amount).replace('KES', 'Ksh');
     };
 
-    document.getElementById('subtotal-display').textContent = formatCurrency(subtotal);
+    const subtotalDisplay = document.getElementById('subtotal-display');
+    if (subtotalDisplay) subtotalDisplay.textContent = formatCurrency(subtotal);
     
     const discountRow = document.getElementById('discount-row');
-    if (totalDiscount > 0) {
-      discountRow.classList.remove('hidden');
-      document.getElementById('discount-display').textContent = `-${formatCurrency(totalDiscount)}`;
-    } else {
-      discountRow.classList.add('hidden');
+    const discountDisplay = document.getElementById('discount-display');
+    if (discountRow && discountDisplay) {
+      if (totalDiscount > 0) {
+        discountRow.classList.remove('hidden');
+        discountDisplay.textContent = `-${formatCurrency(totalDiscount)}`;
+      } else {
+        discountRow.classList.add('hidden');
+      }
     }
 
-    document.getElementById('total-display').textContent = formatCurrency(total);
+    const totalDisplay = document.getElementById('total-display');
+    if (totalDisplay) totalDisplay.textContent = formatCurrency(total);
   }
 
   async function applyDiscount() {
     const codeInput = document.getElementById('discount_code');
     const msgEl = document.getElementById('discount_message');
+    if (!codeInput || !msgEl) return;
     const code = codeInput.value.trim();
 
     if (!code) {
@@ -230,18 +239,27 @@
 
   // Initialize totals on page load
   document.addEventListener('turbo:load', function() {
-    updateTotals();
+    currentDiscountType = null;
+    currentDiscountAmount = 0;
+    
     const codeInput = document.getElementById('discount_code');
     if (codeInput && codeInput.value.trim() !== '') {
       applyDiscount();
+    } else {
+      updateTotals();
     }
   });
+  
   // Also run on plain DOM load for non-turbo navigations
   document.addEventListener('DOMContentLoaded', function() {
-    updateTotals();
+    currentDiscountType = null;
+    currentDiscountAmount = 0;
+    
     const codeInput = document.getElementById('discount_code');
     if (codeInput && codeInput.value.trim() !== '') {
       applyDiscount();
+    } else {
+      updateTotals();
     }
   });
 </script>
