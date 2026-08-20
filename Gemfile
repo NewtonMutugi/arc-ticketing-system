@@ -94,3 +94,9 @@ gem "faraday"
 gem "pundit", "~> 2.5"
 
 gem "hashid-rails", "~> 1.4"
+
+gem "caxlsx", "~> 4.5"
+gem "caxlsx_rails", "~> 0.7.2"
+gem "prawn-table", "~> 0.2.2"
+
+gem "csv", "~> 3.3"
