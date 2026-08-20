@@ -10,9 +10,16 @@
       <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
       <%= f.text_field :query, value: params[:query], placeholder: "Search name, email...", class: "pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500" %>
     <% end %>
-    <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700">
-      <i class="fa-solid fa-download mr-2"></i> Export
-    </button>
+    <%= render DropdownComponent.new(align: :right, direction: :down) do |dropdown| %>
+      <% dropdown.with_trigger do %>
+        <button type="button" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 flex items-center">
+          <i class="fa-solid fa-download mr-2"></i> Export
+        </button>
+      <% end %>
+      <% dropdown.with_item(title: "Export as CSV", href: admin_event_attendees_path(@event, format: :csv, query: params[:query]), icon: "fa-solid fa-file-csv", data: { turbo: false }) %>
+      <% dropdown.with_item(title: "Export as Excel", href: admin_event_attendees_path(@event, format: :xlsx, query: params[:query]), icon: "fa-solid fa-file-excel", data: { turbo: false }) %>
+      <% dropdown.with_item(title: "Export as PDF", href: admin_event_attendees_path(@event, format: :pdf, query: params[:query]), icon: "fa-solid fa-file-pdf", data: { turbo: false }) %>
+    <% end %>
   </div>
 </div>
 <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">

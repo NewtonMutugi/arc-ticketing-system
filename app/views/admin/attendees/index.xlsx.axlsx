@@ -1,0 +1,17 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "Attendees") do |sheet|
+  # Header
+  sheet.add_row ["First Name", "Last Name", "Email", "Ticket Type", "Order No"], style: wb.styles.add_style(b: true, bg_color: "EEEEEE")
+
+  # Data
+  @attendees_export.each do |attendee|
+    sheet.add_row [
+      attendee.first_name,
+      attendee.last_name,
+      attendee.email,
+      attendee.ticket.title,
+      "##{attendee.order.order_no}"
+    ]
+  end
+end

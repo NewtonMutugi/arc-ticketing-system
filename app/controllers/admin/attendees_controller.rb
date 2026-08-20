@@ -10,7 +10,30 @@ class Admin::AttendeesController < Admin::BaseController
       @query = @query.where("first_name ILIKE ? OR last_name ILIKE ? OR email ILIKE ? OR token ILIKE ?",
                     "%#{params[:query]}%", "%#{params[:query]}%", "%#{params[:query]}%", "%#{params[:query]}%")
     end
-    @pagy, @attendees = pagy(@query)
+
+    respond_to do |format|
+      format.html do
+        @pagy, @attendees = pagy(@query)
+      end
+      format.csv do
+        require 'csv'
+        csv_data = CSV.generate(headers: true) do |csv|
+          csv << ["First Name", "Last Name", "Email", "Ticket Type", "Order No"]
+          @query.each do |attendee|
+            csv << [attendee.first_name, attendee.last_name, attendee.email, attendee.ticket.title, "\##{attendee.order.order_no}"]
+          end
+        end
+        send_data csv_data, filename: "attendees-#{@event.title.parameterize}-#{Date.today}.csv"
+      end
+      format.xlsx do
+        @attendees_export = @query
+        response.headers['Content-Disposition'] = "attachment; filename=\"attendees-#{@event.title.parameterize}-#{Date.today}.xlsx\""
+      end
+      format.pdf do
+        pdf = AttendeesPdfGenerator.new(@event, @query).render
+        send_data pdf, filename: "attendees-#{@event.title.parameterize}-#{Date.today}.pdf", type: "application/pdf", disposition: "attachment"
+      end
+    end
   end
 
   def edit
