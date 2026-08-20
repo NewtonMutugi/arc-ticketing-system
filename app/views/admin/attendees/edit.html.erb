@@ -1,4 +1,4 @@
-<% close_path = params[:return_to].presence || admin_event_order_path(@event, @attendee.order) %>
+<% close_path = safe_return_to(params[:return_to], admin_event_order_path(@event, @attendee.order)) %>
 <%= turbo_frame_tag "modal" do %>
   <div class="fixed inset-0 z-[100] flex items-center justify-center bg-opacity-0 backdrop-blur-sm p-4 overflow-y-auto">
     <%= link_to "", close_path, class: "absolute inset-0 cursor-default", aria: { label: "Close" } %>
