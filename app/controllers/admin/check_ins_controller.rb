@@ -4,6 +4,7 @@ class Admin::CheckInsController < Admin::BaseController
   before_action :set_user
 
   def index
+    authorize :check_in, :index?
     # Determine which day's tab we are on
     @selected_date = params[:date].present? ? Date.parse(params[:date]) : @event.start_date
     @selected_date = @event.start_date if @selected_date < @event.start_date
@@ -26,6 +27,7 @@ class Admin::CheckInsController < Admin::BaseController
   end
 
   def create
+    authorize :check_in, :create?
     @attendee = @event.attendees.find(params[:attendee_id])
     date = Date.parse(params[:date])
 
@@ -37,6 +39,7 @@ class Admin::CheckInsController < Admin::BaseController
   end
 
   def destroy
+    authorize :check_in, :destroy?
     @attendee = @event.attendees.find(params[:attendee_id])
     date = Date.parse(params[:id])
     check_in = @attendee.check_ins.find_by!(date: date)

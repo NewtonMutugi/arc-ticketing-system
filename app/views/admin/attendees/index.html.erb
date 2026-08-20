@@ -10,15 +10,17 @@
       <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
       <%= f.text_field :query, value: params[:query], placeholder: "Search name, email...", class: "pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500" %>
     <% end %>
-    <%= render DropdownComponent.new(align: :right, direction: :down) do |dropdown| %>
-      <% dropdown.with_trigger do %>
-        <button type="button" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 flex items-center">
-          <i class="fa-solid fa-download mr-2"></i> Export
-        </button>
+    <% unless Current.user.volunteer? %>
+      <%= render DropdownComponent.new(align: :right, direction: :down) do |dropdown| %>
+        <% dropdown.with_trigger do %>
+          <button type="button" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 flex items-center">
+            <i class="fa-solid fa-download mr-2"></i> Export
+          </button>
+        <% end %>
+        <% dropdown.with_item(title: "Export as CSV", href: admin_event_attendees_path(@event, format: :csv, query: params[:query]), icon: "fa-solid fa-file-csv", data: { turbo: false }) %>
+        <% dropdown.with_item(title: "Export as Excel", href: admin_event_attendees_path(@event, format: :xlsx, query: params[:query]), icon: "fa-solid fa-file-excel", data: { turbo: false }) %>
+        <% dropdown.with_item(title: "Export as PDF", href: admin_event_attendees_path(@event, format: :pdf, query: params[:query]), icon: "fa-solid fa-file-pdf", data: { turbo: false }) %>
       <% end %>
-      <% dropdown.with_item(title: "Export as CSV", href: admin_event_attendees_path(@event, format: :csv, query: params[:query]), icon: "fa-solid fa-file-csv", data: { turbo: false }) %>
-      <% dropdown.with_item(title: "Export as Excel", href: admin_event_attendees_path(@event, format: :xlsx, query: params[:query]), icon: "fa-solid fa-file-excel", data: { turbo: false }) %>
-      <% dropdown.with_item(title: "Export as PDF", href: admin_event_attendees_path(@event, format: :pdf, query: params[:query]), icon: "fa-solid fa-file-pdf", data: { turbo: false }) %>
     <% end %>
   </div>
 </div>
@@ -30,7 +32,9 @@
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Attendee</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ticket Type</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order #</th>
-          <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          <% unless Current.user.volunteer? %>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          <% end %>
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-gray-200">
@@ -62,11 +66,13 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 #<%= attendee.order.order_no %>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <%= link_to edit_admin_event_attendee_path(@event, attendee, return_to: request.fullpath), data: { turbo_frame: "modal" }, class: "text-gray-400 hover:text-indigo-600 transition-colors inline-block", title: "View & Edit Attendee Details" do %>
-                  <i class="fa-solid fa-pen-to-square"></i>
-                <% end %>
-              </td>
+              <% unless Current.user.volunteer? %>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <%= link_to edit_admin_event_attendee_path(@event, attendee, return_to: request.fullpath), data: { turbo_frame: "modal" }, class: "text-gray-400 hover:text-indigo-600 transition-colors inline-block", title: "View & Edit Attendee Details" do %>
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  <% end %>
+                </td>
+              <% end %>
             </tr>
           <% end %>
         <% end %>

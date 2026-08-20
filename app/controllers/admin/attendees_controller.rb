@@ -5,6 +5,7 @@ class Admin::AttendeesController < Admin::BaseController
   before_action :set_attendee, only: [ :edit, :update, :resend_ticket ]
 
   def index
+    authorize :attendee, :index?
     @query = @event.attendees.joins(:order).where(orders: { status: "paid" }).includes(:ticket, :order).order(created_at: :desc)
     if params[:query].present?
       @query = @query.where("first_name ILIKE ? OR last_name ILIKE ? OR email ILIKE ? OR token ILIKE ?",
@@ -37,9 +38,11 @@ class Admin::AttendeesController < Admin::BaseController
   end
 
   def edit
+    authorize @attendee
   end
 
   def update
+    authorize @attendee
     old_ticket = @attendee.ticket
 
     @attendee.assign_attributes(attendee_params)
@@ -61,6 +64,7 @@ class Admin::AttendeesController < Admin::BaseController
   end
 
   def resend_ticket
+    authorize @attendee
     OrderMailer.attendee_ticket_email(@attendee).deliver_later
     redirect_to admin_event_order_path(@event, @attendee.order), notice: "Ticket resent to #{@attendee.email} successfully."
   end

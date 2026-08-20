@@ -9,11 +9,11 @@ class ApplicationPolicy
   end
 
   def index?
-    true
+    !user.volunteer?
   end
 
   def show?
-    true
+    !user.volunteer?
   end
 
   def create?
