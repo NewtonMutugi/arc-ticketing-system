@@ -69,7 +69,7 @@
                 <td class="px-6 py-4 whitespace-nowrap">
                   <% if check_in %>
                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
-                      <i class="fa-solid fa-check mr-1.5"></i> Checked in <%= time_ago_in_words(check_in.created_at) %> ago
+                      <i class="fa-solid fa-check mr-1.5"></i> Checked in at&nbsp;<span data-controller="local-time" data-local-time-datetime-value="<%= check_in.created_at.iso8601 %>" data-local-time-format-value="time"><%= check_in.created_at.strftime("%H:%M") %></span>
                     </span>
                   <% else %>
                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">

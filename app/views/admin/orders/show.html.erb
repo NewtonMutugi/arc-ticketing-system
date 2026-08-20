@@ -5,7 +5,7 @@
       <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
         <div>
           <h2 class="text-xl font-bold text-gray-900">Order #<%= @order.order_no %></h2>
-          <p class="text-sm text-gray-500"><%= @order.created_at.strftime("%b %d, %Y at %H:%M") %></p>
+          <p class="text-sm text-gray-500"><span data-controller="local-time" data-local-time-datetime-value="<%= @order.created_at.iso8601 %>"><%= @order.created_at.strftime("%b %d, %Y at %H:%M") %></span></p>
         </div>
         <div class="flex items-center gap-2">
           <% status_colors = { "paid" => "bg-green-100 text-green-800", "submitted" => "bg-yellow-100 text-yellow-800", "failed" => "bg-red-100 text-red-800", "refunded" => "bg-gray-100 text-gray-800" } %>

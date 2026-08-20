@@ -8,7 +8,7 @@
     <div class="text-sm text-gray-500"><%= order.buyer_email %></div>
   </td>
   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-    <%= order.created_at.strftime("%b %d, %Y") %>
+    <span data-controller="local-time" data-local-time-datetime-value="<%= order.created_at.iso8601 %>" data-local-time-format-value="date"><%= order.created_at.strftime("%b %d, %Y") %></span>
   </td>
   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
     <%= order.total_items %> items

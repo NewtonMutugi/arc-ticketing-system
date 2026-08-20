@@ -30,3 +30,6 @@ application.register("dynamic-attendees", DynamicAttendeesController)
 
 import PaymentProviderController from "controllers/payment_provider_controller"
 application.register("payment-provider", PaymentProviderController)
+
+import LocalTimeController from "controllers/local_time_controller"
+application.register("local-time", LocalTimeController)

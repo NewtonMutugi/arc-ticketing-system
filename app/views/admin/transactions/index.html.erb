@@ -24,7 +24,7 @@
             <%= txn.order_no %>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-            <%= txn.created_at.strftime("%Y-%m-%d %H:%M") %>
+            <span data-controller="local-time" data-local-time-datetime-value="<%= txn.created_at.iso8601 %>"><%= txn.created_at.strftime("%Y-%m-%d %H:%M") %></span>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
             Payment from <%= txn.buyer_name %>
