@@ -2,7 +2,7 @@ class Admin::AttendeesController < Admin::BaseController
   layout "event_dashboard"
   before_action :set_event
   before_action :set_user
-  before_action :set_attendee, only: [:edit, :update, :resend_ticket]
+  before_action :set_attendee, only: [ :edit, :update, :resend_ticket ]
 
   def index
     @query = @event.attendees.joins(:order).where(orders: { status: "paid" }).includes(:ticket, :order).order(created_at: :desc)
@@ -16,18 +16,18 @@ class Admin::AttendeesController < Admin::BaseController
         @pagy, @attendees = pagy(@query)
       end
       format.csv do
-        require 'csv'
+        require "csv"
         csv_data = CSV.generate(headers: true) do |csv|
-          csv << ["First Name", "Last Name", "Email", "Ticket Type", "Order No"]
+          csv << [ "First Name", "Last Name", "Email", "Ticket Type", "Order No" ]
           @query.each do |attendee|
-            csv << [attendee.first_name, attendee.last_name, attendee.email, attendee.ticket.title, "\##{attendee.order.order_no}"]
+            csv << [ attendee.first_name, attendee.last_name, attendee.email, attendee.ticket.title, "\##{attendee.order.order_no}" ]
           end
         end
         send_data csv_data, filename: "attendees-#{@event.title.parameterize}-#{Date.today}.csv"
       end
       format.xlsx do
         @attendees_export = @query
-        response.headers['Content-Disposition'] = "attachment; filename=\"attendees-#{@event.title.parameterize}-#{Date.today}.xlsx\""
+        response.headers["Content-Disposition"] = "attachment; filename=\"attendees-#{@event.title.parameterize}-#{Date.today}.xlsx\""
       end
       format.pdf do
         pdf = AttendeesPdfGenerator.new(@event, @query).render

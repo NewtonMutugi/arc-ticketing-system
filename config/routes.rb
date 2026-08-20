@@ -50,7 +50,7 @@ Rails.application.routes.draw do
     end
 
     resource :profile, only: [ :show, :update ]
-    
+
     # Backward compatibility for existing QR codes
     get "verify/:token", to: redirect("/verify/%{token}")
   end

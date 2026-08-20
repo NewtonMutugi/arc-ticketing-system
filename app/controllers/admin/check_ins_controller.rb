@@ -18,9 +18,9 @@ class Admin::CheckInsController < Admin::BaseController
       @query = @query.where("first_name ILIKE ? OR last_name ILIKE ? OR email ILIKE ? OR token ILIKE ?",
                     "%#{params[:query]}%", "%#{params[:query]}%", "%#{params[:query]}%", "%#{params[:query]}%")
     end
-    
+
     @pagy, @attendees = pagy(@query)
-    
+
     # Pre-fetch check-ins for the selected date to optimize N+1
     @check_ins_for_date = CheckIn.where(attendee_id: @attendees.map(&:id), date: @selected_date).index_by(&:attendee_id)
   end
@@ -40,7 +40,7 @@ class Admin::CheckInsController < Admin::BaseController
     @attendee = @event.attendees.find(params[:attendee_id])
     date = Date.parse(params[:id])
     check_in = @attendee.check_ins.find_by!(date: date)
-    
+
     check_in.destroy
     redirect_back fallback_location: admin_event_check_ins_path(@event, date: date), notice: "Check-in for #{@attendee.first_name} on #{date} was removed."
   end

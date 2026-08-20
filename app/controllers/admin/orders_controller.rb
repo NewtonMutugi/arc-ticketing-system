@@ -22,7 +22,7 @@ class Admin::OrdersController < Admin::BaseController
     ticket_id_param = params[:order][:ticket_id]
     ticket = @event.tickets.find(Ticket.decode_id(ticket_id_param) || ticket_id_param)
     quantity = params[:order][:quantity].to_i
-    
+
     # Use override cost if provided, otherwise calculate
     override_cost = params[:order][:total_cost]
     if override_cost.present?

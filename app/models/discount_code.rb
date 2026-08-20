@@ -31,7 +31,7 @@ class DiscountCode < ApplicationRecord
       discount_amount
     end
 
-    discount_per_ticket = [discount_per_ticket, original_price].min
+    discount_per_ticket = [ discount_per_ticket, original_price ].min
     discount_per_ticket * quantity
   end
 
