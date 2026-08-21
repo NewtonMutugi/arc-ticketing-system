@@ -27,6 +27,32 @@
   </nav>
 </div>
 
+<div class="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8 mt-4 mb-6">
+  <%= render CardComponent.new(class: "bg-white p-4 border border-gray-200") do %>
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-medium text-gray-500">Total Attendees</h2>
+      <i class="fa-solid fa-users text-gray-400 text-2xl"></i>
+    </div>
+    <p class="text-3xl font-bold mt-4 text-gray-900"><%= @total_attendees_count %></p>
+  <% end %>
+
+  <%= render CardComponent.new(class: "bg-white p-4 border border-green-200 shadow-sm") do %>
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-medium text-green-700">Checked In</h2>
+      <i class="fa-solid fa-check-circle text-green-500 text-2xl"></i>
+    </div>
+    <p class="text-3xl font-bold mt-4 text-green-800"><%= @total_checked_in_count %></p>
+  <% end %>
+
+  <%= render CardComponent.new(class: "bg-white p-4 border border-red-200 shadow-sm") do %>
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-medium text-red-700">Not Checked In</h2>
+      <i class="fa-solid fa-xmark-circle text-red-500 text-2xl"></i>
+    </div>
+    <p class="text-3xl font-bold mt-4 text-red-800"><%= @total_not_checked_in_count %></p>
+  <% end %>
+</div>
+
 <%= turbo_frame_tag "attendees" do %>
   <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
     <div class="overflow-x-auto">

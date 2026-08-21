@@ -13,8 +13,16 @@ class Admin::CheckInsController < Admin::BaseController
     # Generate an array of all event dates for the tabs
     @event_dates = (@event.start_date..@event.end_date).to_a
 
+    # Base scope for valid attendees
+    base_attendees = @event.attendees.joins(:order).where(orders: { status: "paid" })
+    
+    # Calculate stats for the selected date
+    @total_attendees_count = base_attendees.count
+    @total_checked_in_count = CheckIn.where(attendee_id: base_attendees.select(:id), date: @selected_date).count
+    @total_not_checked_in_count = @total_attendees_count - @total_checked_in_count
+
     # Fetch attendees for this event (similar to attendees index but without the paid constraint if check-ins are allowed for all, but let's restrict to paid orders just in case, though usually attendees index does it)
-    @query = @event.attendees.joins(:order).where(orders: { status: "paid" }).includes(:ticket, :order)
+    @query = base_attendees.includes(:ticket, :order)
     if params[:query].present?
       @query = @query.where("first_name ILIKE ? OR last_name ILIKE ? OR email ILIKE ? OR token ILIKE ?",
                     "%#{params[:query]}%", "%#{params[:query]}%", "%#{params[:query]}%", "%#{params[:query]}%")
