@@ -61,6 +61,7 @@ group :development do
   gem "erb_lint", "~> 0.9"
   gem "letter_opener", "~> 1.10"
   gem "letter_opener_web", "~> 3.0"
+  gem "lefthook"
 end
 
 group :test do
