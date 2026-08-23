@@ -6,7 +6,7 @@ class Admin::OrdersController < Admin::BaseController
   def index
     authorize Order
     @query = @event.orders.includes(:order_items).order(created_at: :desc)
-    
+
     if params[:query].present?
       @query = @query.where("order_no ILIKE ? OR buyer_name ILIKE ? OR buyer_email ILIKE ?",
                     "%#{params[:query]}%", "%#{params[:query]}%", "%#{params[:query]}%")

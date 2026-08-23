@@ -15,7 +15,7 @@ class Admin::CheckInsController < Admin::BaseController
 
     # Base scope for valid attendees
     base_attendees = @event.attendees.joins(:order).where(orders: { status: "paid" })
-    
+
     # Calculate stats for the selected date
     @total_attendees_count = base_attendees.count
     @total_checked_in_count = CheckIn.where(attendee_id: base_attendees.select(:id), date: @selected_date).count
