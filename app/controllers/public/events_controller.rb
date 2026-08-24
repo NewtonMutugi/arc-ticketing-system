@@ -7,7 +7,8 @@ module Public
 
     # Landing Page
     def index
-      @events = Event.where(publish: true).where("end_date >= ?", Date.today)
+      @upcoming_events = Event.published.upcoming.order(start_date: :asc)
+      @past_events = Event.published.past.order(start_date: :desc).limit(6)
     end
 
     # The "Buy Tickets" Page

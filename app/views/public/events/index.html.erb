@@ -46,71 +46,135 @@
     %>
   </div>
 </div>
-<div class="mb-12">
-  <div class="flex items-center justify-between mb-8">
-    <h2 class="text-2xl font-bold text-gray-900">Upcoming Events</h2>
-    <span class="text-sm text-gray-500 font-medium"><%= @events.count %> events found</span>
+<div data-controller="tabs" data-tabs-active-tab-class="border-red-500 text-red-600" data-tabs-inactive-tab-class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+  <div class="mb-8 border-b border-gray-200">
+    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+      <a href="#" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg" data-tabs-target="tab" data-action="click->tabs#switch">
+        Upcoming Events
+      </a>
+      <% if @past_events.any? %>
+        <a href="#" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg" data-tabs-target="tab" data-action="click->tabs#switch">
+          Past Events
+        </a>
+      <% end %>
+    </nav>
   </div>
-  <% if @events.empty? %>
-    <div class="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-300">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-        <i class="fa-regular fa-calendar-xmark text-2xl text-gray-400"></i>
-      </div>
-      <h3 class="text-lg font-medium text-gray-900">No events found</h3>
-      <p class="text-gray-500">Check back later for new announcements.</p>
+
+  <div data-tabs-target="panel" class="hidden mb-12">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-2xl font-bold text-gray-900">Upcoming Events</h2>
+      <span class="text-sm text-gray-500 font-medium"><%= @upcoming_events.count %> events found</span>
     </div>
-  <% else %>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <% @events.each do |event| %>
-        <%= link_to event_path(event), class: "group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden h-full" do %>
-          <div class="relative h-56 overflow-hidden bg-gray-200">
-            <% if event.event_image.attached? %>
-              <%= image_tag event.event_image, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" %>
-            <% else %>
-              <div class="w-full h-full flex items-center justify-center text-gray-400">
-                <i class="fa-regular fa-image text-4xl"></i>
+    <% if @upcoming_events.empty? %>
+      <div class="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-300">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+          <i class="fa-regular fa-calendar-xmark text-2xl text-gray-400"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900">No events found</h3>
+        <p class="text-gray-500">Check back later for new announcements.</p>
+      </div>
+    <% else %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <% @upcoming_events.each do |event| %>
+          <%= link_to event_path(event), class: "group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden h-full" do %>
+            <div class="relative h-56 overflow-hidden bg-gray-200">
+              <% if event.event_image.attached? %>
+                <%= image_tag event.event_image, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" %>
+              <% else %>
+                <div class="w-full h-full flex items-center justify-center text-gray-400">
+                  <i class="fa-regular fa-image text-4xl"></i>
+                </div>
+              <% end %>
+              <div class="absolute top-4 left-4 bg-white/95 backdrop-blur rounded-lg p-2 text-center shadow-lg min-w-[60px]">
+                <span class="block text-xs font-bold text-red-600 uppercase tracking-wider">
+                  <%= event.start_date.strftime("%b") %>
+                </span>
+                <span class="block text-xl font-extrabold text-gray-900 leading-none">
+                  <%= event.start_date.strftime("%d") %>
+                </span>
               </div>
-            <% end %>
-            <div class="absolute top-4 left-4 bg-white/95 backdrop-blur rounded-lg p-2 text-center shadow-lg min-w-[60px]">
-              <span class="block text-xs font-bold text-red-600 uppercase tracking-wider">
-                <%= event.start_date.strftime("%b") %>
-              </span>
-              <span class="block text-xl font-extrabold text-gray-900 leading-none">
-                <%= event.start_date.strftime("%d") %>
-              </span>
-            </div>
-            <div class="absolute bottom-4 left-4">
-              <span class="bg-gray-900/80 backdrop-blur text-white text-[10px] font-bold px-2 py-1 rounded">
-                CONFERENCE
-              </span>
-            </div>
-          </div>
-          <div class="p-6 flex flex-col flex-grow">
-            <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors line-clamp-2">
-              <%= event.title %>
-            </h3>
-            <div class="flex items-start text-sm text-gray-500 mb-4">
-              <i class="fa-solid fa-location-dot mt-1 mr-2 text-gray-400"></i>
-              <span class="line-clamp-1"><%= event.location %></span>
-            </div>
-            <div class="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
-              <div>
-                <p class="text-xs text-gray-400 font-medium uppercase">Tickets from</p>
-                <% min_price = event.tickets.where(status: true).minimum(:price) %>
-                <p class="text-lg font-bold text-gray-900">
-                  <%= min_price.to_f > 0 ? number_to_currency(min_price, unit: "Ksh ", precision: 0) : "Free" %>
-                </p>
+              <div class="absolute bottom-4 left-4">
+                <span class="bg-gray-900/80 backdrop-blur text-white text-[10px] font-bold px-2 py-1 rounded">
+                  CONFERENCE
+                </span>
               </div>
-              <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-red-50 text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors">
-                <i class="fa-solid fa-arrow-right"></i>
-              </span>
+            </div>
+            <div class="p-6 flex flex-col flex-grow">
+              <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors line-clamp-2">
+                <%= event.title %>
+              </h3>
+              <div class="flex items-start text-sm text-gray-500 mb-4">
+                <i class="fa-solid fa-location-dot mt-1 mr-2 text-gray-400"></i>
+                <span class="line-clamp-1"><%= event.location %></span>
+              </div>
+              <div class="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
+                <div>
+                  <p class="text-xs text-gray-400 font-medium uppercase">Tickets from</p>
+                  <% min_price = event.tickets.where(status: true).minimum(:price) %>
+                  <p class="text-lg font-bold text-gray-900">
+                    <%= min_price.to_f > 0 ? number_to_currency(min_price, unit: "Ksh ", precision: 0) : "Free" %>
+                  </p>
+                </div>
+                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-red-50 text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors">
+                  <i class="fa-solid fa-arrow-right"></i>
+                </span>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @past_events.any? %>
+    <div data-tabs-target="panel" class="hidden mb-12">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-bold text-gray-900">Past Events</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <% @past_events.each do |event| %>
+          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col overflow-hidden h-full grayscale-[50%]">
+            <div class="relative h-56 overflow-hidden bg-gray-200">
+              <% if event.event_image.attached? %>
+                <%= image_tag event.event_image, class: "w-full h-full object-cover" %>
+              <% else %>
+                <div class="w-full h-full flex items-center justify-center text-gray-400">
+                  <i class="fa-regular fa-image text-4xl"></i>
+                </div>
+              <% end %>
+              <div class="absolute top-4 left-4 bg-white/95 backdrop-blur rounded-lg p-2 text-center shadow-lg min-w-[60px]">
+                <span class="block text-xs font-bold text-gray-500 uppercase tracking-wider">
+                  <%= event.start_date.strftime("%b") %>
+                </span>
+                <span class="block text-xl font-extrabold text-gray-500 leading-none">
+                  <%= event.start_date.strftime("%d") %>
+                </span>
+              </div>
+              <div class="absolute bottom-4 left-4">
+                <span class="bg-gray-900/80 backdrop-blur text-white text-[10px] font-bold px-2 py-1 rounded">
+                  ENDED
+                </span>
+              </div>
+            </div>
+            <div class="p-6 flex flex-col flex-grow">
+              <h3 class="text-xl font-bold text-gray-700 mb-2 line-clamp-2">
+                <%= event.title %>
+              </h3>
+              <div class="flex items-start text-sm text-gray-500 mb-4">
+                <i class="fa-solid fa-location-dot mt-1 mr-2 text-gray-400"></i>
+                <span class="line-clamp-1"><%= event.location %></span>
+              </div>
+              <div class="mt-auto pt-4 border-t border-gray-50 flex items-center justify-end">
+                <span class="text-sm font-medium text-gray-400 uppercase tracking-wider">Event Completed</span>
+              </div>
             </div>
           </div>
         <% end %>
-      <% end %>
+      </div>
     </div>
   <% end %>
 </div>
+
 <%#
 <div class="bg-gray-50 rounded-2xl p-8 md:p-12 text-center border border-gray-200">
   <h2 class="text-2xl font-bold text-gray-900 mb-4">Don't miss the next big event</h2>

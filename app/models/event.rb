@@ -12,6 +12,10 @@ class Event < ApplicationRecord
 
   validates :title, :description,  presence: true
 
+  scope :published, -> { where(publish: true) }
+  scope :upcoming, -> { where("end_date >= ?", Date.today) }
+  scope :past, -> { where("end_date < ?", Date.today) }
+
   has_one_attached :event_image
 
   validates :event_image, content_type: [ "image/png", "image/jpeg" ], size: { less_than: 5.megabytes }

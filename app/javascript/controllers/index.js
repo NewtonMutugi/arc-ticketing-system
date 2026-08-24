@@ -33,3 +33,6 @@ application.register("payment-provider", PaymentProviderController)
 
 import LocalTimeController from "controllers/local_time_controller"
 application.register("local-time", LocalTimeController)
+
+import TabsController from "controllers/tabs_controller"
+application.register("tabs", TabsController)
