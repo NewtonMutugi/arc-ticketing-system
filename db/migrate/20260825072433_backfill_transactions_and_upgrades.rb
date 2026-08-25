@@ -3,6 +3,10 @@ class BackfillTransactionsAndUpgrades < ActiveRecord::Migration[8.1]
     self.table_name = "ticket_upgrades"
   end
 
+  class MigrationTransaction < ActiveRecord::Base
+    self.table_name = "transactions"
+  end
+
   def up
     # 1. Backfill Orders to Transactions
     Order.where(status: 1).find_each do |order|
@@ -10,10 +14,11 @@ class BackfillTransactionsAndUpgrades < ActiveRecord::Migration[8.1]
       event_id = order.order_items.first&.ticket&.event_id
       next unless event_id
 
-      Transaction.create!(
+      MigrationTransaction.create!(
         event_id: event_id,
         amount: order.total_cost || 0,
-        referenceable: order,
+        referenceable_type: "Order",
+        referenceable_id: order.id,
         transaction_type: "order_payment"
       )
     end
@@ -71,7 +76,7 @@ class BackfillTransactionsAndUpgrades < ActiveRecord::Migration[8.1]
 
         # Only create transaction if there was a price difference
         if amount_paid > 0
-          Transaction.create!(
+          MigrationTransaction.create!(
             event_id: attendee.event_id,
             amount: amount_paid,
             referenceable_type: "TicketUpgrade",
@@ -84,7 +89,7 @@ class BackfillTransactionsAndUpgrades < ActiveRecord::Migration[8.1]
   end
 
   def down
-    Transaction.destroy_all
+    MigrationTransaction.destroy_all
     MigrationTicketUpgrade.destroy_all
   end
 end
