@@ -6,12 +6,12 @@ class MpesaService
   BASE_URL = Rails.env.production? ? "https://api.safaricom.co.ke" : "https://sandbox.safaricom.co.ke"
   CALLBACK_URL = Rails.env.production? ? ENV["PROD_MPESA_CALLBACK_URL"] : ENV["MPESA_CALLBACK_URL"]
 
-  def initialize(order)
-    @order = order
+  def initialize(payable)
+    @payable = payable
   end
 
   def stk_push(phone_number_override = nil)
-    phone = phone_number_override || @order.buyer_phone_no
+    phone = phone_number_override || @payable.try(:buyer_phone_no)
     formatted_phone = format_phone(phone)
 
     token = get_access_token
@@ -33,12 +33,12 @@ class MpesaService
         Password: password,
         Timestamp: timestamp,
         TransactionType: "CustomerBuyGoodsOnline",
-        Amount: @order.total_cost.to_i,
+        Amount: (@payable.try(:total_cost) || @payable.try(:amount_paid)).to_i,
         PartyA: formatted_phone, # Must be 2547...
         PartyB: till_number,
         PhoneNumber: formatted_phone,
         CallBackURL: CALLBACK_URL,
-        AccountReference: @order.order_no,
+        AccountReference: @payable.try(:order_no) || "UPG-#{@payable.id}",
         TransactionDesc: "Ticket Payment"
       }.to_json
     end

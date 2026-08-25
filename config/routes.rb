@@ -35,6 +35,7 @@ Rails.application.routes.draw do
         member do
           post :resend_ticket
         end
+        resources :ticket_upgrades, only: [ :new, :create ]
       end
       resources :orders, param: :order_no do
         member do

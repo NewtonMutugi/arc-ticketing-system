@@ -3,9 +3,9 @@ class Admin::TransactionsController < Admin::BaseController
   before_action :set_event
 
   def index
-    @query = @event.orders.where(status: [ :paid, :refunded ]).order(created_at: :desc)
+    @query = @event.transactions.includes(:referenceable).order(created_at: :desc)
     @pagy, @transactions = pagy(@query)
-    @total_revenue = @event.orders.paid.sum(:total_cost)
+    @total_revenue = @event.revenue
   end
 
   private

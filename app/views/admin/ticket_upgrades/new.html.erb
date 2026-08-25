@@ -1,0 +1,85 @@
+<% close_path = admin_event_order_path(@event, @attendee.order) %>
+<%= turbo_frame_tag "modal" do %>
+  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-opacity-0 backdrop-blur-sm p-4 overflow-y-auto" data-controller="upgrade-calculator" data-upgrade-calculator-current-price-value="<%= @attendee.ticket.price %>" data-upgrade-calculator-tickets-value="<%= @available_tickets.map { |t| { id: t.id, price: t.price } }.to_json %>">
+    <%= link_to "", close_path, class: "absolute inset-0 cursor-default", aria: { label: "Close" } %>
+    
+    <div class="relative w-full max-w-lg">
+      <%= form_with model: @ticket_upgrade, url: admin_event_attendee_ticket_upgrades_path(@event, @attendee), data: { turbo_frame: "_top" }, class: "w-full" do |f| %>
+        <div class="modal-content bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col">
+          <div class="modal-header px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+            <h4 class="text-xl font-bold text-gray-900">
+              <i class="fa-solid fa-arrow-up-right-dots text-blue-600 mr-2"></i>
+              Upgrade Ticket
+            </h4>
+            <%= link_to close_path, class: "text-gray-400 hover:text-gray-600 transition-colors" do %>
+              <i class="fa-solid fa-xmark text-xl"></i>
+            <% end %>
+          </div>
+
+          <div class="modal-body p-6 max-h-[80vh] overflow-y-auto space-y-6">
+            <div class="bg-blue-50 border border-blue-100 rounded-lg p-4">
+              <div class="text-sm font-medium text-blue-900">Current Ticket</div>
+              <div class="font-bold text-lg text-blue-950"><%= @attendee.ticket.title %></div>
+              <div class="text-blue-700"><%= number_to_currency(@attendee.ticket.price, unit: "Ksh ", precision: 0) %></div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Upgrade To</label>
+              <%= f.select :to_ticket_id, 
+                  @available_tickets.map { |t| ["#{t.title} - #{number_to_currency(t.price, unit: 'Ksh ', precision: 0)}", t.id] }, 
+                  { include_blank: "Select a ticket..." }, 
+                  class: "w-full rounded border border-gray-300 py-2 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500",
+                  data: { upgrade_calculator_target: "ticketSelect", action: "change->upgrade-calculator#calculate" },
+                  required: true
+              %>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-lg flex justify-between items-center border border-gray-100">
+              <span class="font-medium text-gray-700">Price Difference:</span>
+              <span class="font-bold text-xl text-gray-900" data-upgrade-calculator-target="priceDifference">Ksh 0</span>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
+              <select name="payment_method" class="w-full rounded border border-gray-300 py-2 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500" data-upgrade-calculator-target="paymentMethod" data-action="change->upgrade-calculator#togglePaymentFields">
+                <option value="stk_push">M-Pesa STK Push (Automatic)</option>
+                <option value="manual">Manual / Pre-paid</option>
+              </select>
+            </div>
+
+            <div data-upgrade-calculator-target="phoneInput">
+              <%= render InputComponent.new(
+                label: "M-Pesa Phone Number",
+                name: "phone_number",
+                value: @attendee.order.buyer_phone_no,
+                placeholder: "07...",
+                required: false
+              ) %>
+              <p class="text-xs text-gray-500 mt-1">An STK push will be sent to this number to complete the upgrade.</p>
+            </div>
+
+            <div data-upgrade-calculator-target="referenceInput" class="hidden space-y-4">
+              <%= render InputComponent.new(
+                label: "Payment Provider",
+                name: "payment_provider",
+                value: "Mpesa",
+                required: false
+              ) %>
+              <%= render InputComponent.new(
+                label: "Transaction Reference (Optional)",
+                name: "payment_reference",
+                placeholder: "e.g. QWE123RTY",
+                required: false
+              ) %>
+            </div>
+          </div>
+
+          <div class="modal-footer p-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
+            <%= link_to "Cancel", close_path, class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50" %>
+            <%= f.submit "Process Upgrade", class: "px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 cursor-pointer", data: { turbo_disable_with: "Processing..." } %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

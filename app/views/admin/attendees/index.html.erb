@@ -71,6 +71,9 @@
                   <%= link_to edit_admin_event_attendee_path(@event, attendee, return_to: request.fullpath), data: { turbo_frame: "modal" }, class: "text-gray-400 hover:text-indigo-600 transition-colors inline-block", title: "View & Edit Attendee Details" do %>
                     <i class="fa-solid fa-pen-to-square"></i>
                   <% end %>
+                  <%= link_to new_admin_event_attendee_ticket_upgrade_path(@event, attendee), class: "text-gray-400 hover:text-blue-600 transition", title: "Upgrade Ticket", data: { turbo_frame: "modal" } do %>
+                  <i class="fa-solid fa-arrow-up-right-dots"></i>
+                <% end %>
                 </td>
               <% end %>
             </tr>

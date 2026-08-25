@@ -43,20 +43,8 @@ class Admin::AttendeesController < Admin::BaseController
 
   def update
     authorize @attendee
-    old_ticket = @attendee.ticket
 
-    @attendee.assign_attributes(attendee_params)
-    ticket_changed = @attendee.ticket_id_changed?
-
-    if ticket_changed
-      @attendee.token = SecureRandom.hex(10).upcase
-    end
-
-    if @attendee.save
-      if ticket_changed
-        OrderMailer.ticket_change_email(@attendee, old_ticket).deliver_later
-      end
-      # Redirect back to the return_to path or order show page
+    if @attendee.update(attendee_params)
       redirect_to params[:return_to].presence || admin_event_order_path(@event, @attendee.order), notice: "Attendee details updated successfully."
     else
       render :edit, status: :unprocessable_entity
@@ -83,6 +71,6 @@ class Admin::AttendeesController < Admin::BaseController
   end
 
   def attendee_params
-    params.require(:attendee).permit(:first_name, :last_name, :preferred_name, :email, :ticket_id)
+    params.require(:attendee).permit(:first_name, :last_name, :preferred_name, :email)
   end
 end
