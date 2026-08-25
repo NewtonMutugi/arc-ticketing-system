@@ -1,4 +1,8 @@
 class BackfillTransactionsAndUpgrades < ActiveRecord::Migration[8.1]
+  class MigrationTicketUpgrade < ActiveRecord::Base
+    self.table_name = "ticket_upgrades"
+  end
+
   def up
     # 1. Backfill Orders to Transactions
     Order.where(status: 1).find_each do |order|
@@ -57,7 +61,7 @@ class BackfillTransactionsAndUpgrades < ActiveRecord::Migration[8.1]
           amount_paid = [ to_ticket.price - from_ticket.price, 0 ].max
         end
 
-        upgrade = TicketUpgrade.create!(
+        upgrade = MigrationTicketUpgrade.create!(
           attendee_id: attendee.id,
           from_ticket_id: from_ticket_id,
           to_ticket_id: attendee.ticket_id,
@@ -70,7 +74,8 @@ class BackfillTransactionsAndUpgrades < ActiveRecord::Migration[8.1]
           Transaction.create!(
             event_id: attendee.event_id,
             amount: amount_paid,
-            referenceable: upgrade,
+            referenceable_type: "TicketUpgrade",
+            referenceable_id: upgrade.id,
             transaction_type: "ticket_upgrade"
           )
         end
@@ -80,6 +85,6 @@ class BackfillTransactionsAndUpgrades < ActiveRecord::Migration[8.1]
 
   def down
     Transaction.destroy_all
-    TicketUpgrade.destroy_all
+    MigrationTicketUpgrade.destroy_all
   end
 end
