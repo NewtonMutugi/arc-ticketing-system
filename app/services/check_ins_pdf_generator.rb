@@ -29,13 +29,14 @@ class CheckInsPdfGenerator
 
     @attendees.each do |attendee|
       check_in = attendee.check_ins.find { |c| c.date == @date }
+      checked_in_at = check_in ? check_in.created_at.strftime("%Y-%m-%d %H:%M:%S") : "Not Checked In"
       table_data << [
         attendee.first_name,
         attendee.last_name,
         attendee.email,
         attendee.ticket.title,
         "##{attendee.order.order_no}",
-        check_in&.created_at&.strftime("%Y-%m-%d %H:%M:%S")
+        checked_in_at
       ]
     end
 
