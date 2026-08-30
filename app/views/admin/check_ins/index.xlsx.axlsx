@@ -1,0 +1,19 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "Check-ins") do |sheet|
+  # Header
+  sheet.add_row [ "First Name", "Last Name", "Email", "Ticket Type", "Order No", "Checked In At" ], style: wb.styles.add_style(b: true, bg_color: "EEEEEE")
+
+  # Data
+  @attendees_export.each do |attendee|
+    check_in = attendee.check_ins.find { |c| c.date == @selected_date }
+    sheet.add_row [
+      attendee.first_name,
+      attendee.last_name,
+      attendee.email,
+      attendee.ticket.title,
+      "##{attendee.order.order_no}",
+      check_in&.created_at&.strftime("%Y-%m-%d %H:%M:%S")
+    ]
+  end
+end
