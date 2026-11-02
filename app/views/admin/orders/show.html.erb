@@ -117,6 +117,9 @@
                 <%= link_to edit_admin_event_attendee_path(@event, attendee), class: "text-gray-400 hover:text-indigo-600 transition", title: "Edit Attendee", data: { turbo_frame: "modal" } do %>
                   <i class="fa-solid fa-pen-to-square"></i>
                 <% end %>
+                <%= link_to new_admin_event_attendee_ticket_upgrade_path(@event, attendee), class: "text-gray-400 hover:text-blue-600 transition", title: "Upgrade Ticket", data: { turbo_frame: "modal" } do %>
+                  <i class="fa-solid fa-arrow-up-right-dots"></i>
+                <% end %>
                 <%= button_to resend_ticket_admin_event_attendee_path(@event, attendee), method: :post, class: "text-gray-400 hover:text-green-600 transition", title: "Resend Ticket", data: { turbo_confirm: "Resend ticket to #{attendee.email}?" } do %>
                   <i class="fa-solid fa-paper-plane"></i>
                 <% end %>

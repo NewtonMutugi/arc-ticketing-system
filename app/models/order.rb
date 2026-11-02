@@ -4,12 +4,14 @@ class Order < ApplicationRecord
   has_many :order_items, dependent: :destroy
   has_many :tickets, through: :order_items
   has_many :attendees, dependent: :destroy
+  has_one :payment_transaction, class_name: "Transaction", as: :referenceable, dependent: :destroy
   belongs_to :user, foreign_key: "approved_by_user_id", optional: true
   belongs_to :discount_code, optional: true
 
   before_create :generate_order_number
 
   after_update :generate_attendees, if: -> { saved_change_to_status? && paid? }
+  after_update :generate_transaction, if: -> { saved_change_to_status? && paid? }
   after_update :log_payment_approval, if: :status_changed?
   after_update :increment_discount_usage, if: -> { saved_change_to_status? && paid? }
 
@@ -67,6 +69,18 @@ class Order < ApplicationRecord
         )
       end
     end
+  end
+
+  def generate_transaction
+    return unless order_items.any?
+
+    event_id = order_items.first.ticket.event_id
+    Transaction.create!(
+      event_id: event_id,
+      amount: total_cost || 0,
+      referenceable: self,
+      transaction_type: "order_payment"
+    )
   end
 
   def log_payment_approval

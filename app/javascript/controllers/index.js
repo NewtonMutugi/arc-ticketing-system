@@ -36,3 +36,6 @@ application.register("local-time", LocalTimeController)
 
 import TabsController from "controllers/tabs_controller"
 application.register("tabs", TabsController)
+
+import UpgradeCalculatorController from "controllers/upgrade_calculator_controller"
+application.register("upgrade-calculator", UpgradeCalculatorController)

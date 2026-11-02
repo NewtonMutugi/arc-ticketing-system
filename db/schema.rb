@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_16_041213) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_25_074900) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -312,6 +312,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_16_041213) do
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
+  create_table "ticket_upgrades", force: :cascade do |t|
+    t.decimal "amount_paid", precision: 10, scale: 2
+    t.bigint "attendee_id", null: false
+    t.string "checkout_request_id"
+    t.datetime "created_at", null: false
+    t.bigint "from_ticket_id", null: false
+    t.string "payment_provider"
+    t.string "payment_reference"
+    t.integer "status", default: 1
+    t.bigint "to_ticket_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "upgraded_by_user_id", null: false
+    t.index ["attendee_id"], name: "index_ticket_upgrades_on_attendee_id"
+    t.index ["from_ticket_id"], name: "index_ticket_upgrades_on_from_ticket_id"
+    t.index ["to_ticket_id"], name: "index_ticket_upgrades_on_to_ticket_id"
+    t.index ["upgraded_by_user_id"], name: "index_ticket_upgrades_on_upgraded_by_user_id"
+  end
+
   create_table "tickets", force: :cascade do |t|
     t.text "benefits"
     t.datetime "created_at", null: false
@@ -332,6 +350,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_16_041213) do
     t.index ["created_by_user_id"], name: "index_tickets_on_created_by_user_id"
     t.index ["event_id"], name: "index_tickets_on_event_id"
     t.index ["updated_by_user_id"], name: "index_tickets_on_updated_by_user_id"
+  end
+
+  create_table "transactions", force: :cascade do |t|
+    t.decimal "amount", precision: 10, scale: 2
+    t.datetime "created_at", null: false
+    t.bigint "event_id", null: false
+    t.bigint "referenceable_id", null: false
+    t.string "referenceable_type", null: false
+    t.string "transaction_type"
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_transactions_on_event_id"
+    t.index ["referenceable_type", "referenceable_id"], name: "index_transactions_on_referenceable"
   end
 
   create_table "users", force: :cascade do |t|
@@ -367,6 +397,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_16_041213) do
   add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
+  add_foreign_key "ticket_upgrades", "attendees"
+  add_foreign_key "ticket_upgrades", "tickets", column: "from_ticket_id"
+  add_foreign_key "ticket_upgrades", "tickets", column: "to_ticket_id"
+  add_foreign_key "ticket_upgrades", "users", column: "upgraded_by_user_id"
   add_foreign_key "tickets", "events"
   add_foreign_key "tickets", "users", column: "created_by_user_id"
+  add_foreign_key "transactions", "events"
 end
