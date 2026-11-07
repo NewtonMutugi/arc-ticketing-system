@@ -32,6 +32,31 @@ class Admin::CheckInsController < Admin::BaseController
 
     # Pre-fetch check-ins for the selected date to optimize N+1
     @check_ins_for_date = CheckIn.where(attendee_id: @attendees.map(&:id), date: @selected_date).index_by(&:attendee_id)
+
+    respond_to do |format|
+      format.html
+      format.csv do
+        require "csv"
+        @export_query = @query.joins(:check_ins).where(check_ins: { date: @selected_date }).includes(:check_ins)
+        csv_data = CSV.generate(headers: true) do |csv|
+          csv << [ "First Name", "Last Name", "Email", "Ticket Type", "Order No", "Checked In At" ]
+          @export_query.each do |attendee|
+            check_in = attendee.check_ins.find { |c| c.date == @selected_date }
+            csv << [ attendee.first_name, attendee.last_name, attendee.email, attendee.ticket.title, "\##{attendee.order.order_no}", check_in&.created_at&.strftime("%Y-%m-%d %H:%M:%S") ]
+          end
+        end
+        send_data csv_data, filename: "check-ins-#{@event.title.parameterize}-#{@selected_date}.csv"
+      end
+      format.xlsx do
+        @attendees_export = @query.joins(:check_ins).where(check_ins: { date: @selected_date }).includes(:check_ins)
+        response.headers["Content-Disposition"] = "attachment; filename=\"check-ins-#{@event.title.parameterize}-#{@selected_date}.xlsx\""
+      end
+      format.pdf do
+        @export_query = @query.joins(:check_ins).where(check_ins: { date: @selected_date }).includes(:check_ins)
+        pdf = CheckInsPdfGenerator.new(@event, @export_query, @selected_date).render
+        send_data pdf, filename: "check-ins-#{@event.title.parameterize}-#{@selected_date}.pdf", type: "application/pdf", disposition: "attachment"
+      end
+    end
   end
 
   def create
