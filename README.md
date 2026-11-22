@@ -8,7 +8,7 @@ ARC Events System provides a public event storefront and an admin back office fo
 
 ### Tech Stack
 
-- Ruby: 3.4.3
+- Ruby: 3.4.13
 - Rails: 8.1.1 (Gemfile) / load defaults 8.0
 - Database: PostgreSQL
 - Frontend: Hotwire (Turbo + Stimulus), Tailwind CSS, ViewComponent
@@ -29,7 +29,7 @@ ARC Events System provides a public event storefront and an admin back office fo
 
 Install the following before setup:
 
-- Ruby 3.4.3
+- Ruby 3.4.13
 - Bundler
 - PostgreSQL 16+ (or Docker to run PostgreSQL container)
 - libvips (required by image_processing for Active Storage variants)

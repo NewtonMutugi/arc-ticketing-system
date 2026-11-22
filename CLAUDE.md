@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ARC Events System — a Rails 8 app for publishing events, selling tickets, and processing attendee orders, with M-Pesa (STK Push) and PayPal payment integrations. Public storefront + an admin back office.
 
-Stack: Ruby 3.4.3, Rails 8.1, PostgreSQL, Hotwire (Turbo + Stimulus), Tailwind CSS, ViewComponent, Pundit, Solid Queue/Cache/Cable, Prawn (PDF tickets) + RQRCode.
+Stack: Ruby 3.4.13, Rails 8.1, PostgreSQL, Hotwire (Turbo + Stimulus), Tailwind CSS, ViewComponent, Pundit, Solid Queue/Cache/Cable, Prawn (PDF tickets) + RQRCode.
 
 ## Commands
 
